@@ -17,7 +17,13 @@ class GridData:
         return '\n'.join([' '.join([str(item) for item in row]) for row in self._data])
     
     def __repr__(self):
-        return f'<GridData>'
+        counts_string = ''
+        counts = self.counts()
+
+        for key, val in counts.items():
+            counts_string += f'#{key}:{val}|'
+
+        return f'<GridData |{counts_string}>'
     
     @property
     def data(self) -> List[List[int]]:
