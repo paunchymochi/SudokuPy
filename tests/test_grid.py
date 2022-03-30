@@ -30,6 +30,17 @@ class TestGridData:
         assert cols[0] == tuple([0]*9)
         assert boxes[0][0] == tuple([0]*9)
     
+    def test_constructor(self, zero_grid):
+        gd = GridData(zero_grid)
+        assert gd.valid == True
+
+        invalid_grid = [[10 for _ in range(9)] for _ in range(9)]
+        with pytest.raises(ValueError):
+            gd = GridData(invalid_grid, raises_error=True)
+        
+        gd = GridData(invalid_grid, raises_error=False)
+        assert gd.valid == False
+    
     def test_rows(self, input_grid):
         gd = GridData(input_grid)
         rows = gd.rows
