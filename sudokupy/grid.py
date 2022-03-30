@@ -9,28 +9,28 @@ class GridData:
         self._boxes = self._get_boxes(grid_data)
     
     @property
-    def data(self):
+    def data(self) -> List[List[int]]:
         return self._data
     
     @property
-    def rows(self):
+    def rows(self) -> List[List[int]]:
         return self._rows
     
     @property
-    def columns(self):
+    def columns(self) -> List[List[int]]:
         return self._columns
     
     @property
-    def boxes(self):
+    def boxes(self) -> List[List[List[int]]]:
         return self._boxes
     
-    def _get_rows(self, grid_data: List[List[int]]):
+    def _get_rows(self, grid_data: List[List[int]]) -> List[List[int]]:
         return grid_data
 
-    def _get_columns(self, grid_data: List[List[int]]):
+    def _get_columns(self, grid_data: List[List[int]]) -> List[List[int]]:
         return list(zip(*grid_data))
 
-    def _get_boxes(self, grid_data: List[List[int]]):
+    def _get_boxes(self, grid_data: List[List[int]]) -> List[List[List[int]]]:
         def _get_box(topleft_row: int, topleft_col: int) -> List[int]:
             box = []
             for i in range(topleft_row, topleft_row + 3):
@@ -50,7 +50,7 @@ class GridData:
         
         return boxes
     
-    def _flatten_boxes(self, boxes: List[List[int]]):
+    def _flatten_boxes(self, boxes: List[List[List[int]]]) -> List[List[int]]:
         raise NotImplementedError
     
     def _validate(self, grid_data: List[List[int]]):
