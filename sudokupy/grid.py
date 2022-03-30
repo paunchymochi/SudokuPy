@@ -95,7 +95,7 @@ class GridData:
             raise ValueError('duplicated number found in boxes')
 
     def _validate_has_duplicate_nonzero_number(self, group: List) -> bool:
-        sorted_group = group.copy()
+        sorted_group = list(group).copy()
         sorted_group.sort()
 
         for i in range(1, len(sorted_group)):
