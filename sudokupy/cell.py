@@ -10,6 +10,9 @@ class Cell:
 
         self.set_value(value)
     
+    def __repr__(self):
+        return f'<Cell row:{self._row} column:{self._column} value:{self._value}>'
+
     @property
     def row(self) -> int:
         return self._row
