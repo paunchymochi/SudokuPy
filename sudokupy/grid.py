@@ -1,10 +1,15 @@
 from typing import List, Tuple
 
 class GridData:
-    def __init__(self, grid_data: List[List[int]], raises_error=False):
+    def __init__(self, grid_data: List[List[int]]=None, raises_error=False):
         self._raises_error = raises_error
         self._valid = True
-        self._validate(grid_data, raises_error=raises_error)
+
+        if grid_data is None:
+            grid_data = self._get_zero_grid()
+        else:
+            self._validate(grid_data, raises_error=raises_error)
+
         self._data = grid_data
         self._rows = self._get_rows(grid_data)
         self._columns = self._get_columns(grid_data)
@@ -29,7 +34,7 @@ class GridData:
     @property
     def valid(self) -> bool:
         return self._valid
-
+    
     def set_item(self, row: int, col: int, value: int):
 
         new_data = self._data.copy()
@@ -74,6 +79,9 @@ class GridData:
         
         if self._validate(new_data, raises_error=True):
             self._data = new_data
+    
+    def _get_zero_grid(self) -> List[List[int]]:
+        return [[0]*9]*9
     
     def _get_rows(self, grid_data: List[List[int]]) -> Tuple[Tuple[int]]:
         rows = [tuple(row) for row in grid_data]
@@ -149,32 +157,19 @@ class GridData:
         return True
     
     def _validate_conflicts(self, grid_data: List[List[int]], raises_error: bool):
-        rows = self._get_rows(grid_data)
-        cols = self._get_columns(grid_data)
-        boxes = self._flatten_boxes(self._get_boxes(grid_data))
+        groups = {}
+        groups['rows'] = self._get_rows(grid_data)
+        groups['columns'] = self._get_columns(grid_data)
+        groups['boxes'] = self._flatten_boxes(self._get_boxes(grid_data))
 
-        if self._groups_have_duplicate_nonzero_number(rows):
-            if raises_error:
-                raise ValueError('duplicated number found in rows')
-            else:
-                self._valid = False
-                return False
-        
-        if self._groups_have_duplicate_nonzero_number(cols):
-            if raises_error:
-                raise ValueError('duplicated number found in columns')
-            else:
-                self._valid = False
-                return False
-        
-        if self._groups_have_duplicate_nonzero_number(boxes):
-            if raises_error:
-                raise ValueError('duplicated number found in boxes')
-            else:
-                self._valid = False
-                return False
-        return True
-    
+        for key, item in groups.items():
+            if self._groups_have_duplicate_nonzero_number(item):
+                if raises_error:
+                    raise ValueError(f'duplicated number found in {key}')
+                else:
+                    self._valid = False
+                    return False
+
     def _groups_have_duplicate_nonzero_number(self, groups: List[List[int]]) -> bool:
         return any([self._group_has_duplicate_nonzero_number(group) for group in groups])
 
