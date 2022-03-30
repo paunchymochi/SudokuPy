@@ -57,7 +57,14 @@ class GridData:
             self._data = new_data
     
     def set_box(self, topleft_row: int, topleft_col: int, values: List[int]):
-        raise NotImplementedError
+
+        new_data = self._data.copy()
+        for row_offset in range(3):
+            for col_offset in range(3):
+                new_data[topleft_row + row_offset][topleft_col + col_offset] = values[row_offset * 3 + col_offset]
+        
+        if self._validate(new_data, raises_error=True):
+            self._data = new_data
     
     def _get_rows(self, grid_data: List[List[int]]) -> Tuple[Tuple[int]]:
         rows = [tuple(row) for row in grid_data]
