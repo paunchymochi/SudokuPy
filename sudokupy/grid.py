@@ -25,6 +25,10 @@ class GridData:
     @property
     def boxes(self) -> Tuple[Tuple[Tuple[int]]]:
         return self._boxes
+    
+    @property
+    def valid(self) -> bool:
+        return self._valid
 
     def set_item(self, row: int, col: int, value: int):
         raise NotImplementedError
