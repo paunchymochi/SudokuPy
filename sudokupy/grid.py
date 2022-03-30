@@ -10,12 +10,9 @@ class GridData:
             grid_data = self._get_zero_grid()
         else:
             self._validate(grid_data, raises_error=raises_error)
+        
+        self._set_data(grid_data)
 
-        self._data = grid_data
-        self._rows = self._get_rows(grid_data)
-        self._columns = self._get_columns(grid_data)
-        self._boxes = self._get_boxes(grid_data)
-    
     def __repr__(self):
         return '\n'.join([' '.join([str(item) for item in row]) for row in self._data])
     
@@ -45,7 +42,7 @@ class GridData:
         new_data[row][col] = value
 
         if self._validate(new_data, raises_error=True):
-            self._data = new_data
+            self._set_data(new_data)
     
     def set_row(self, row: int, values: List[int]):
 
@@ -60,7 +57,7 @@ class GridData:
             new_data[row][i] = values[i]
         
         if self._validate(new_data, raises_error=True):
-            self._data = new_data
+            self._set_data(new_data)
     
     def set_column(self, column: int, values: List[int]):
 
@@ -75,7 +72,7 @@ class GridData:
             new_data[i][column] = values[i]
         
         if self._validate(new_data, raises_error=True):
-            self._data = new_data
+            self._set_data(new_data)
     
     def set_box(self, box_row: int, box_col: int, values: List[int]):
 
@@ -92,7 +89,13 @@ class GridData:
                 new_data[box_row*3 + row_offset][box_col*3 + col_offset] = values[row_offset * 3 + col_offset]
         
         if self._validate(new_data, raises_error=True):
-            self._data = new_data
+            self._set_data(new_data)
+    
+    def _set_data(self, data: List[List[int]]):
+        self._data = data
+        self._rows = self._get_rows(data)
+        self._columns = self._get_columns(data)
+        self._boxes = self._get_boxes(data)
     
     def _get_zero_grid(self) -> List[List[int]]:
         return [[0 for _ in range(9)] for _ in range(9)]
