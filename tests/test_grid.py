@@ -163,7 +163,22 @@ class TestGridData:
 
     def test_set_row_error(self, zero_grid):
         gd = GridData(zero_grid)
-        raise NotImplementedError
+
+        with pytest.raises(ValueError):
+            gd.set_row(10, [0]*9)
+        
+        with pytest.raises(ValueError):
+            gd.set_row(0, [10]*9)
+        
+        with pytest.raises(ValueError):
+            gd.set_row(0, [0]*2)
+        
+        with pytest.raises(ValueError):
+            gd.set_row(0, [1,2,3,4,5,6,7,8,1])
+        
+        gd.set_row(0, [1,2,3,4,5,6,7,8,9])
+        with pytest.raises(ValueError):
+            gd.set_row(1, [1,0,0,0,0,0,0,0,0])
 
     def test_set_column_error(self, zero_grid):
         gd = GridData(zero_grid)
