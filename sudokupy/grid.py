@@ -28,7 +28,7 @@ class GridData:
         return grid_data
 
     def _get_columns(self, grid_data: List[List[int]]):
-        raise NotImplementedError
+        return list(zip(*grid_data))
 
     def _get_boxes(self, grid_data: List[List[int]]):
         raise NotImplementedError
