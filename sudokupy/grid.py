@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Tuple, Union, Dict
 from copy import deepcopy
 
 class GridData:
@@ -38,6 +38,37 @@ class GridData:
     @property
     def valid(self) -> bool:
         return self._valid
+    
+    def counts(self) -> Dict[int, int]:
+        dict = {}
+        for i in range(10):
+            dict[i] = 0
+        
+        for row in self._data:
+            for item in row:
+                dict[item] += 1
+        
+        return dict
+    
+    def count(self, number: Union[int, List[int]]=None) -> int:
+        if number is None:
+            number = list(range(1, 10))
+        elif type(number) is int:
+            number = [number]
+        elif type(number) in [list, tuple]:
+            number = list(number)
+        else:
+            raise ValueError(f'number must be of types int, ilst, tuple, or NoneType')
+        
+        number = list(set(number)) # remove duplicates
+
+        counts = self.counts()
+        count = 0
+
+        for n in number:
+            count += counts[n]
+        
+        return count
     
     def set_item(self, row: int, col: int, value: int, raises_error=True):
 
