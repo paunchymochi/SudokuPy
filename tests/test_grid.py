@@ -146,3 +146,19 @@ class TestGridData:
         
         for arg in inputs:
             assert gd.boxes[arg[0], arg[1]] == arg[2]
+    
+    def test_set_item_error(self, zero_grid):
+        gd = GridData(zero_grid)
+        raise NotImplementedError
+
+    def test_set_row_error(self, zero_grid):
+        gd = GridData(zero_grid)
+        raise NotImplementedError
+
+    def test_set_column_error(self, zero_grid):
+        gd = GridData(zero_grid)
+        raise NotImplementedError
+
+    def test_set_box_error(self, zero_grid):
+        gd = GridData(zero_grid)
+        raise NotImplementedError
