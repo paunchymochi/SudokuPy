@@ -85,7 +85,7 @@ class GridData:
             self._data = new_data
     
     def _get_zero_grid(self) -> List[List[int]]:
-        return [[0]*9]*9
+        return [[0 for _ in range(9)] for _ in range(9)]
     
     def _get_rows(self, grid_data: List[List[int]]) -> Tuple[Tuple[int]]:
         rows = [tuple(row) for row in grid_data]
