@@ -15,13 +15,9 @@ def input_grid():
         [6,1,3,5,4,9,8,2,7]
     ]
 
-@pytest.fixture
-def zero_grid():
-    return [[0]*9]*9
-
 class TestGridData:
-    def test_zero_grid(self, zero_grid):
-        gd = GridData(zero_grid)
+    def test_zero_grid(self):
+        gd = GridData()
         rows = gd.rows
         cols = gd.columns
         boxes = gd.boxes
@@ -87,8 +83,8 @@ class TestGridData:
         with pytest.raises(ValueError):
             GridData(zero_grid, raises_error=True)
     
-    def test_set_item(self, zero_grid):
-        gd = GridData(zero_grid)
+    def test_set_item(self):
+        gd = GridData()
 
         inputs = [
             [0,0,1],
@@ -117,8 +113,8 @@ class TestGridData:
         for arg in inputs:
             assert gd.rows[arg[0]] == arg[1]
     
-    def test_set_column(self, zero_grid):
-        gd = GridData(zero_grid)
+    def test_set_column(self):
+        gd = GridData()
 
         inputs = [
             [0, [1,2,3,4,5,6,7,8,9]],
@@ -132,8 +128,8 @@ class TestGridData:
         for arg in inputs:
             assert gd.columns[arg[0]] == arg[1]
     
-    def test_set_box(self, zero_grid):
-        gd = GridData(zero_grid)
+    def test_set_box(self):
+        gd = GridData()
 
         inputs = [
             [0, 0, [1,2,3,4,5,6,7,8,9]],
@@ -147,8 +143,8 @@ class TestGridData:
         for arg in inputs:
             assert gd.boxes[arg[0], arg[1]] == arg[2]
     
-    def test_set_item_error(self, zero_grid):
-        gd = GridData(zero_grid, raises_error=True)
+    def test_set_item_error(self):
+        gd = GridData(raises_error=True)
 
         with pytest.raises(ValueError):
             gd.set_item(0,0,10)
@@ -161,8 +157,8 @@ class TestGridData:
         with pytest.raises(ValueError):
             gd.set_item(8, 0, 1)
 
-    def test_set_row_error(self, zero_grid):
-        gd = GridData(zero_grid, raises_error=True)
+    def test_set_row_error(self):
+        gd = GridData(raises_error=True)
 
         with pytest.raises(ValueError):
             gd.set_row(10, [0]*9)
@@ -180,8 +176,8 @@ class TestGridData:
         with pytest.raises(ValueError):
             gd.set_row(1, [1,0,0,0,0,0,0,0,0])
 
-    def test_set_column_error(self, zero_grid):
-        gd = GridData(zero_grid, raises_error=True)
+    def test_set_column_error(self):
+        gd = GridData(raises_error=True)
 
         with pytest.raises(ValueError):
             gd.set_column(10, [0]*9)
@@ -200,8 +196,8 @@ class TestGridData:
             gd.set_column(1, [1,0,0,0,0,0,0,0,0])
 
 
-    def test_set_box_error(self, zero_grid):
-        gd = GridData(zero_grid, raises_error=True)
+    def test_set_box_error(self):
+        gd = GridData(raises_error=True)
 
         with pytest.raises(ValueError):
             gd.set_box(10, 10, [0]*9)
