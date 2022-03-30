@@ -31,7 +31,24 @@ class GridData:
         return list(zip(*grid_data))
 
     def _get_boxes(self, grid_data: List[List[int]]):
-        raise NotImplementedError
+        def _get_box(topleft_row: int, topleft_col: int) -> List[int]:
+            box = []
+            for i in range(topleft_row, topleft_row + 3):
+                for j in range(topleft_col, topleft_col + 3):
+                    box.append(grid_data[i][j])
+            return box
+        
+        def _get_boxrow(topleft_row: int) -> List[List[int]]:
+            boxrow = []
+            for topleft_col in range(0, 9, 3):
+                boxrow.append(_get_box(topleft_row, topleft_col))
+            return boxrow
+        
+        boxes = []
+        for topleft_row in range(0, 9, 3):
+            boxes.append(_get_boxrow(topleft_row))
+        
+        return boxes
     
     def _flatten_boxes(self, boxes: List[List[int]]):
         raise NotImplementedError
