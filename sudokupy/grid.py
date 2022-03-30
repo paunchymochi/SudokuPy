@@ -92,7 +92,7 @@ class GridData:
     
     def _validate_structure(self, grid_data: List[List[int]], raises_error: bool):
         if len(grid_data) != 9:
-            if self._raisesError:
+            if raises_error:
                 raise ValueError('grid_data must have 9 rows')
             else:
                 self._valid = False
