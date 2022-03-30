@@ -24,7 +24,7 @@ class Cell:
     
     @property
     def box(self) -> int:
-        return self._row // 3 + self._column // 3
+        return self.boxrow * 3 + self.boxcol
     
     @property
     def boxrow(self) -> int:
