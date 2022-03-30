@@ -34,13 +34,19 @@ class TestGridData:
         gd = GridData(zero_grid)
         assert gd.valid == True
 
-        invalid_grid = [[10 for _ in range(9)] for _ in range(9)]
-        with pytest.raises(ValueError):
-            gd = GridData(invalid_grid, raises_error=True)
-        
-        gd = GridData(invalid_grid, raises_error=False)
-        assert gd.valid == False
-    
+        grids = {}
+        grids['invalid_number_grid'] = [[10 for _ in range(9)] for _ in range(9)]
+        grids['invalid_type_grid'] = [['0' for _ in range(9)] for _ in range(9)]
+        grids['invalid_row_structure_grid'] = [[0 for _ in range(9)] for _ in range(11)]
+        grids['invalid_col_structure_grid'] = [[0 for _ in range(11)] for _ in range(9)]
+
+        for key, val in grids.items():
+            print(key, val)
+            gd = GridData(val, raises_error=False)
+            assert gd.valid == False
+            with pytest.raises(ValueError):
+                gd = GridData(val, raises_error=True)
+
     def test_rows(self, input_grid):
         gd = GridData(input_grid)
         rows = gd.rows
