@@ -50,3 +50,7 @@ class TestCell:
     def test_boxcol(self):
         for col in range(9):
             assert Cell(0, col, 0).boxcol == col // 3
+    
+    def test_repr(self):
+        c = Cell(1, 2, 3)
+        assert c.__repr__() == '<Cell row:1 column:2 value:3>'
