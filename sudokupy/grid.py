@@ -23,6 +23,18 @@ class GridData:
     @property
     def boxes(self) -> Tuple[Tuple[Tuple[int]]]:
         return self._boxes
+
+    def set_item(self, row: int, col: int, value: int):
+        raise NotImplementedError
+    
+    def set_row(self, row: int, values: List[int]):
+        raise NotImplementedError
+    
+    def set_column(self, column: int, values: List[int]):
+        raise NotImplementedError
+    
+    def set_box(self, topleft_row: int, topleft_col: int, values: List[int]):
+        raise NotImplementedError
     
     def _get_rows(self, grid_data: List[List[int]]) -> Tuple[Tuple[int]]:
         rows = [tuple(row) for row in grid_data]
