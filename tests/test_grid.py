@@ -25,8 +25,8 @@ class TestGridData:
         gd = GridData(input_grid)
         cols = gd.columns
         assert len(cols) == 9
-        assert cols[0] == [3,4,5,8,1,7,9,2,6]
-        assert cols[-1] == [2,5,4,6,3,8,1,9,7]
+        assert cols[0] == (3,4,5,8,1,7,9,2,6)
+        assert cols[-1] == (2,5,4,6,3,8,1,9,7)
 
     def test_boxes(self, input_grid):
         gd = GridData(input_grid)
@@ -34,9 +34,9 @@ class TestGridData:
         assert len(boxes) == 3
         for boxrow in boxes:
             assert len(boxrow) == 3
-        assert boxes[0][0] == [3,7,8,4,2,9,5,6,1]
-        assert boxes[1][1] == [1,5,7,2,8,4,3,9,6]
-        assert boxes[2][2] == [5,3,1,6,4,9,8,2,7]
+        assert boxes[0][0] == (3,7,8,4,2,9,5,6,1)
+        assert boxes[1][1] == (1,5,7,2,8,4,3,9,6)
+        assert boxes[2][2] == (5,3,1,6,4,9,8,2,7)
     
     def test_missing_rows(self, input_grid):
         with pytest.raises(ValueError):
