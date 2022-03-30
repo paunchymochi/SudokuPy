@@ -87,3 +87,14 @@ class TestGridData:
         with pytest.raises(ValueError):
             GridData(zero_grid)
     
+    def test_set_item(self, zero_grid):
+        raise NotImplementedError
+    
+    def test_set_row(self, zero_grid):
+        raise NotImplementedError
+    
+    def test_set_column(self, zero_grid):
+        raise NotImplementedError
+    
+    def test_set_box(self, zero_grid):
+        raise NotImplementedError
