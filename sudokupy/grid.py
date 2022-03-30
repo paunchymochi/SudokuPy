@@ -39,7 +39,7 @@ class GridData:
     def _validate(self, grid_data: List[List[int]]):
         self._validate_structure(grid_data)
         self._validate_numbers(grid_data)
-        self._validate_duplicates(grid_data)
+        self._validate_conflicts(grid_data)
     
     def _validate_structure(self, grid_data: List[List[int]]):
         if len(grid_data) != 9:
@@ -57,10 +57,29 @@ class GridData:
         if not result:
             raise ValueError('each item must be an int between 0 and 9')
     
-    def _validate_duplicates(self, grid_data: List[List[int]]):
-        raise NotImplementedError
+    def _validate_conflicts(self, grid_data: List[List[int]]):
+        rows = self._get_rows(grid_data)
+        cols = self._get_columns(grid_data)
+        boxes = self._flatten_boxes(self._get_boxes(grid_data))
 
+        if any([self._validate_has_duplicate_nonzero_number(row) for row in rows]):
+            raise ValueError('duplicated number found in rows')
         
+        if any([self._validate_has_duplicate_nonzero_number(col) for col in cols]):
+            raise ValueError('duplicated number found in columns')
+        
+        if any([self._validate_has_duplicate_nonzero_number(box) for box in boxes]):
+            raise ValueError('duplicated number found in boxes')
+
+    def _validate_has_duplicate_nonzero_number(self, group: List) -> bool:
+        sorted_group = group.copy()
+        sorted_group.sort()
+
+        for i in range(1, len(sorted_group)):
+            if sorted_group[i] > 0 and sorted_group[i] == sorted_group[i-1]:
+                return True
+        
+        return False
 
 class Grid:
     def __init__(self):
