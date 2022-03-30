@@ -153,29 +153,32 @@ class GridData:
         cols = self._get_columns(grid_data)
         boxes = self._flatten_boxes(self._get_boxes(grid_data))
 
-        if any([self._validate_has_duplicate_nonzero_number(row) for row in rows]):
+        if self._groups_have_duplicate_nonzero_number(rows):
             if raises_error:
                 raise ValueError('duplicated number found in rows')
             else:
                 self._valid = False
                 return False
         
-        if any([self._validate_has_duplicate_nonzero_number(col) for col in cols]):
+        if self._groups_have_duplicate_nonzero_number(cols):
             if raises_error:
                 raise ValueError('duplicated number found in columns')
             else:
                 self._valid = False
                 return False
         
-        if any([self._validate_has_duplicate_nonzero_number(box) for box in boxes]):
+        if self._groups_have_duplicate_nonzero_number(boxes):
             if raises_error:
                 raise ValueError('duplicated number found in boxes')
             else:
                 self._valid = False
                 return False
         return True
+    
+    def _groups_have_duplicate_nonzero_number(self, groups: List[List[int]]) -> bool:
+        return any([self._group_has_duplicate_nonzero_number(group) for group in groups])
 
-    def _validate_has_duplicate_nonzero_number(self, group: List) -> bool:
+    def _group_has_duplicate_nonzero_number(self, group: List[int]) -> bool:
         sorted_group = list(group).copy()
         sorted_group.sort()
 
