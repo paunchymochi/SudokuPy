@@ -18,6 +18,8 @@ def input_grid():
 class TestGridData:
     def test_rows(self, input_grid):
         gd = GridData(input_grid)
+        rows = gd.rows
+        assert rows == input_grid
 
     def test_columns(self, input_grid):
         raise NotImplementedError
