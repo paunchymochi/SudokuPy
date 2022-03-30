@@ -15,6 +15,10 @@ def input_grid():
         [6,1,3,5,4,9,8,2,7]
     ]
 
+@pytest.fixture
+def zero_grid():
+    return [[0 for _ in range(9)] for _ in range(9)]
+
 class TestGridData:
     def test_zero_grid(self):
         gd = GridData()
