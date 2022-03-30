@@ -1,5 +1,7 @@
 
 class Cell:
+    __slots__ = ['_row', '_column', '_value']
+
     def __init__(self, row: int, column: int, value: int):
         self._validate_position(row, 'row')
         self._validate_position(column, 'column')
