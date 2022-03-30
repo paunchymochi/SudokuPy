@@ -1,7 +1,7 @@
 from typing import List
 
 class GridData:
-    def __init__(self, grid_data: List[List[str]]):
+    def __init__(self, grid_data: List[List[int]]):
         self._validate(grid_data)
         self._data = grid_data
         self._rows = self._get_rows(grid_data)
@@ -24,24 +24,24 @@ class GridData:
     def boxes(self):
         return self._boxes
     
-    def _get_rows(self, grid_data: List[List[str]]):
+    def _get_rows(self, grid_data: List[List[int]]):
         return grid_data
 
-    def _get_columns(self, grid_data: List[List[str]]):
+    def _get_columns(self, grid_data: List[List[int]]):
         raise NotImplementedError
 
-    def _get_boxes(self, grid_data: List[List[str]]):
+    def _get_boxes(self, grid_data: List[List[int]]):
         raise NotImplementedError
     
-    def _flatten_boxes(self, boxes: List[List[str]]):
+    def _flatten_boxes(self, boxes: List[List[int]]):
         raise NotImplementedError
     
-    def _validate(self, grid_data: List[List[str]]):
+    def _validate(self, grid_data: List[List[int]]):
         self._validate_structure(grid_data)
         self._validate_numbers(grid_data)
         self._validate_duplicates(grid_data)
     
-    def _validate_structure(self, grid_data: List[List[str]]):
+    def _validate_structure(self, grid_data: List[List[int]]):
         if len(grid_data) != 9:
             raise ValueError('grid_data must have 9 rows')
         
@@ -49,10 +49,10 @@ class GridData:
             if len(row) != 9:
                 raise ValueError('each grid_data row must have 9 elements (columns)')
     
-    def _validate_numbers(self, grid_data: List[List[str]]):
+    def _validate_numbers(self, grid_data: List[List[int]]):
         raise NotImplementedError
     
-    def _validate_duplicates(self, grid_data: List[List[str]]):
+    def _validate_duplicates(self, grid_data: List[List[int]]):
         raise NotImplementedError
 
         
