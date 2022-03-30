@@ -1,7 +1,9 @@
 from typing import List, Tuple
 
 class GridData:
-    def __init__(self, grid_data: List[List[int]]):
+    def __init__(self, grid_data: List[List[int]], raisesError=False):
+        self._raisesError = raisesError
+        self._valid = True
         self._validate(grid_data)
         self._data = grid_data
         self._rows = self._get_rows(grid_data)
@@ -73,17 +75,26 @@ class GridData:
         return tuple(flattened_boxes)
     
     def _validate(self, grid_data: List[List[int]]):
-        self._validate_structure(grid_data)
-        self._validate_numbers(grid_data)
-        self._validate_conflicts(grid_data)
+        if not self._validate_structure(grid_data): return
+        if not self._validate_numbers(grid_data): return
+        if not self._validate_conflicts(grid_data): return
     
     def _validate_structure(self, grid_data: List[List[int]]):
         if len(grid_data) != 9:
-            raise ValueError('grid_data must have 9 rows')
+            if self._raisesError:
+                raise ValueError('grid_data must have 9 rows')
+            else:
+                self._valid = False
+                return False
         
         for row in grid_data:
             if len(row) != 9:
-                raise ValueError('each grid_data row must have 9 elements (columns)')
+                if self._raisesError:
+                    raise ValueError('each grid_data row must have 9 elements (columns)')
+                else:
+                    self._valid = False
+                    return False
+        return True
     
     def _validate_numbers(self, grid_data: List[List[int]]):
         allowed_numbers = list(range(10))
@@ -91,7 +102,12 @@ class GridData:
         result = all([all([item in allowed_numbers for item in row]) for row in grid_data])
 
         if not result:
-            raise ValueError('each item must be an int between 0 and 9')
+            if self._raisesError:
+                raise ValueError('each item must be an int between 0 and 9')
+            else:
+                self._valid = False
+                return False
+        return True
     
     def _validate_conflicts(self, grid_data: List[List[int]]):
         rows = self._get_rows(grid_data)
@@ -99,13 +115,26 @@ class GridData:
         boxes = self._flatten_boxes(self._get_boxes(grid_data))
 
         if any([self._validate_has_duplicate_nonzero_number(row) for row in rows]):
-            raise ValueError('duplicated number found in rows')
+            if self._raisesError:
+                raise ValueError('duplicated number found in rows')
+            else:
+                self._valid = False
+                return False
         
         if any([self._validate_has_duplicate_nonzero_number(col) for col in cols]):
-            raise ValueError('duplicated number found in columns')
+            if self._raisesError:
+                raise ValueError('duplicated number found in columns')
+            else:
+                self._valid = False
+                return False
         
         if any([self._validate_has_duplicate_nonzero_number(box) for box in boxes]):
-            raise ValueError('duplicated number found in boxes')
+            if self._raisesError:
+                raise ValueError('duplicated number found in boxes')
+            else:
+                self._valid = False
+                return False
+        return True
 
     def _validate_has_duplicate_nonzero_number(self, group: List) -> bool:
         sorted_group = list(group).copy()
