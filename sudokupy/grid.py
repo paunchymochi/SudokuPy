@@ -49,6 +49,9 @@ class GridData:
     
     def set_row(self, row: int, values: List[int]):
 
+        if row not in list(range(9)):
+            raise ValueError('row must be an int between 0 and 9')
+
         if len(values) != 9:
             raise ValueError('values must have 9 elemtns')
 
@@ -60,6 +63,9 @@ class GridData:
             self._data = new_data
     
     def set_column(self, column: int, values: List[int]):
+
+        if column not in list(range(9)):
+            raise ValueError('column must be an int between 0 and 9')
 
         if len(values) != 9:
             raise ValueError('values must have 9 elemtns')
