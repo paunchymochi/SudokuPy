@@ -50,7 +50,12 @@ class GridData:
                 raise ValueError('each grid_data row must have 9 elements (columns)')
     
     def _validate_numbers(self, grid_data: List[List[int]]):
-        raise NotImplementedError
+        allowed_numbers = list(range(10))
+
+        result = all([all([item in allowed_numbers for item in row]) for row in grid_data])
+
+        if not result:
+            raise ValueError('each item must be an int between 0 and 9')
     
     def _validate_duplicates(self, grid_data: List[List[int]]):
         raise NotImplementedError
