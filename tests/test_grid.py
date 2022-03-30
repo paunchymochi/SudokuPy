@@ -37,3 +37,16 @@ class TestGridData:
         assert boxes[0][0] == [3,7,8,4,2,9,5,6,1]
         assert boxes[1][1] == [1,5,7,2,8,4,3,9,6]
         assert boxes[2][2] == [5,3,1,6,4,9,8,2,7]
+    
+    def test_missing_rows(self, input_grid):
+        with pytest.raises(ValueError):
+            GridData(input_grid[1:])
+    
+    def test_missing_columns(self, input_grid):
+        with pytest.raises(ValueError):
+            GridData([row[1:] for row in input_grid])
+    
+    def test_non_numbers(self, input_grid):
+        with pytest.raises(ValueError):
+            GridData([[str(item) for item in row] for row in input_grid])
+    
