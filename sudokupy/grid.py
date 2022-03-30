@@ -78,10 +78,12 @@ class GridData:
         
         return tuple(flattened_boxes)
     
-    def _validate(self, grid_data: List[List[int]], raises_error: bool):
-        if not self._validate_structure(grid_data, raises_error=raises_error): return
-        if not self._validate_numbers(grid_data, raises_error=raises_error): return
-        if not self._validate_conflicts(grid_data, raises_error=raises_error): return
+    def _validate(self, grid_data: List[List[int]], raises_error: bool) -> bool:
+        if not self._validate_structure(grid_data, raises_error=raises_error): return False
+        if not self._validate_numbers(grid_data, raises_error=raises_error): return False
+        if not self._validate_conflicts(grid_data, raises_error=raises_error): return False
+
+        return True
     
     def _validate_structure(self, grid_data: List[List[int]], raises_error: bool):
         if len(grid_data) != 9:
