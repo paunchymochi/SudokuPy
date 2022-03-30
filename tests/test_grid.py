@@ -115,7 +115,7 @@ class TestGridData:
             gd.set_row(*arg)
         
         for arg in inputs:
-            assert gd.rows[arg[0]] == arg[1]
+            assert gd.rows[arg[0]] == tuple(arg[1])
     
     def test_set_column(self):
         gd = GridData()
@@ -130,7 +130,7 @@ class TestGridData:
             gd.set_column(*arg)
         
         for arg in inputs:
-            assert gd.columns[arg[0]] == arg[1]
+            assert gd.columns[arg[0]] == tuple(arg[1])
     
     def test_set_box(self):
         gd = GridData()
@@ -145,7 +145,7 @@ class TestGridData:
             gd.set_box(*arg)
         
         for arg in inputs:
-            assert gd.boxes[arg[0]][arg[1]] == arg[2]
+            assert gd.boxes[arg[0]][arg[1]] == tuple(arg[2])
     
     def test_set_item_error(self):
         gd = GridData(raises_error=True)
