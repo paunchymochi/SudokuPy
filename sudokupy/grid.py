@@ -31,7 +31,12 @@ class GridData:
         return self._valid
 
     def set_item(self, row: int, col: int, value: int):
-        raise NotImplementedError
+
+        new_data = self._data.copy()
+        new_data[row][col] = value
+
+        if self._validate(new_data, raises_error=True):
+            self._data = new_data
     
     def set_row(self, row: int, values: List[int]):
         raise NotImplementedError
