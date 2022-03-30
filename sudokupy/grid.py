@@ -39,10 +39,22 @@ class GridData:
             self._data = new_data
     
     def set_row(self, row: int, values: List[int]):
-        raise NotImplementedError
+
+        new_data = self._data.copy()
+        for i in range(9):
+            new_data[row][i] = values[i]
+        
+        if self._validate(new_data, raises_error=True):
+            self._data = new_data
     
     def set_column(self, column: int, values: List[int]):
-        raise NotImplementedError
+
+        new_data = self._data.copy()
+        for i in range(9):
+            new_data[i][column] = values[i]
+        
+        if self._validate(new_data, raises_error=True):
+            self._data = new_data
     
     def set_box(self, topleft_row: int, topleft_col: int, values: List[int]):
         raise NotImplementedError
