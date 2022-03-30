@@ -40,6 +40,9 @@ class GridData:
     
     def set_row(self, row: int, values: List[int]):
 
+        if len(values) != 9:
+            raise ValueError('values must have 9 elemtns')
+
         new_data = self._data.copy()
         for i in range(9):
             new_data[row][i] = values[i]
@@ -49,6 +52,9 @@ class GridData:
     
     def set_column(self, column: int, values: List[int]):
 
+        if len(values) != 9:
+            raise ValueError('values must have 9 elemtns')
+
         new_data = self._data.copy()
         for i in range(9):
             new_data[i][column] = values[i]
@@ -57,6 +63,9 @@ class GridData:
             self._data = new_data
     
     def set_box(self, topleft_row: int, topleft_col: int, values: List[int]):
+
+        if len(values) != 9:
+            raise ValueError('values must have 9 elemtns')
 
         new_data = self._data.copy()
         for row_offset in range(3):
