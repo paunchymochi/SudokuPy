@@ -6,13 +6,13 @@ class Cell:
         self._value = value
     
     @property
-    def row(self):
+    def row(self) -> int:
         return self._row
     
     @property
-    def column(self):
+    def column(self) -> int:
         return self._column
     
     @property
-    def value(self):
+    def value(self) -> int:
         return self._value
