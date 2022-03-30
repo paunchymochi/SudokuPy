@@ -1,4 +1,5 @@
 import pytest
+from ..sudokupy.grid import GridData, Grid
 
 @pytest.fixture
 def input_grid():
@@ -14,11 +15,12 @@ def input_grid():
         [6,1,3,5,4,9,8,2,7]
     ]
 
-def test_rows(input_grid):
-    raise NotImplementedError
+class TestGridData:
+    def test_rows(self, input_grid):
+        raise NotImplementedError
 
-def test_columns(input_grid):
-    raise NotImplementedError
+    def test_columns(self, input_grid):
+        raise NotImplementedError
 
-def test_boxes(input_grid):
-    raise NotImplementedError
+    def test_boxes(self, input_grid):
+        raise NotImplementedError
