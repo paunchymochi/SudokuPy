@@ -54,38 +54,38 @@ class TestGridData:
     
     def test_missing_rows(self, input_grid):
         with pytest.raises(ValueError):
-            GridData(input_grid[1:], raisesError=True)
+            GridData(input_grid[1:], raises_error=True)
     
     def test_missing_columns(self, input_grid):
         with pytest.raises(ValueError):
-            GridData([row[1:] for row in input_grid], raisesError=True)
+            GridData([row[1:] for row in input_grid], raises_error=True)
     
     def test_non_numbers(self, input_grid):
         with pytest.raises(ValueError):
-            GridData([[str(item) for item in row] for row in input_grid], raisesError=True)
+            GridData([[str(item) for item in row] for row in input_grid], raises_error=True)
     
     def test_conflicts(self, input_grid):
         input_grid[0][0] = 4
         with pytest.raises(ValueError):
-            GridData(input_grid, raisesError=True)
+            GridData(input_grid, raises_error=True)
     
     def test_conflicts_row(self, zero_grid):
         zero_grid[0][0] = 1
         zero_grid[0][8] = 1
         with pytest.raises(ValueError):
-            GridData(zero_grid, raisesError=True)
+            GridData(zero_grid, raises_error=True)
     
     def test_conflicts_column(self, zero_grid):
         zero_grid[0][0] = 1
         zero_grid[5][0] = 1
         with pytest.raises(ValueError):
-            GridData(zero_grid, raisesError=True)
+            GridData(zero_grid, raises_error=True)
     
     def test_conflicts_box(self, zero_grid):
         zero_grid[0][0] = 1
         zero_grid[2][2] = 1
         with pytest.raises(ValueError):
-            GridData(zero_grid, raisesError=True)
+            GridData(zero_grid, raises_error=True)
     
     def test_set_item(self, zero_grid):
         gd = GridData(zero_grid)
@@ -148,7 +148,7 @@ class TestGridData:
             assert gd.boxes[arg[0], arg[1]] == arg[2]
     
     def test_set_item_error(self, zero_grid):
-        gd = GridData(zero_grid, raisesError=True)
+        gd = GridData(zero_grid, raises_error=True)
 
         with pytest.raises(ValueError):
             gd.set_item(0,0,10)
@@ -162,7 +162,7 @@ class TestGridData:
             gd.set_item(8, 0, 1)
 
     def test_set_row_error(self, zero_grid):
-        gd = GridData(zero_grid, raisesError=True)
+        gd = GridData(zero_grid, raises_error=True)
 
         with pytest.raises(ValueError):
             gd.set_row(10, [0]*9)
@@ -181,7 +181,7 @@ class TestGridData:
             gd.set_row(1, [1,0,0,0,0,0,0,0,0])
 
     def test_set_column_error(self, zero_grid):
-        gd = GridData(zero_grid, raisesError=True)
+        gd = GridData(zero_grid, raises_error=True)
 
         with pytest.raises(ValueError):
             gd.set_column(10, [0]*9)
@@ -201,7 +201,7 @@ class TestGridData:
 
 
     def test_set_box_error(self, zero_grid):
-        gd = GridData(zero_grid, raisesError=True)
+        gd = GridData(zero_grid, raises_error=True)
 
         with pytest.raises(ValueError):
             gd.set_box(10, 10, [0]*9)
