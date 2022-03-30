@@ -22,7 +22,11 @@ class TestGridData:
         assert rows == input_grid
 
     def test_columns(self, input_grid):
-        raise NotImplementedError
+        gd = GridData(input_grid)
+        cols = gd.columns
+        assert len(cols) == 9
+        assert cols[0] == [3,4,5,8,1,7,9,2,6]
+        assert cols[-1] == [2,5,4,6,3,8,1,9,7]
 
     def test_boxes(self, input_grid):
         raise NotImplementedError
