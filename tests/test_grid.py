@@ -50,3 +50,7 @@ class TestGridData:
         with pytest.raises(ValueError):
             GridData([[str(item) for item in row] for row in input_grid])
     
+    def test_conflicts(self, input_grid):
+        input_grid[0][0] = 4
+        with pytest.raises(ValueError):
+            GridData(input_grid)
