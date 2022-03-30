@@ -51,7 +51,13 @@ class GridData:
         return boxes
     
     def _flatten_boxes(self, boxes: List[List[List[int]]]) -> List[List[int]]:
-        raise NotImplementedError
+        flattened_boxes = []
+
+        for boxrow in boxes:
+            for box in boxrow:
+                flattened_boxes.append(box)
+        
+        return flattened_boxes
     
     def _validate(self, grid_data: List[List[int]]):
         self._validate_structure(grid_data)
