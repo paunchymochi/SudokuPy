@@ -20,10 +20,20 @@ def zero_grid():
     return [[0]*9]*9
 
 class TestGridData:
+    def test_zero_grid(self, zero_grid):
+        gd = GridData(zero_grid)
+        rows = gd.rows
+        cols = gd.columns
+        boxes = gd.boxes
+
+        assert rows[0] == tuple([0]*9)
+        assert cols[0] == tuple([0]*9)
+        assert boxes[0][0] == tuple([0]*9)
+    
     def test_rows(self, input_grid):
         gd = GridData(input_grid)
         rows = gd.rows
-        assert rows == input_grid
+        assert rows[0] == tuple(input_grid[0])
 
     def test_columns(self, input_grid):
         gd = GridData(input_grid)
