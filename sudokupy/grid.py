@@ -13,8 +13,11 @@ class GridData:
         
         self._set_data(grid_data)
 
-    def __repr__(self):
+    def __str__(self):
         return '\n'.join([' '.join([str(item) for item in row]) for row in self._data])
+    
+    def __repr__(self):
+        return f'<GridData>'
     
     @property
     def data(self) -> List[List[int]]:
