@@ -25,10 +25,11 @@ class GridData:
         return self._boxes
     
     def _get_rows(self, grid_data: List[List[int]]) -> Tuple[Tuple[int]]:
-        return grid_data
+        rows = [tuple(row) for row in grid_data]
+        return tuple(rows)
 
     def _get_columns(self, grid_data: List[List[int]]) -> Tuple[Tuple[int]]:
-        return list(zip(*grid_data))
+        return tuple(zip(*grid_data))
 
     def _get_boxes(self, grid_data: List[List[int]]) -> Tuple[Tuple[Tuple[int]]]:
         def _get_box(topleft_row: int, topleft_col: int) -> Tuple[int]:
