@@ -16,6 +16,9 @@ class GridData:
         self._columns = self._get_columns(grid_data)
         self._boxes = self._get_boxes(grid_data)
     
+    def __repr__(self):
+        return '\n'.join([' '.join([str(item) for item in row]) for row in self._data])
+    
     @property
     def data(self) -> List[List[int]]:
         return self._data
