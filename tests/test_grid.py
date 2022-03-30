@@ -246,3 +246,17 @@ class TestGridData:
         assert gd.valid == True
         gd.set_item(1, 1, 1, False)
         assert gd.valid == False
+    
+    def test_count(self):
+        gd = GridData()
+        assert gd.count() == 0
+
+        gd.set_row(0 ,list(range(1, 10)))
+        assert gd.count() == 9
+        assert gd.count(1) == 1
+        assert gd.count([1, 2, 3]) == 3
+        assert gd.count([1, 1, 2, 3, 4]) == 4
+
+
+
+
