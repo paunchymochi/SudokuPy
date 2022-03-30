@@ -1,9 +1,12 @@
 
 class Cell:
     def __init__(self, row: int, column: int, value: int):
+        self._validate_position(row, 'row')
+        self._validate_position(column, 'column')
         self._row = row
         self._column = column
-        self._value = value
+
+        self.set_value(value)
     
     @property
     def row(self) -> int:
@@ -16,3 +19,16 @@ class Cell:
     @property
     def value(self) -> int:
         return self._value
+    
+    def set_value(self, value: int):
+        self._validate_value(value)
+        self._value = value
+    
+    def _validate_position(self, pos: int, pos_name: str):
+        if pos not in range(0, 9):
+            raise ValueError(f'{pos_name} must be an integer between 0 and 8')
+    
+    def _validate_value(self, value: int):
+        if value not in range(0, 10):
+            raise ValueError('cell value must be an integer between 0 and 9')
+
