@@ -77,19 +77,19 @@ class GridData:
         if self._validate(new_data, raises_error=True):
             self._data = new_data
     
-    def set_box(self, topleft_row: int, topleft_col: int, values: List[int]):
+    def set_box(self, box_row: int, box_col: int, values: List[int]):
 
         if len(values) != 9:
             raise ValueError('values must have 9 elemtns')
         
-        for key, item in {'topleft_row': topleft_row, 'topleft_col': topleft_col}.items():
-            if item % 3 != 0:
-                raise ValueError(f'{key} must be 0, 3, or 6')
+        for key, item in {'box_row': box_row, 'box_col': box_col}.items():
+            if item not in range(3):
+                raise ValueError(f'{key} must be 0, 1, or 2')
 
         new_data = deepcopy(self._data)
         for row_offset in range(3):
             for col_offset in range(3):
-                new_data[topleft_row + row_offset][topleft_col + col_offset] = values[row_offset * 3 + col_offset]
+                new_data[box_row*3 + row_offset][box_col*3 + col_offset] = values[row_offset * 3 + col_offset]
         
         if self._validate(new_data, raises_error=True):
             self._data = new_data
