@@ -26,6 +26,14 @@ class Cell:
     def box(self) -> int:
         return self._row // 3 + self._column // 3
     
+    @property
+    def boxrow(self) -> int:
+        return self._row // 3
+    
+    @property
+    def boxcol(self) -> int:
+        return self._column // 3
+    
     def set_value(self, value: int):
         self._validate_value(value)
         self._value = value
