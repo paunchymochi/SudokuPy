@@ -1,4 +1,5 @@
 from typing import List, Tuple
+from copy import deepcopy
 
 class GridData:
     def __init__(self, grid_data: List[List[int]]=None, raises_error=False):
@@ -37,7 +38,7 @@ class GridData:
     
     def set_item(self, row: int, col: int, value: int):
 
-        new_data = self._data.copy()
+        new_data = deepcopy(self._data)
         new_data[row][col] = value
 
         if self._validate(new_data, raises_error=True):
@@ -48,7 +49,7 @@ class GridData:
         if len(values) != 9:
             raise ValueError('values must have 9 elemtns')
 
-        new_data = self._data.copy()
+        new_data = deepcopy(self._data)
         for i in range(9):
             new_data[row][i] = values[i]
         
@@ -60,7 +61,7 @@ class GridData:
         if len(values) != 9:
             raise ValueError('values must have 9 elemtns')
 
-        new_data = self._data.copy()
+        new_data = deepcopy(self._data)
         for i in range(9):
             new_data[i][column] = values[i]
         
@@ -72,7 +73,7 @@ class GridData:
         if len(values) != 9:
             raise ValueError('values must have 9 elemtns')
 
-        new_data = self._data.copy()
+        new_data = deepcopy(self._data)
         for row_offset in range(3):
             for col_offset in range(3):
                 new_data[topleft_row + row_offset][topleft_col + col_offset] = values[row_offset * 3 + col_offset]
