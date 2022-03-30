@@ -207,7 +207,7 @@ class TestGridData:
             gd.set_box(10, 10, [0]*9)
         
         with pytest.raises(ValueError):
-            gd.set_box(1, 1, [0]*9)
+            gd.set_box(3, 3, [0]*9)
 
         with pytest.raises(ValueError):
             gd.set_box(0, 0, [10]*9)
