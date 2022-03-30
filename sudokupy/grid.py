@@ -169,6 +169,7 @@ class GridData:
                 else:
                     self._valid = False
                     return False
+        return True
 
     def _groups_have_duplicate_nonzero_number(self, groups: List[List[int]]) -> bool:
         return any([self._group_has_duplicate_nonzero_number(group) for group in groups])
