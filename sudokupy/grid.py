@@ -39,15 +39,15 @@ class GridData:
     def valid(self) -> bool:
         return self._valid
     
-    def set_item(self, row: int, col: int, value: int):
+    def set_item(self, row: int, col: int, value: int, raises_error=True):
 
         new_data = deepcopy(self._data)
         new_data[row][col] = value
 
-        if self._validate(new_data, raises_error=True):
+        if self._validate(new_data, raises_error=raises_error):
             self._set_data(new_data)
     
-    def set_row(self, row: int, values: List[int]):
+    def set_row(self, row: int, values: List[int], raises_error=True):
 
         if row not in list(range(9)):
             raise ValueError('row must be an int between 0 and 9')
@@ -59,10 +59,10 @@ class GridData:
         for i in range(9):
             new_data[row][i] = values[i]
         
-        if self._validate(new_data, raises_error=True):
+        if self._validate(new_data, raises_error=raises_error):
             self._set_data(new_data)
     
-    def set_column(self, column: int, values: List[int]):
+    def set_column(self, column: int, values: List[int], raises_error=True):
 
         if column not in list(range(9)):
             raise ValueError('column must be an int between 0 and 9')
@@ -74,10 +74,10 @@ class GridData:
         for i in range(9):
             new_data[i][column] = values[i]
         
-        if self._validate(new_data, raises_error=True):
+        if self._validate(new_data, raises_error=raises_error):
             self._set_data(new_data)
     
-    def set_box(self, box_row: int, box_col: int, values: List[int]):
+    def set_box(self, box_row: int, box_col: int, values: List[int], raises_error=True):
 
         if len(values) != 9:
             raise ValueError('values must have 9 elemtns')
@@ -91,7 +91,7 @@ class GridData:
             for col_offset in range(3):
                 new_data[box_row*3 + row_offset][box_col*3 + col_offset] = values[row_offset * 3 + col_offset]
         
-        if self._validate(new_data, raises_error=True):
+        if self._validate(new_data, raises_error=raises_error):
             self._set_data(new_data)
     
     def _set_data(self, data: List[List[int]]):
