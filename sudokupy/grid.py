@@ -9,7 +9,7 @@ class GridData:
         self._boxes = self._get_boxes(grid_data)
     
     @property
-    def data(self) -> Tuple[Tuple[int]]:
+    def data(self) -> List[List[int]]:
         return self._data
     
     @property
