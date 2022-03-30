@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 
 class GridData:
     def __init__(self, grid_data: List[List[int]]):
@@ -9,55 +9,55 @@ class GridData:
         self._boxes = self._get_boxes(grid_data)
     
     @property
-    def data(self) -> List[List[int]]:
+    def data(self) -> Tuple[Tuple[int]]:
         return self._data
     
     @property
-    def rows(self) -> List[List[int]]:
+    def rows(self) -> Tuple[Tuple[int]]:
         return self._rows
     
     @property
-    def columns(self) -> List[List[int]]:
+    def columns(self) -> Tuple[Tuple[int]]:
         return self._columns
     
     @property
-    def boxes(self) -> List[List[List[int]]]:
+    def boxes(self) -> Tuple[Tuple[Tuple[int]]]:
         return self._boxes
     
-    def _get_rows(self, grid_data: List[List[int]]) -> List[List[int]]:
+    def _get_rows(self, grid_data: List[List[int]]) -> Tuple[Tuple[int]]:
         return grid_data
 
-    def _get_columns(self, grid_data: List[List[int]]) -> List[List[int]]:
+    def _get_columns(self, grid_data: List[List[int]]) -> Tuple[Tuple[int]]:
         return list(zip(*grid_data))
 
-    def _get_boxes(self, grid_data: List[List[int]]) -> List[List[List[int]]]:
-        def _get_box(topleft_row: int, topleft_col: int) -> List[int]:
+    def _get_boxes(self, grid_data: List[List[int]]) -> Tuple[Tuple[Tuple[int]]]:
+        def _get_box(topleft_row: int, topleft_col: int) -> Tuple[int]:
             box = []
             for i in range(topleft_row, topleft_row + 3):
                 for j in range(topleft_col, topleft_col + 3):
                     box.append(grid_data[i][j])
-            return box
+            return tuple(box)
         
-        def _get_boxrow(topleft_row: int) -> List[List[int]]:
+        def _get_boxrow(topleft_row: int) -> Tuple[Tuple[int]]:
             boxrow = []
             for topleft_col in range(0, 9, 3):
                 boxrow.append(_get_box(topleft_row, topleft_col))
-            return boxrow
+            return tuple(boxrow)
         
         boxes = []
         for topleft_row in range(0, 9, 3):
             boxes.append(_get_boxrow(topleft_row))
         
-        return boxes
+        return tuple(boxes)
     
-    def _flatten_boxes(self, boxes: List[List[List[int]]]) -> List[List[int]]:
+    def _flatten_boxes(self, boxes: Tuple[Tuple[Tuple[int]]]) -> Tuple[Tuple[int]]:
         flattened_boxes = []
 
         for boxrow in boxes:
             for box in boxrow:
                 flattened_boxes.append(box)
         
-        return flattened_boxes
+        return tuple(flattened_boxes)
     
     def _validate(self, grid_data: List[List[int]]):
         self._validate_structure(grid_data)
