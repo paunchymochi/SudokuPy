@@ -221,3 +221,11 @@ class TestGridData:
         gd.set_box(0, 0, [1,2,3,4,5,6,7,8,9])
         with pytest.raises(ValueError):
             gd.set_box(0, 2, [1,0,0,0,0,0,0,0,0])
+
+    def test_valid(self):
+        gd = GridData(raises_error=False)
+
+        gd.set_item(0, 0, 1)
+        assert gd.valid == True
+        gd.set_item(1, 1, 1, False)
+        assert gd.valid == False
