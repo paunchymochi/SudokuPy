@@ -149,7 +149,17 @@ class TestGridData:
     
     def test_set_item_error(self, zero_grid):
         gd = GridData(zero_grid)
-        raise NotImplementedError
+
+        with pytest.raises(ValueError):
+            gd.set_item(0,0,10)
+        
+        gd.set_item(0,0,1)
+
+        with pytest.raises(ValueError):
+            gd.set_item(0,1,1)
+        
+        with pytest.raises(ValueError):
+            gd.set_item(8, 0, 1)
 
     def test_set_row_error(self, zero_grid):
         gd = GridData(zero_grid)
