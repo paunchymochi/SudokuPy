@@ -75,6 +75,10 @@ class GridData:
 
         if len(values) != 9:
             raise ValueError('values must have 9 elemtns')
+        
+        for key, item in {'topleft_row': topleft_row, 'topleft_col': topleft_col}.items():
+            if item % 3 != 0:
+                raise ValueError(f'{key} must be 0, 3, or 6')
 
         new_data = deepcopy(self._data)
         for row_offset in range(3):
