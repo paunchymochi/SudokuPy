@@ -15,6 +15,10 @@ def input_grid():
         [6,1,3,5,4,9,8,2,7]
     ]
 
+@pytest.fixture
+def zero_grid():
+    return [[0]*9]*9
+
 class TestGridData:
     def test_rows(self, input_grid):
         gd = GridData(input_grid)
@@ -54,3 +58,22 @@ class TestGridData:
         input_grid[0][0] = 4
         with pytest.raises(ValueError):
             GridData(input_grid)
+    
+    def test_conflicts_row(self, zero_grid):
+        zero_grid[0][0] = 1
+        zero_grid[0][8] = 1
+        with pytest.raises(ValueError):
+            GridData(zero_grid)
+    
+    def test_conflicts_column(self, zero_grid):
+        zero_grid[0][0] = 1
+        zero_grid[5][0] = 1
+        with pytest.raises(ValueError):
+            GridData(zero_grid)
+    
+    def test_conflicts_box(self, zero_grid):
+        zero_grid[0][0] = 1
+        zero_grid[2][2] = 1
+        with pytest.raises(ValueError):
+            GridData(zero_grid)
+    
