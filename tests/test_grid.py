@@ -88,7 +88,19 @@ class TestGridData:
             GridData(zero_grid)
     
     def test_set_item(self, zero_grid):
-        raise NotImplementedError
+        gd = GridData(zero_grid)
+
+        inputs = [
+            [0,0,1],
+            [1,1,2],
+            [4,5,3],
+            [8,8,4]
+        ]
+        for arg in inputs:
+            gd.set_item(*arg)
+        
+        for arg in inputs:
+            assert gd.data[arg[0], arg[1]] == arg[2]
     
     def test_set_row(self, zero_grid):
         raise NotImplementedError
