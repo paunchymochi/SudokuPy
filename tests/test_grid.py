@@ -202,4 +202,22 @@ class TestGridData:
 
     def test_set_box_error(self, zero_grid):
         gd = GridData(zero_grid, raisesError=True)
-        raise NotImplementedError
+
+        with pytest.raises(ValueError):
+            gd.set_box(10, 10, [0]*9)
+        
+        with pytest.raises(ValueError):
+            gd.set_box(1, 1, [0]*9)
+
+        with pytest.raises(ValueError):
+            gd.set_box(0, 0, [10]*9)
+        
+        with pytest.raises(ValueError):
+            gd.set_box(0, 0, [0]*2)
+        
+        with pytest.raises(ValueError):
+            gd.set_box(0, 0, [1,2,3,4,5,6,7,8,1])
+        
+        gd.set_box(0, 0, [1,2,3,4,5,6,7,8,9])
+        with pytest.raises(ValueError):
+            gd.set_box(0, 2, [1,0,0,0,0,0,0,0,0])
