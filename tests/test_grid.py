@@ -270,6 +270,13 @@ class TestGridData:
         assert gd.count([1, 2, 3]) == 3
         assert gd.count([1, 1, 2, 3, 4]) == 4
 
+    def test_repr(self):
+        gd = GridData()
+        str_string = gd.__str__()
+        repr_string = gd.__repr__()
+
+        assert str_string.count('\n') == 8
+        assert repr_string.count('#') == 10
 
 
 
