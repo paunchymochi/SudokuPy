@@ -100,7 +100,7 @@ class TestGridData:
             gd.set_item(*arg)
         
         for arg in inputs:
-            assert gd.data[arg[0], arg[1]] == arg[2]
+            assert gd.data[arg[0]][arg[1]] == arg[2]
     
     def test_set_row(self, zero_grid):
         gd = GridData(zero_grid)
@@ -145,7 +145,7 @@ class TestGridData:
             gd.set_box(*arg)
         
         for arg in inputs:
-            assert gd.boxes[arg[0], arg[1]] == arg[2]
+            assert gd.boxes[arg[0]][arg[1]] == arg[2]
     
     def test_set_item_error(self):
         gd = GridData(raises_error=True)
