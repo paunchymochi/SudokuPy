@@ -103,7 +103,19 @@ class TestGridData:
             assert gd.data[arg[0], arg[1]] == arg[2]
     
     def test_set_row(self, zero_grid):
-        raise NotImplementedError
+        gd = GridData(zero_grid)
+
+        inputs = [
+            [0, [1,2,3,4,5,6,7,8,9]],
+            [1, [2,0,0,0,0,0,0,0,0]],
+            [2, [3,4,5,0,0,0,9,0,0]]
+        ]
+
+        for arg in inputs:
+            gd.set_row(*arg)
+        
+        for arg in inputs:
+            assert gd.rows[arg[0]] == arg[1]
     
     def test_set_column(self, zero_grid):
         raise NotImplementedError
