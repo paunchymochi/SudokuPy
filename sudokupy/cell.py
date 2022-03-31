@@ -88,15 +88,20 @@ class Cells:
         return self._count_data()
     
     def __getitem__(self, key):
-        if type(key) is tuple:
-            cells = self._data[key[0]]
-            if type(cells[0]) is list:
-                return Cells([row[key[1]] for row in cells])
-            else:
-                return Cells(cells[key[1]])
-        else:
-            return Cells(self._data[key])
-    
+        if type(key) is not tuple:
+            key = (key,)
+
+        sliced_rows = self._data[key[0]]
+        if type(sliced_rows[0]) is not list: # single row selected
+            sliced_rows = [sliced_rows]
+        
+        if len(key) > 1: # column slicer provided
+            sliced_rows = [row[key[1]] for row in sliced_rows]
+            if type(sliced_rows[0]) is not list: # single column selected
+                sliced_rows = [[cell] for cell in sliced_rows]
+        
+        return Cells(sliced_rows)
+
     @property
     def data(self):
         return self._data
