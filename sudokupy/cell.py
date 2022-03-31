@@ -117,8 +117,18 @@ class Cells:
         self._col_count = col_count
     
     def set_values(self, values: Union[int, List[int], List[List[int]]]):
-        raise NotImplementedError
+        flat_values = self._flatten(values)
+        flat_data = self._flatten(self._data)
+
+        if len(flat_values) != len(flat_data):
+            raise ValueError(f'values (len={len(flat_values)}) '\
+                'must have to same number of elements ' \
+                'as elements in Cells (len={self._count_data()})')
+        
+        for i, value in enumerate(flat_values):
+            flat_data[i].set_value(value)
     
+
     def _flatten(self, matrix) -> List:
 
         if type(matrix) not in [list, tuple]:
