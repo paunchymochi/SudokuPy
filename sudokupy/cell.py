@@ -98,7 +98,7 @@ class Cells:
     def data(self):
         return self._data
 
-    def _make_default_data(self):
+    def _make_default_cells(self):
         row_count = 9
         col_count = 9
         cells = []
