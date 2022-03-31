@@ -38,6 +38,20 @@ class TestCell:
         with pytest.raises(ValueError):
             Cell(0, 0, '0')
     
+    def test_value_setter(self):
+        for val in range(10):
+            c = Cell(0, 0, 0)
+            c.value = val
+            assert c.value == val
+        
+        with pytest.raises(ValueError):
+            c = Cell(0, 0, 0)
+            c.value = 11
+        
+        with pytest.raises(ValueError):
+            c = Cell(0, 0, 0)
+            c.value = '0'
+    
     def test_box(self):
         for row in [0, 3, 6]:
             for col in [1,4,7]:
