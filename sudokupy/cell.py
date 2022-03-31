@@ -52,25 +52,25 @@ class Cell:
 
 
 class Cells:
-    def __init__(self, cells:Union['Cells', List['Cells'], List[List['Cells']]]=None, _sliced=False):
+    def __init__(self, _cells:Union['Cells', List['Cells'], List[List['Cells']]]=None, _sliced=False):
         self._sliced = _sliced
         self._row_count = 0
         self._col_count = 0
-        if cells is None:
+        if _cells is None:
             self._make_default_cells()
         else:
-            if isinstance(cells, Cell):
-                self._data = [[cells]]
+            if isinstance(_cells, Cell):
+                self._data = [[_cells]]
                 self._row_count = 1
                 self._col_count = 1
-            elif isinstance(cells[0], Cell):
-                self._data = [cells]
-                self.row_count = len(cells)
+            elif isinstance(_cells[0], Cell):
+                self._data = [_cells]
+                self.row_count = len(_cells)
                 self.col_count = 1
             else:
-                self._data = cells
-                self.row_count = len(cells)
-                self.col_count = len(cells[0])
+                self._data = _cells
+                self.row_count = len(_cells)
+                self.col_count = len(_cells[0])
     
     def __str__(self):
         return '\n'.join([' '.join([str(item.value) for item in row]) for row in self._data])
