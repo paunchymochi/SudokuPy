@@ -190,3 +190,9 @@ class TestCells:
             assert isinstance(data[0][0], Cell)
             assert len(data) == rows[i]
             assert len(data[0]) == cols[i]
+    
+    def test_invalid_constructor(self):
+        c = Cells()
+        c2 = Cells(c.data[:3])
+        with pytest.raises(ValueError):
+            Cells(c.data[0][0])
