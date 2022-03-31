@@ -85,7 +85,21 @@ class TestCells:
         assert cells4.is_sliced == cells5.is_sliced == True
     
     def test_repr(self):
-        raise NotImplementedError
+        cells = Cells()
+        str = cells.__str__()
+        repr = cells.__repr__()
+
+        assert str.count('\n') == 8 + 2 # 8 between grid, 2 for headers
+        assert 'rows:9' in repr
+        assert 'cols:9' in repr
+
+        cells2 = cells[:5, :4]
+        str = cells2.__str__()
+        repr = cells2.__repr__()
+
+        assert str.count('\n') == 4 + 2
+        assert 'rows:5' in repr
+        assert 'cols:4' in repr
     
     def test_len(self):
         cells = Cells()
