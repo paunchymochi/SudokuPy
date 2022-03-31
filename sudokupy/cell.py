@@ -87,9 +87,6 @@ class Cells:
     def __len__(self):
         return self._count_data()
     
-    def __setitem__(self, key, value):
-        raise NotImplementedError
-
     def __getitem__(self, key):
         if type(key) is tuple:
             cells = self._data[key[0]]
