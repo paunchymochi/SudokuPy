@@ -90,4 +90,14 @@ class TestCells:
         raise NotImplementedError
     
     def test_data(self):
-        raise NotImplementedError
+        c1 = Cells()
+        c2 = c1[0]
+        c3 = c1[0,0]
+
+        cells = [c1, c2, c3]
+
+        for cell in cells:
+            data = cell.data
+            assert type(data) is list
+            assert type(data[0]) is list
+            assert isinstance(data[0][0], Cell)
