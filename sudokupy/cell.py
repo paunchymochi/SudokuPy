@@ -58,17 +58,17 @@ class Cells:
             self._make_default_cells()
         else:
             if isinstance(cells, Cell):
-                self._cells = [[cells]]
+                self._data = [[cells]]
             elif isinstance(cells[0], Cell):
-                self._cells = [cells]
+                self._data = [cells]
             else:
-                self._cells = cells
+                self._data = cells
     
     def __str__(self):
-        return '\n'.join([' '.join([str(item.value) for item in row]) for row in self._cells])
+        return '\n'.join([' '.join([str(item.value) for item in row]) for row in self._data])
     
     def __repr__(self):
-        return '<Cells>\n' + '\n'.join([' '.join([str(item.value) for item in row]) for row in self._cells])
+        return '<Cells>\n' + '\n'.join([' '.join([str(item.value) for item in row]) for row in self._data])
     
     def __len__(self):
         raise NotImplementedError
@@ -78,22 +78,26 @@ class Cells:
 
     def __getitem__(self, key):
         if type(key) is tuple:
-            cells = self._cells[key[0]]
+            cells = self._data[key[0]]
             if type(cells[0]) is list:
                 return Cells([row[key[1]] for row in cells], _sliced=True)
             else:
                 return Cells(cells[key[1]], _sliced=True)
         else:
-            return Cells(self._cells[key], _sliced=True)
+            return Cells(self._data[key], _sliced=True)
+    
+    @property
+    def data(self):
+        return self._data
 
-    def _make_default_cells(self):
+    def _make_default_data(self):
         cells = []
         for r in range(9):
             row = []
             for c in range(9):
                 row.append(Cell(r, c, 0))
             cells.append(row)
-        self._cells = cells
+        self._data = cells
     
     def set_values(self, values: Union[int, List[int], List[List[int]]]):
         raise NotImplementedError
@@ -101,6 +105,6 @@ class Cells:
     def _flatten(self):
         raise NotImplementedError
     
-    def _count_cells(self):
+    def _count_data(self):
         raise NotImplementedError
 
