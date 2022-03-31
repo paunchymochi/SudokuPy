@@ -87,7 +87,23 @@ class TestCells:
         raise NotImplementedError
     
     def test_set_values(self):
-        raise NotImplementedError
+        c = Cells()
+
+        c.set_values([1]*81)
+        assert c.data[0][0].value == 1
+        assert c.data[8][8].value == 1
+
+        c[0,0].set_values(2)
+        assert c.data[0][0].value == 2
+
+        c[1].set_values(list(range(9)))
+        for i in range(9):
+            assert c.data[1][i].value == i
+        
+        c[0:3, 3:6].set_values([ [1,2,3], [4,5,6], [7,8,9] ])
+        for i in range(3):
+            for j in range(3):
+                assert c.data[i][j+3].value == (i*3) + (j+1)
     
     def test_data(self):
         c1 = Cells()
