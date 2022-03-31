@@ -69,6 +69,12 @@ class Cells:
     
     def __repr__(self):
         return '<Cells>\n' + '\n'.join([' '.join([str(item.value) for item in row]) for row in self._cells])
+    
+    def __len__(self):
+        raise NotImplementedError
+    
+    def __setitem__(self, key, value):
+        raise NotImplementedError
 
     def __getitem__(self, key):
         if type(key) is tuple:
@@ -88,3 +94,13 @@ class Cells:
                 row.append(Cell(r, c, 0))
             cells.append(row)
         self._cells = cells
+    
+    def set_values(self, values: Union[int, List[int], List[List[int]]]):
+        raise NotImplementedError
+    
+    def _flatten(self):
+        raise NotImplementedError
+    
+    def _count_cells(self):
+        raise NotImplementedError
+
