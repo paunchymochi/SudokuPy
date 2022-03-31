@@ -79,7 +79,7 @@ class Cells:
         return '<Cells>\n' + '\n'.join([' '.join([str(item.value) for item in row]) for row in self._data])
     
     def __len__(self):
-        raise NotImplementedError
+        return self._count_data()
     
     def __setitem__(self, key, value):
         raise NotImplementedError
@@ -118,5 +118,5 @@ class Cells:
         raise NotImplementedError
     
     def _count_data(self):
-        raise NotImplementedError
+        return self._row_count & self._col_count
 
