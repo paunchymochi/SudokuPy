@@ -89,11 +89,11 @@ class Cells:
         if type(key) is tuple:
             cells = self._data[key[0]]
             if type(cells[0]) is list:
-                return Cells([row[key[1]] for row in cells], _sliced=True)
+                return Cells([row[key[1]] for row in cells])
             else:
-                return Cells(cells[key[1]], _sliced=True)
+                return Cells(cells[key[1]])
         else:
-            return Cells(self._data[key], _sliced=True)
+            return Cells(self._data[key])
     
     @property
     def data(self):
