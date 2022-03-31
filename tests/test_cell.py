@@ -57,7 +57,18 @@ class TestCell:
 
 class TestCells:
     def test_constructor(self):
-        raise NotImplementedError
+        cells = Cells()
+        assert len(cells) == 81
+        assert cells.is_sliced == False
+        cells2 = cells[0]
+        cells3 = Cells(cells2.data)
+        assert len(cells2) == len(cells3) == 9
+        assert cells2.is_sliced == cells3.is_sliced == True
+
+        cells4 = cells[0,0]
+        cells5 = Cells(cells4.data)
+        assert len(cells4) == len(cells5) == 1
+        assert cells4.is_sliced == cells5.is_sliced == True
     
     def test_repr(self):
         raise NotImplementedError
