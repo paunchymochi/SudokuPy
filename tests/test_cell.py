@@ -73,3 +73,6 @@ class TestCells:
     
     def test_set_values(self):
         raise NotImplementedError
+    
+    def test_data(self):
+        raise NotImplementedError
