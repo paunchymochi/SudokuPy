@@ -52,13 +52,14 @@ class Cell:
 
 
 class Cells:
-    def __init__(self, _cells:Union['Cells', List['Cells'], List[List['Cells']]]=None, _sliced=False):
-        self._sliced = _sliced
+    def __init__(self, _cells:Union['Cells', List['Cells'], List[List['Cells']]]=None):
         self._row_count = 0
         self._col_count = 0
         if _cells is None:
+            self._is_sliced = False
             self._make_default_cells()
         else:
+            self._is_sliced = True
             if isinstance(_cells, Cell):
                 self._data = [[_cells]]
                 self._row_count = 1
@@ -97,6 +98,10 @@ class Cells:
     @property
     def data(self):
         return self._data
+    
+    @property
+    def is_sliced(self):
+        return self._is_sliced
 
     def _make_default_cells(self):
         row_count = 9
