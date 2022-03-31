@@ -57,7 +57,7 @@ class Cell:
 
 
 class Cells:
-    def __init__(self, _cells:Union['Cells', List['Cells'], List[List['Cells']]]=None):
+    def __init__(self, _cells:List[List['Cells']]=None):
         self._row_count = 0
         self._col_count = 0
         if _cells is None:
@@ -65,18 +65,11 @@ class Cells:
             self._make_default_cells()
         else:
             self._is_sliced = True
-            if isinstance(_cells, Cell):
-                self._data = [[_cells]]
-                self._row_count = 1
-                self._col_count = 1
-            elif isinstance(_cells[0], Cell):
-                self._data = [_cells]
-                self._row_count = len(_cells)
-                self._col_count = 1
-            else:
-                self._data = _cells
-                self._row_count = len(_cells)
-                self._col_count = len(_cells[0])
+            if type(_cells) is not list or type(_cells[0]) is not list or not isinstance(_cells[0][0], Cell):
+                raise ValueError('_cells structure not valid')
+            self._data = _cells
+            self._row_count = len(_cells)
+            self._col_count = len(_cells[0])
     
     def __str__(self):
         return '\n'.join([' '.join([str(item.value) for item in row]) for row in self._data])
