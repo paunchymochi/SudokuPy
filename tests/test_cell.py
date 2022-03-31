@@ -147,12 +147,17 @@ class TestCells:
     def test_data(self):
         c1 = Cells()
         c2 = c1[0]
-        c3 = c1[0,0]
+        c3 = c1[:, 0]
+        c4 = c1[0,0]
 
-        cells = [c1, c2, c3]
+        cells = [c1, c2, c3, c4]
+        rows = [9, 1, 9, 1]
+        cols = [9, 9, 1, 1]
 
-        for cell in cells:
+        for i, cell in enumerate(cells):
             data = cell.data
             assert type(data) is list
             assert type(data[0]) is list
             assert isinstance(data[0][0], Cell)
+            assert len(data) == rows[i]
+            assert len(data[0]) == cols[i]
