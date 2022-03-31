@@ -78,20 +78,23 @@ class Cells:
         return f'<Cells \n{self._print_grid()}\nrows:{self._row_count} cols:{self._col_count}>'
     
     def _print_grid(self):
-        def _print_row(row_num:int, row: List[Cell]):
-            return f'{row_num} |' + ' '.join([str(item.value) for item in row])
+        def _print_row_grid(row: List[Cell]):
+            return ' '.join([str(item.value) for item in row])
         
-        def _print_rows(data):
-            return '\n'.join([_print_row(i+1, row) for i, row in enumerate(data)])
+        def _print_row_index(row: List[Cell]):
+            return f'{row[0].row} |'
         
-        def _print_header(cols:int):
-            nums = list(range(1, cols+1))
+        def _print_rows(data: List[List[Cell]]):
+            return '\n'.join([_print_row_index(row)+_print_row_grid(row) for row in data])
+        
+        def _print_header(row: List[Cell]):
+            nums = [cell.column + 1 for cell in row]
             nums = [str(num) for num in nums]
             nums = ' '.join(nums)
-            sep = '   ' + '_'*(cols*2-1)
+            sep = '   ' + '_'*(len(row)*2-1)
             return f'   {nums}\n{sep}\n'
         
-        grid = _print_header(self._col_count) + _print_rows(self._data)
+        grid = _print_header(self._data[0]) + _print_rows(self._data)
         return grid
     
     def __len__(self):
