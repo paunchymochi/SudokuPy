@@ -80,9 +80,6 @@ class TestCells:
         assert len(cells[1]) == 9
         assert len(cells[1,1]) == 1
     
-    def test_getitem(self):
-        raise NotImplementedError
-    
     def test_setitem(self):
         raise NotImplementedError
     
