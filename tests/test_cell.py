@@ -65,8 +65,9 @@ class TestCells:
     def test_len(self):
         cells = Cells()
         assert len(cells) == 81
-        cells2 = cells[1]
-        assert len(cells2) == 9
+        assert len(cells[:]) == 81
+        assert len(cells[1]) == 9
+        assert len(cells[1,1]) == 1
     
     def test_getitem(self):
         raise NotImplementedError
