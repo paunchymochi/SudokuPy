@@ -116,15 +116,15 @@ class Cells:
         return Cells(sliced_rows)
 
     @property
-    def data(self):
+    def data(self) -> List[List[Cell]]:
         return self._data
     
     @property
-    def is_sliced(self):
+    def is_sliced(self) -> bool:
         return self._is_sliced
     
     @property
-    def values(self):
+    def values(self) -> List[List[int]]:
         return self._get_values()
 
     @values.setter
