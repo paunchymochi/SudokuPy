@@ -119,8 +119,18 @@ class Cells:
     def set_values(self, values: Union[int, List[int], List[List[int]]]):
         raise NotImplementedError
     
-    def _flatten(self):
-        raise NotImplementedError
+    def _flatten(self, matrix) -> List:
+
+        if type(matrix) not in [list, tuple]:
+            return [matrix]
+        
+        if type(matrix[0]) not in [list, tuple]:
+            return matrix
+        
+        flattened = []
+        for row in matrix:
+            flattened.extend(row)
+        return flattened
     
     def _count_data(self):
         return self._row_count * self._col_count
