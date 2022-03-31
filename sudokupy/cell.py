@@ -72,10 +72,27 @@ class Cells:
             self._col_count = len(_cells[0])
     
     def __str__(self):
-        return '\n'.join([' '.join([str(item.value) for item in row]) for row in self._data])
+        return self._print_grid()
     
     def __repr__(self):
-        return '<Cells>\n' + '\n'.join([' '.join([str(item.value) for item in row]) for row in self._data])
+        return f'<Cells \n{self._print_grid()}\nrows:{self._row_count} cols:{self._col_count}>'
+    
+    def _print_grid(self):
+        def _print_row(row_num:int, row: List[Cell]):
+            return f'{row_num} |' + ' '.join([str(item.value) for item in row])
+        
+        def _print_rows(data):
+            return '\n'.join([_print_row(i+1, row) for i, row in enumerate(data)])
+        
+        def _print_header(cols:int):
+            nums = list(range(1, cols+1))
+            nums = [str(num) for num in nums]
+            nums = ' '.join(nums)
+            sep = '   ' + '_'*(cols*2-1)
+            return f'   {nums}\n{sep}\n'
+        
+        grid = _print_header(self._col_count) + _print_rows(self._data)
+        return grid
     
     def __len__(self):
         return self._count_data()
