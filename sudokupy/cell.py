@@ -54,15 +54,23 @@ class Cell:
 class Cells:
     def __init__(self, cells:Union['Cells', List['Cells'], List[List['Cells']]]=None, _sliced=False):
         self._sliced = _sliced
+        self._row_count = 0
+        self._col_count = 0
         if cells is None:
             self._make_default_cells()
         else:
             if isinstance(cells, Cell):
                 self._data = [[cells]]
+                self._row_count = 1
+                self._col_count = 1
             elif isinstance(cells[0], Cell):
                 self._data = [cells]
+                self.row_count = len(cells)
+                self.col_count = 1
             else:
                 self._data = cells
+                self.row_count = len(cells)
+                self.col_count = len(cells[0])
     
     def __str__(self):
         return '\n'.join([' '.join([str(item.value) for item in row]) for row in self._data])
@@ -91,13 +99,17 @@ class Cells:
         return self._data
 
     def _make_default_data(self):
+        row_count = 9
+        col_count = 9
         cells = []
-        for r in range(9):
+        for r in range(row_count):
             row = []
-            for c in range(9):
+            for c in range(col_count):
                 row.append(Cell(r, c, 0))
             cells.append(row)
         self._data = cells
+        self._row_count = row_count
+        self._col_count = col_count
     
     def set_values(self, values: Union[int, List[int], List[List[int]]]):
         raise NotImplementedError
