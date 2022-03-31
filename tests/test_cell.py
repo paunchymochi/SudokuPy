@@ -94,9 +94,37 @@ class TestCells:
         assert len(cells[1]) == 9
         assert len(cells[1,1]) == 1
     
-    def test_setitem(self):
-        raise NotImplementedError
+    def test_values_getter(self):
+        cells = Cells()
+        values = cells.values
+        assert len(values) == 9
+        assert len(values[0]) == 9
+        assert values[0][0] == 0
+
+        cells2 = cells[1]
+        values = cells2.values
+        assert len(values) == 1
+        assert len(values[0]) == 9
+
+        cells3 = cells[:,1]
+        values = cells3.values
+        assert len(values) == 9
+        assert len(values[0]) == 1
+
+        cells3 = cells[1, 1]
+        values = cells3.values
+        assert len(values) == 1
+        assert len(values[0]) == 1
+        assert values[0][0] == 0
+
+        cells4 = cells[3, 3:6]
+        values = cells4.values
+        assert len(values) == 1
+        assert len(values[0]) == 3
     
+    def test_values_setter(self):
+        raise NotImplementedError
+
     def test_set_values(self):
         c = Cells()
 
