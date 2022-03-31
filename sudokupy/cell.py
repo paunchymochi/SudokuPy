@@ -65,12 +65,12 @@ class Cells:
                 self._col_count = 1
             elif isinstance(_cells[0], Cell):
                 self._data = [_cells]
-                self.row_count = len(_cells)
-                self.col_count = 1
+                self._row_count = len(_cells)
+                self._col_count = 1
             else:
                 self._data = _cells
-                self.row_count = len(_cells)
-                self.col_count = len(_cells[0])
+                self._row_count = len(_cells)
+                self._col_count = len(_cells[0])
     
     def __str__(self):
         return '\n'.join([' '.join([str(item.value) for item in row]) for row in self._data])
