@@ -54,3 +54,22 @@ class TestCell:
     def test_repr(self):
         c = Cell(1, 2, 3)
         assert c.__repr__() == '<Cell row:1 column:2 value:3>'
+
+class TestCells:
+    def test_constructor(self):
+        raise NotImplementedError
+    
+    def test_repr(self):
+        raise NotImplementedError
+    
+    def test_len(self):
+        raise NotImplementedError
+    
+    def test_getitem(self):
+        raise NotImplementedError
+    
+    def test_setitem(self):
+        raise NotImplementedError
+    
+    def test_set_values(self):
+        raise NotImplementedError
