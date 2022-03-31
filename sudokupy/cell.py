@@ -104,6 +104,14 @@ class Cells:
     @property
     def is_sliced(self):
         return self._is_sliced
+    
+    @property
+    def values(self):
+        return self._get_values()
+
+    @values.setter
+    def values(self, values: Union[int, List[int], List[List[int]]]):
+        self.set_values(values)
 
     def _make_default_cells(self):
         row_count = 9
@@ -130,6 +138,9 @@ class Cells:
         for i, value in enumerate(flat_values):
             flat_data[i].set_value(value)
     
+    def _get_values(self):
+        values = [[cell.value for cell in row] for row in self._data]
+        return values
 
     def _flatten(self, matrix) -> List:
 
