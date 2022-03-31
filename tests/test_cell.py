@@ -137,7 +137,22 @@ class TestCells:
         assert len(values[0]) == 3
     
     def test_values_setter(self):
-        raise NotImplementedError
+        cells = Cells()
+        cells[0,0].values = 1
+        assert cells.data[0][0].value == 1
+
+        cells[1].values = list(range(1, 10))
+        for i in range(1, 10):
+            assert cells.data[1][i-1].value == i
+        
+        cells[:, 2].values = list(range(1, 10))
+        for i in range(1, 10):
+            assert cells.data[i-1][2].value == i
+
+        cells[3:6,3:6].values = [[1,2,3],[4,5,6],[7,8,9]]
+        for i in range(3):
+            for j in range(3):
+                assert cells.data[i+3][j+3].value==(i*3)+(j+1)
 
     def test_set_values(self):
         c = Cells()
