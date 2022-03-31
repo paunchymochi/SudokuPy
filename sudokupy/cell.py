@@ -118,5 +118,5 @@ class Cells:
         raise NotImplementedError
     
     def _count_data(self):
-        return self._row_count & self._col_count
+        return self._row_count * self._col_count
 

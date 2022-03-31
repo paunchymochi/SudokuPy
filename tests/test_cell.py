@@ -1,5 +1,5 @@
 import pytest
-from ..sudokupy.cell import Cell
+from ..sudokupy.cell import Cell, Cells
 
 class TestCell:
     def test_constructor(self):
@@ -63,7 +63,10 @@ class TestCells:
         raise NotImplementedError
     
     def test_len(self):
-        raise NotImplementedError
+        cells = Cells()
+        assert len(cells) == 81
+        cells2 = cells[1]
+        assert len(cells2) == 9
     
     def test_getitem(self):
         raise NotImplementedError
