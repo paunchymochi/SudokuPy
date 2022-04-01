@@ -204,6 +204,16 @@ class TestCells:
     
     def test_invalid_constructor(self):
         c = Cells()
-        c2 = Cells(c.data[:3])
-        with pytest.raises(ValueError):
-            Cells(c.data[0][0])
+        data = c.data
+        invalid_inputs = [
+            '',
+            [''],
+            [['', ''], ['', '']],
+            data[1],
+            data[1][1],
+        ]
+
+        for invalid_input in invalid_inputs:
+            with pytest.raises(ValueError):
+                Cells(invalid_input)
+    
