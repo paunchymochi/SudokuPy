@@ -53,10 +53,22 @@ class Board:
             self._validate_slicer(key[0], 2)
             self._validate_slicer(key[1], 2)
             return self.cells[key[0]*3, key[1]*3]
+    
+    class Cell(_Slice):
+        def __init__(self, cells:Cells):
+            super().__init__(cells)
+
+        def __getitem__(self, key) -> Cells:
+            key = self._cast_tuple(key)
+            self._validate_tuple(key, 2)
+            self._validate_slicer(key[0], 8)
+            self._validate_slicer(key[1], 8)
+            return self.cells[key[0], key[1]]
 
     def __init__(self):
         self.cells = Cells()
         self.row = self.Row(self.cells)
         self.col = self.Col(self.cells)
         self.box = self.Box(self.cells)
+        self.cell = self.Cell(self.cells)
     
