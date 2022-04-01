@@ -183,6 +183,18 @@ class TestCells:
         for case in [ [1]*10, [1], ['1']*9]:
             with pytest.raises(ValueError):
                 c2.set_values(case)
+    
+    def test_contains(self):
+        c = Cells()
+        assert c.contains(0) == True
+        assert c.contains(1) == False
+
+        c[0, 0].values = 1
+        c[0, 1].values = 2
+        c[0, 2].values = 3
+        assert c[0].contains([0, 1]) == True
+        assert c[0].contains([1, 2, 3]) == True
+        assert c[:,1].contains([0, 2]) == True
 
     def test_data(self):
         c1 = Cells()
