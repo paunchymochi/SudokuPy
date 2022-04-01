@@ -27,7 +27,7 @@ class Board:
         def __init__(self, cells:Cells):
             super().__init__(cells)
         
-        def __getitem__(self, key):
+        def __getitem__(self, key) -> Cells:
             key = self._cast_tuple(key)
             self._validate_tuple(key, 1)
             self._validate_slicer(key[0], 8)
@@ -37,7 +37,7 @@ class Board:
         def __init__(self, cells:Cells):
             super().__init__(cells)
 
-        def __getitem__(self, key):
+        def __getitem__(self, key) -> Cells:
             key = self._cast_tuple(key)
             self._validate_tuple(key, 1)
             self._validate_slicer(key[0], 8)
