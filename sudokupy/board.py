@@ -14,7 +14,7 @@ class Board:
                 return key
         
         def _validate_slicer(self, key, max_value:int) -> bool:
-            if key is not int or key not in list(range(max_value)):
+            if type(key) is not int or key not in list(range(max_value)):
                 raise ValueError(f'index must be an int between 0 and {max_value}')
             return True
         
