@@ -184,6 +184,19 @@ class TestCells:
             with pytest.raises(ValueError):
                 c2.set_values(case)
     
+    def test_topleft(self):
+        c = Cells()
+        assert c.topleft_row == 0
+        assert c.topleft_column == 0
+
+        c1 = c[1, 2]
+        assert c1.topleft_row == 1
+        assert c1.topleft_column == 2
+
+        c2 = c[3:5, 6:]
+        assert c2.topleft_row == 3
+        assert c2.topleft_column == 6
+    
     def test_contains(self):
         c = Cells()
         assert c.contains(0) == True
