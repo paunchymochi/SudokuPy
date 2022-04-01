@@ -57,7 +57,8 @@ class Cell:
 
 
 class Cells:
-    def __init__(self, _cells:List[List['Cells']]=None):
+    def __init__(self, _cells:List[List['Cell']]=None):
+        self._data : List[List['Cell']] = [[]]
         self._row_count = 0
         self._col_count = 0
         if _cells is None:
