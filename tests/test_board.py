@@ -17,4 +17,8 @@ class TestBoard:
         assert col.topleft_row == 0
 
     def test_box(self):
-        raise NotImplementedError
+        b = Board()
+        box = b.box[1, 2]
+        assert len(box) == 9
+        assert box.topleft_row == 3
+        assert box.topleft_column == 6
