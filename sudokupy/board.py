@@ -11,10 +11,10 @@ class Board:
         def _cast_tuple(self, key):
             if type(key) is not tuple:
                 key = (key, )
-                return key
+            return key
         
         def _validate_slicer(self, key, max_value:int) -> bool:
-            if type(key) is not int or key not in list(range(max_value)):
+            if type(key) is not int or key not in list(range(max_value+1)):
                 raise ValueError(f'index must be an int between 0 and {max_value}')
             return True
         
