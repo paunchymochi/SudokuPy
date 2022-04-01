@@ -130,6 +130,17 @@ class Cells:
     @values.setter
     def values(self, values: Union[int, List[int], List[List[int]]]):
         self.set_values(values)
+    
+    def contains(self, values: Union[int, List[int]]) -> bool:
+        if type(values) is int:
+            values = [values]
+        
+        for value in values:
+            if value not in range(9):
+                raise ValueError(f'value must be an int between 0 and 9. Received [{value}]')
+        
+        cell_values = self._flatten(self.values)
+        return all([value in cell_values for value in values])
 
     def _make_default_cells(self):
         row_count = 9
