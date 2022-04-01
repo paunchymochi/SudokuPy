@@ -31,7 +31,7 @@ class Board:
             key = self._cast_tuple(key)
             self._validate_tuple(key, 1)
             self._validate_slicer(key[0], 8)
-            return self.cells[key]
+            return self._cells[key[0]]
 
     class Col(_Slice):
         def __init__(self, cells:Cells):
@@ -41,7 +41,7 @@ class Board:
             key = self._cast_tuple(key)
             self._validate_tuple(key, 1)
             self._validate_slicer(key[0], 8)
-            return self.cells[:, key]
+            return self._cells[:, key[0]]
 
     class Box(_Slice):
         def __init__(self, cells:Cells):
@@ -54,7 +54,7 @@ class Board:
             self._validate_slicer(key[1], 2)
             topleft_row = key[0]*3
             topleft_col = key[1]*3
-            return self.cells[topleft_row:topleft_row+3, topleft_col:topleft_col+3]
+            return self._cells[topleft_row:topleft_row+3, topleft_col:topleft_col+3]
     
     class Cell(_Slice):
         def __init__(self, cells:Cells):
@@ -65,7 +65,7 @@ class Board:
             self._validate_tuple(key, 2)
             self._validate_slicer(key[0], 8)
             self._validate_slicer(key[1], 8)
-            return self.cells[key[0], key[1]]
+            return self._cells[key[0], key[1]]
 
     def __init__(self):
         self.cells = Cells()
