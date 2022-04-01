@@ -173,6 +173,17 @@ class TestCells:
             for j in range(3):
                 assert c.data[i][j+3].value == (i*3) + (j+1)
     
+    def test_invalid_set_values(self):
+        c = Cells()
+        for case in [ '', ['0']*81, [0]*80, ]:
+            with pytest.raises(ValueError):
+                c.set_values(case)
+        
+        c2 = c[0]
+        for case in [ [1]*10, [1], ['1']*9]:
+            with pytest.raises(ValueError):
+                c2.set_values(case)
+
     def test_data(self):
         c1 = Cells()
         c2 = c1[0]
