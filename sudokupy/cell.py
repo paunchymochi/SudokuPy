@@ -127,6 +127,14 @@ class Cells:
     @property
     def values(self) -> List[List[int]]:
         return self._get_values()
+    
+    @property
+    def topleft_row(self):
+        return self._data[0][0].row
+    
+    @property
+    def topleft_column(self):
+        return self._data[0][0].column
 
     @values.setter
     def values(self, values: Union[int, List[int], List[List[int]]]):
