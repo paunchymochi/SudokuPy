@@ -52,7 +52,9 @@ class Board:
             self._validate_tuple(key, 2)
             self._validate_slicer(key[0], 2)
             self._validate_slicer(key[1], 2)
-            return self.cells[key[0]*3, key[1]*3]
+            topleft_row = key[0]*3
+            topleft_col = key[1]*3
+            return self.cells[topleft_row:topleft_row+3, topleft_col:topleft_col+3]
     
     class Cell(_Slice):
         def __init__(self, cells:Cells):
