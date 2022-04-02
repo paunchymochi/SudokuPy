@@ -14,15 +14,22 @@ class Candidate:
     def remove(self, values: Union[int, List[int]]):
         if type(values) is int:
             values = [values]
+        self._validate_values(values)
         self._values = [v for v in self._values if v not in values]
     
     def set(self, values: Union[int, List[int]]):
         if type(values) is int:
             values = [values]
+        self._validate_values(values)
         self._values = values
     
     def count(self):
         return len(self._values)
+
+    def _validate_values(self, values: List[int]):
+        for value in values:
+            if value not in range(1, 10):
+                raise ValueError('cell value must be an integer between 1 and 9')
 
 class Cell:
     __slots__ = ['_row', '_column', '_value']
