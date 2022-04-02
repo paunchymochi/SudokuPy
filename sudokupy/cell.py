@@ -1,5 +1,30 @@
 from typing import Union, List
 
+class Candidate:
+    def __init__(self):
+        self._values = self._get_default_values()
+        raise NotImplementedError
+    
+    @property
+    def values(self) -> List[int]:
+        return self._values
+    
+    def _get_default_values(self) -> List[int]:
+        return list(range(1, 10))
+    
+    def remove(self, values: Union[int, List[int]]):
+        if type(values) is int:
+            values = [values]
+        self._values = [v for v in self._values if v not in values]
+    
+    def set(self, values: Union[int, List[int]]):
+        if type(values) is int:
+            values = [values]
+        self._values = values
+    
+    def count(self):
+        return len(self._values)
+
 class Cell:
     __slots__ = ['_row', '_column', '_value']
 
