@@ -90,7 +90,26 @@ class TestCell:
             c.set_candidates(0)
 
     def test_remove_candidates(self):
-        raise NotImplementedError
+        c = Cell(0, 0, 0)
+        assert len(c.candidates) == 9
+
+        c.remove_candidates(1)
+        assert len(c.candidates) == 8
+        assert 1 not in c.candidates
+
+        c.remove_candidates([2])
+        assert len(c.candidates) == 7
+        assert c.candidates == [3,4,5,6,7,8,9]
+
+        c.remove_candidates([1,2,3])
+        assert len(c.candidates) == 6
+        assert c.candidates == [4,5,6,7,8,9]
+
+        c.remove_candidates([1,2,3])
+        assert len(c.candidates) == 6
+        
+        with pytest.raises(ValueError):
+            c.remove_candidates(0)
 
     def test_candidates(self):
         raise NotImplementedError
