@@ -1,5 +1,18 @@
 import pytest
-from ..sudokupy.cell import Cell, Cells
+from ..sudokupy.cell import Cell, Cells, Candidate
+
+class TestCandidate:
+    def test_constructor(self):
+        raise NotImplementedError
+
+    def test_remove(self):
+        raise NotImplementedError
+
+    def test_set(self):
+        raise NotImplementedError
+
+    def test_count(self):
+        raise NotImplementedError
 
 class TestCell:
     def test_constructor(self):
