@@ -22,3 +22,10 @@ class TestBoard:
         assert len(box) == 9
         assert box.topleft_row == 3
         assert box.topleft_column == 6
+    
+    def test_cell(self):
+        b = Board()
+        cell = b.cell[0,8]
+        assert len(cell) == 1
+        assert cell.topleft_row == 0
+        assert cell.topleft_column == 8
