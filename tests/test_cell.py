@@ -1,5 +1,50 @@
 import pytest
-from ..sudokupy.cell import Cell, Cells
+from ..sudokupy.cell import Cell, Cells, Candidate
+
+class TestCandidate:
+    def test_constructor(self):
+        c = Candidate()
+        assert c.count() == 9
+
+    def test_remove(self):
+        c = Candidate()
+        assert c.count() == 9
+        c.remove(1)
+        assert c.count() == 8
+        c.remove([2])
+        assert c.count() == 7
+        c.remove([2, 3])
+        assert c.count() == 6
+        c.remove([1,2,3])
+        assert c.count() == 6
+
+        with pytest.raises(ValueError):
+            c.remove(0)
+        with pytest.raises(ValueError):
+            c.remove(['2'])
+
+    def test_set(self):
+        c = Candidate()
+        assert c.count() == 9
+        c.set(1)
+        assert c.count() == 1
+        c.set(2)
+        assert c.count() == 1
+        c.set([1,2,3])
+        assert c.count() == 3
+
+        with pytest.raises(ValueError):
+            c.set(0)
+        with pytest.raises(ValueError):
+            c.set(['2'])
+
+    def test_count(self):
+        c = Candidate()
+        assert c.count() == 9
+        c.remove(1)
+        assert c.count() == 8
+        c.set([2,3])
+        assert c.count() == 2
 
 class TestCell:
     def test_constructor(self):
