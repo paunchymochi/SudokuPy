@@ -65,3 +65,26 @@ class TestBoard:
         cell = b.get_cell(4, 8)
         assert cell.topleft_row == 4
         assert cell.topleft_column == 8
+    
+    def test_get_error(self):
+        b = Board()
+        with pytest.raises(ValueError):
+            b.row[10]
+        with pytest.raises(ValueError):
+            b.row[1, 2]
+        with pytest.raises(ValueError):
+            b.col[10]
+        with pytest.raises(ValueError):
+            b.col[1, 2]
+        with pytest.raises(ValueError):
+            b.box[0]
+        with pytest.raises(ValueError):
+            b.box[0,5]
+        with pytest.raises(ValueError):
+            b.cell[0]
+        with pytest.raises(ValueError):
+            b.cell[0, 10]
+
+
+
+        
