@@ -29,6 +29,9 @@ class TestBoard:
         assert len(box) == 9
         assert box.topleft_row == 3
         assert box.topleft_column == 6
+        for i in range(3):
+            for j in range(3):
+                assert box.values[i][j] == i*3 + j + 1
     
     def test_cell(self):
         b = Board()
@@ -37,3 +40,4 @@ class TestBoard:
         assert len(cell) == 1
         assert cell.topleft_row == 0
         assert cell.topleft_column == 8
+        assert cell.values[0][0] == 9
