@@ -74,18 +74,18 @@ class Board:
         self.box = self.Box(self.cells)
         self.cell = self.Cell(self.cells)
     
-    def get_row(self, topleft_row:int) -> Cells:
-        return self.cells[topleft_row]
+    def get_row(self, row:int) -> Cells:
+        return self.cells[row]
 
-    def get_col(self, topleft_col:int) -> Cells:
-        return self.cells[:, topleft_col]
+    def get_col(self, col:int) -> Cells:
+        return self.cells[:, col]
 
-    def get_box(self, topleft_row:int, topleft_col:int) -> Cells:
-        row = (topleft_row // 3) * 3
-        col = (topleft_col // 3) * 3
+    def get_box(self, row:int, col:int) -> Cells:
+        row = (row // 3) * 3
+        col = (col // 3) * 3
         return self.cells[row:row+3, col:col+3]
 
-    def get_cell(self, topleft_row:int, topleft_col:int) -> Cells:
-        return self.cells[topleft_row, topleft_col]
+    def get_cell(self, row:int, col:int) -> Cells:
+        return self.cells[row, col]
 
     
