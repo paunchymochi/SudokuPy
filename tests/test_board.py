@@ -41,3 +41,27 @@ class TestBoard:
         assert cell.topleft_row == 0
         assert cell.topleft_column == 8
         assert cell.values[0][0] == 9
+
+    def test_get_row(self):
+        b = Board()
+        row = b.get_row(8)
+        assert row.topleft_row == 8
+        assert row.topleft_column == 0
+
+    def test_get_col(self):
+        b = Board()
+        col = b.get_col(8)
+        assert col.topleft_column == 8
+        assert col.topleft_row == 0
+
+    def test_get_box(self):
+        b = Board()
+        box = b.get_box(4, 8)
+        assert box.topleft_row == 3
+        assert box.topleft_column == 6
+
+    def test_get_cell(self):
+        b = Board()
+        cell = b.get_cell(4, 8)
+        assert cell.topleft_row == 4
+        assert cell.topleft_column == 8
