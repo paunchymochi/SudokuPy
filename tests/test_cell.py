@@ -72,6 +72,28 @@ class TestCell:
         
         with pytest.raises(ValueError):
             Cell(0, '0', 0)
+        
+    def test_set_candidates(self):
+        c = Cell(0, 0, 0)
+        assert c.candidates == list(range(1, 10))
+
+        c.set_candidates(1)
+        assert c.candidates == [1]
+
+        c.set_candidates([2])
+        assert c.candidates == [2]
+
+        c.set_candidates([1,2,3])
+        assert c.candidates == [1,2,3]
+
+        with pytest.raises(ValueError):
+            c.set_candidates(0)
+
+    def test_remove_candidates(self):
+        raise NotImplementedError
+
+    def test_candidates(self):
+        raise NotImplementedError
     
     def test_value(self):
         for val in range(10):
@@ -113,7 +135,7 @@ class TestCell:
     def test_repr(self):
         c = Cell(1, 2, 3)
         assert c.__repr__() == '<Cell row:1 column:2 value:3>'
-
+    
 class TestCells:
     def test_constructor(self):
         cells = Cells()
