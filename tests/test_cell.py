@@ -112,8 +112,17 @@ class TestCell:
             c.remove_candidates(0)
 
     def test_candidates(self):
-        raise NotImplementedError
-    
+        c = Cell(0, 0, 0)
+        x = [1,3,5,7,9]
+        c.candidates = x
+        assert c.candidates == x
+
+        c.candidates = 1
+        assert c.candidates == [1]
+
+        with pytest.raises(ValueError):
+            c.candidates = 0
+
     def test_value(self):
         for val in range(10):
             assert Cell(1, 1, val).value == val
