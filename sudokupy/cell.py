@@ -1,6 +1,8 @@
 from typing import Union, List
 
 class Candidate:
+    __slots__ = ['_values']
+
     def __init__(self):
         self._values = self._get_default_values()
     
