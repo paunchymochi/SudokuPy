@@ -304,6 +304,11 @@ class TestCells:
         assert c[0].contains([1, 2, 3]) == True
         assert c[:,1].contains([0, 2]) == True
 
+        with pytest.raises(ValueError):
+            c[0].contains(10)
+        with pytest.raises(ValueError):
+            c[:, 1].contains([['0']])
+
     def test_data(self):
         c1 = Cells()
         c2 = c1[0]
