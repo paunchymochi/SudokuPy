@@ -124,6 +124,9 @@ class Cell:
         self._validate_value(value)
         self._value = value
     
+    def reset_candidates(self):
+        self._candidates = Candidate()
+    
     def set_candidates(self, values=Union[int, List[int]]):
         self._candidates.set(values)
     
@@ -137,7 +140,6 @@ class Cell:
     def _validate_value(self, value: int):
         if value not in range(0, 10):
             raise ValueError('cell value must be an integer between 0 and 9')
-
 
 class Cells:
     def __init__(self, _cells:List[List['Cell']]=None):
