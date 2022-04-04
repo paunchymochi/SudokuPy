@@ -93,6 +93,10 @@ class Cell:
         self.set_candidates(values)
     
     @property
+    def print_value(self) -> str:
+        return str(self._value).replace('0', '.')
+    
+    @property
     def value(self) -> int:
         return self._value
     
@@ -159,7 +163,7 @@ class Cells:
     
     def _print_grid(self):
         def _print_row_grid(row: List[Cell]):
-            return ' '.join([str(item.value) for item in row])
+            return ' '.join([str(item.print_value) for item in row])
         
         def _print_row_index(row: List[Cell]):
             return f'{row[0].row} |'
