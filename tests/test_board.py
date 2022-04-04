@@ -161,14 +161,14 @@ class TestBoard:
             assert 1 not in candidate
             assert 9 not in candidate
     
-    def test_deduce_cell(self):
+    def test_deduce_adjacent(self):
         b = Board()
         b.cell[4, 4].values = 5
 
         b.cell[0, 4].values = 1
         b.cell[4, 0].values = 2
         b.cell[3, 3].values = 3
-        b.deduce_cell(4, 4)
+        b.deduce_adjacent(4, 4)
         box_candidates = b.box[1, 1].get_candidates(flatten=True)
         col_candidates = b.col[4].get_candidates(flatten=True)
         row_candidates = b.row[4].get_candidates(flatten=True)
