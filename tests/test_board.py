@@ -190,10 +190,49 @@ class TestBoard:
             assert 1 not in candidate
             assert 2 not in candidate
             assert 3 not in candidate
+    
+    def test_resolve(self):
+        b = Board()
+        b.cell[4, 4].set_candidates(8)
+        b.cell[7, 7].set_candidates(9)
+        result = b.resolve()
+        assert b.cell[4, 4].get_values(flatten=True)[0] == 8
+        assert b.cell[4, 4].get_candidates(flatten=True)[0] == []
+        assert result == [(4, 4), (7, 7)]
 
-    def test_resolve_cell(self):
-        raise NotImplementedError
+        b.cell[0, 0].set_candidates([1,2])
+        b.cell[0, 1].set_candidates(2)
+
+        result = b.resolve()
+        assert b.cell[0, 1].get_values(flatten=True)[0] == 2
+        assert b.cell[0, 0].get_values(flatten=True)[0] == 0
+        assert result == [(0, 1)]
+        b.deduce_box(0, 0)
+        result = b.resolve()
+        assert b.cell[0, 1].get_values(flatten=True)[0] == 2
+        assert b.cell[0, 0].get_values(flatten=True)[0] == 1
+        assert result == [(0, 0)]
+    
+    def test_resolve_adjacent(self):
+        b = Board()
+
+        b.cell[0, 0].set_candidates(1)
+        b.cell[0, 2].set_candidates(2)
+        b.cell[2, 0].set_candidates(3)
+        b.cell[1, 1].set_candidates(4)
+        b.cell[3, 3].set_candidates(5)
+
+        result = b.resolve_adjacent(0, 0)
+        assert len(result) == 4
+        assert (0, 0) in result
+        assert (0, 2) in result
+        assert (2, 0) in result
+        assert (1, 1) in result
+        assert (3, 3) not in result
+
+        assert b.cell[0, 0].get_values(flatten=True)[0] == 1
+        assert b.cell[0, 0].get_candidates(flatten=True)[0] == []
+        assert b.cell[3, 3].get_values(flatten=True)[0] == 0
+        assert b.cell[3, 3].get_candidates(flatten=True)[0] == [5]
 
 
-
-        
