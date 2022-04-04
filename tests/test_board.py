@@ -84,6 +84,24 @@ class TestBoard:
             b.cell[0]
         with pytest.raises(ValueError):
             b.cell[0, 10]
+    
+    def test_reset_candidates(self):
+        raise NotImplementedError
+    
+    def test_deduce_row(self):
+        raise NotImplementedError
+    
+    def test_deduce_column(self):
+        raise NotImplementedError
+    
+    def test_deduce_box(self):
+        raise NotImplementedError
+    
+    def test_deduce_cell(self):
+        raise NotImplementedError
+    
+    def test_resolve_cell(self):
+        raise NotImplementedError
 
 
 
