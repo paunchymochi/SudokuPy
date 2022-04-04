@@ -322,7 +322,13 @@ class TestCells:
             assert len(cell.candidates) == 7
     
     def test_set_candidates(self):
-        raise NotImplementedError
+        c = Cells()
+        c[0, 0].set_candidates([1,2,3])
+        assert c.data[0][0].candidates == [1, 2, 3]
+
+        c[1].set_candidates(2)
+        for cell in c.data[1]:
+            assert cell.candidates == [2]
     
     def test_topleft(self):
         c = Cells()
