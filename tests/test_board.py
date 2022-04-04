@@ -162,8 +162,35 @@ class TestBoard:
             assert 9 not in candidate
     
     def test_deduce_cell(self):
-        raise NotImplementedError
-    
+        b = Board()
+        b.cell[4, 4].values = 5
+
+        b.cell[0, 4].values = 1
+        b.cell[4, 0].values = 2
+        b.cell[3, 3].values = 3
+        b.deduce_cell(4, 4)
+        box_candidates = b.box[1, 1].get_candidates(flatten=True)
+        col_candidates = b.col[4].get_candidates(flatten=True)
+        row_candidates = b.row[4].get_candidates(flatten=True)
+
+        for candidate in box_candidates:
+            assert 5 not in candidate
+            assert 3 not in candidate
+        
+        for candidate in row_candidates:
+            assert 5 not in candidate
+            assert 2 not in candidate
+        
+        for candidate in col_candidates:
+            assert 5 not in candidate
+            assert 1 not in candidate
+        
+        for candidate in [box_candidates[4], row_candidates[4], col_candidates[4]]:
+            assert 5 not in candidate
+            assert 1 not in candidate
+            assert 2 not in candidate
+            assert 3 not in candidate
+
     def test_resolve_cell(self):
         raise NotImplementedError
 
