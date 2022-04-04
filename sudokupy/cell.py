@@ -1,13 +1,47 @@
 from typing import Union, List
 
+class Candidate:
+    __slots__ = ['_values']
+
+    def __init__(self):
+        self._values = self._get_default_values()
+    
+    @property
+    def values(self) -> List[int]:
+        return self._values
+    
+    def _get_default_values(self) -> List[int]:
+        return list(range(1, 10))
+    
+    def remove(self, values: Union[int, List[int]]):
+        if type(values) is int:
+            values = [values]
+        self._validate_values(values)
+        self._values = [v for v in self._values if v not in values]
+    
+    def set(self, values: Union[int, List[int]]):
+        if type(values) is int:
+            values = [values]
+        self._validate_values(values)
+        self._values = values
+    
+    def count(self):
+        return len(self._values)
+
+    def _validate_values(self, values: List[int]):
+        for value in values:
+            if value not in range(1, 10):
+                raise ValueError('cell value must be an integer between 1 and 9')
+
 class Cell:
-    __slots__ = ['_row', '_column', '_value']
+    __slots__ = ['_row', '_column', '_value', '_candidates']
 
     def __init__(self, row: int, column: int, value: int):
         self._validate_position(row, 'row')
         self._validate_position(column, 'column')
         self._row = row
         self._column = column
+        self._candidates = Candidate()
 
         self.set_value(value)
     
@@ -21,6 +55,14 @@ class Cell:
     @property
     def column(self) -> int:
         return self._column
+    
+    @property
+    def candidates(self) -> Candidate:
+        return self._candidates.values
+    
+    @candidates.setter
+    def candidates(self, values=Union[int, List[int]]):
+        self.set_candidates(values)
     
     @property
     def value(self) -> int:
@@ -46,6 +88,12 @@ class Cell:
     def set_value(self, value: int):
         self._validate_value(value)
         self._value = value
+    
+    def set_candidates(self, values=Union[int, List[int]]):
+        self._candidates.set(values)
+    
+    def remove_candidates(self, values=Union[int, List[int]]):
+        self._candidates.remove(values)
     
     def _validate_position(self, pos: int, pos_name: str):
         if pos not in range(0, 9):
