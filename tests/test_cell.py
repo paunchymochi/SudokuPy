@@ -132,7 +132,7 @@ class TestCell:
 
         with pytest.raises(ValueError):
             c.candidates = 0
-
+    
     def test_value(self):
         for val in range(10):
             assert Cell(1, 1, val).value == val
@@ -329,6 +329,12 @@ class TestCells:
         c[1].set_candidates(2)
         for cell in c.data[1]:
             assert cell.candidates == [2]
+    
+    def test_get_values(self):
+        raise NotImplementedError
+
+    def test_get_candidates(self):
+        raise NotImplementedError
     
     def test_candidate(self):
         cells = Cells()
