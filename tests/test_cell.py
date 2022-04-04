@@ -111,6 +111,15 @@ class TestCell:
         
         with pytest.raises(ValueError):
             c.remove_candidates(0)
+    
+    def test_reset_candidates(self):
+        c = Cell(0, 0, 0)
+        assert len(c.candidates) == 9
+
+        c.set_candidates([1])
+        assert len(c.candidates) == 1
+        c.reset_candidates()
+        assert len(c.candidates) == 9
 
     def test_candidates(self):
         c = Cell(0, 0, 0)
