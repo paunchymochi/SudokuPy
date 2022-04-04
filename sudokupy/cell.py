@@ -6,6 +6,12 @@ class Candidate:
     def __init__(self):
         self._values = self._get_default_values()
     
+    def __repr__(self):
+        return f'<Candidate\n{self.print_grid()}\n>'
+    
+    def __str__(self):
+        return self.print_grid()
+    
     @property
     def values(self) -> List[int]:
         return self._values
@@ -25,6 +31,9 @@ class Candidate:
         self._validate_values(values)
         self._values = values
     
+    def _get_removed(self) -> List[int]:
+        return [num for num in range(1, 10) if num not in self._values]
+    
     def count(self):
         return len(self._values)
 
@@ -32,6 +41,25 @@ class Candidate:
         for value in values:
             if value not in range(1, 10):
                 raise ValueError('cell value must be an integer between 1 and 9')
+    
+    def print_grid(self):
+        numbers = [[1,2,3],[4,5,6],[7,8,9]]
+        grid = '\n'.join([''.join([str(num) for num in row]) for row in numbers])
+        removed_vals = self._get_removed()
+        for removed_val in removed_vals:
+            grid = grid.replace(str(removed_val), ' ')
+        return grid
+    
+    def print_list(self):
+        numbers = '123456789'
+        removed_vals = self._get_removed()
+        for removed_val in removed_vals:
+            numbers = numbers.replace(str(removed_val), ' ')
+        num_list = []
+        num_list.append(numbers[0:3])
+        num_list.append(numbers[3:6])
+        num_list.append(numbers[6:9])
+        return num_list
 
 class Cell:
     __slots__ = ['_row', '_column', '_value', '_candidates']
