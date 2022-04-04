@@ -297,9 +297,19 @@ class TestCells:
                 c2.set_values(case)
     
     def test_reset_candidates(self):
-        raise NotImplementedError
+        c = Cells()
+        for row in c.data:
+            for cell in row:
+                cell.set_candidates(1)
+                assert len(cell.candidates) == 1
+        c.reset_candidates()
+        for row in c.data:
+            for cell in row:
+                assert len(cell.candidates) == 9
     
     def test_remove_candidates(self):
+        c = Cells()
+
         raise NotImplementedError
     
     def test_set_candidates(self):
