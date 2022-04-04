@@ -192,7 +192,7 @@ class TestCells:
         str = cells.__str__()
         repr = cells.__repr__()
 
-        assert str.count('\n') == 8 + 2 # 8 between grid, 2 for headers
+        assert str.count('\n') == 8 + 2 + 3 # 8 between grid, 2 for headers, 3 for box
         assert 'rows:9' in repr
         assert 'cols:9' in repr
 
@@ -200,7 +200,7 @@ class TestCells:
         str = cells2.__str__()
         repr = cells2.__repr__()
 
-        assert str.count('\n') == 4 + 2
+        assert str.count('\n') == 4 + 2 # 4 between grid, 2 for headers, no box
         assert 'rows:5' in repr
         assert 'cols:4' in repr
     
