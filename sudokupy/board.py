@@ -68,11 +68,15 @@ class Board:
             return self._cells[key[0], key[1]]
 
     def __init__(self):
-        self.cells = Cells()
+        self._cells = Cells()
         self.row = self.Row(self.cells)
         self.col = self.Col(self.cells)
         self.box = self.Box(self.cells)
         self.cell = self.Cell(self.cells)
+    
+    @property
+    def cells(self) -> Cells:
+        return self._cells
     
     def get_row(self, row:int) -> Cells:
         return self.cells[row]
