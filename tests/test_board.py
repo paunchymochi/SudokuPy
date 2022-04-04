@@ -116,7 +116,7 @@ class TestBoard:
         b.cell[1, 8].values = 6
         b.cell[1, 7].values = 9
         b.deduce_row(1)
-        candidattes = b.row[1].get_candidates(flatten=True)
+        candidates = b.row[1].get_candidates(flatten=True)
         for candidate in candidates:
             assert len(candidate) == 6
             assert 5 not in candidate
