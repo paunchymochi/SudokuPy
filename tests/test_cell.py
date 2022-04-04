@@ -331,10 +331,38 @@ class TestCells:
             assert cell.candidates == [2]
     
     def test_get_values(self):
-        raise NotImplementedError
+        cells = Cells()
+
+        values = cells.get_values(flatten=False)
+
+        assert len(values) == 9
+        for row in values:
+            assert len(row) == 9
+            for cell in row:
+                assert cell == 0
+        
+        values = cells.get_values(flatten=True)
+
+        assert len(values) == 81
+        for cell in values:
+            assert cell == 0
 
     def test_get_candidates(self):
-        raise NotImplementedError
+        cells = Cells()
+
+        candidates = cells.get_candidates(flatten=False)
+
+        assert len(candidates) == 9
+        for row in candidates:
+            assert len(row) == 9
+            for cell in row:
+                assert cell == list(range(1, 10))
+        
+        candidates = cells.get_candidates(flatten=True)
+
+        assert len(candidates) == 81
+        for cell in candidates:
+            assert cell == list(range(1, 10))
     
     def test_candidate(self):
         cells = Cells()
