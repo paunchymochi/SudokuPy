@@ -133,7 +133,7 @@ class TestCell:
         
         with pytest.raises(ValueError):
             Cell(0, 0, '0')
-    
+        
     def test_value_setter(self):
         for val in range(10):
             c = Cell(0, 0, 0)
@@ -147,6 +147,13 @@ class TestCell:
         with pytest.raises(ValueError):
             c = Cell(0, 0, 0)
             c.value = '0'
+    
+    def test_print_value(self):
+        cell = Cell(0, 0, 0)
+        assert cell.print_value == '.'
+
+        for val in range(1, 10):
+            assert Cell(1, 1, val).print_value == str(val)
     
     def test_box(self):
         for row in [0, 3, 6]:
