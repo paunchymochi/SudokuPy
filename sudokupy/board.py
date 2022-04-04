@@ -1,4 +1,7 @@
-from .cell import Cell, Cells
+try:
+    from cell import Cell, Cells
+except:
+    from .cell import Cell, Cells
 
 class Board:
     class _Slice:
