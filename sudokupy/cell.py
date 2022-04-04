@@ -162,23 +162,53 @@ class Cells:
         return f'<Cells \n{self._print_grid()}\nrows:{self._row_count} cols:{self._col_count}>'
     
     def _print_grid(self):
-        def _print_row_grid(row: List[Cell]):
-            return ' '.join([str(item.print_value) for item in row])
+        def _print_row_grid(row: List[Cell], print_box:bool):
+            rows_str = [item.print_value for item in row]
+            if print_box:
+                for i in [6, 3]:
+                    rows_str.insert(i, '|')
+                rows_str += '|'
+            return ' '.join(rows_str)
         
         def _print_row_index(row: List[Cell]):
-            return f'{row[0].row} |'
+            return f'{row[0].row + 1} |'
         
-        def _print_rows(data: List[List[Cell]]):
-            return '\n'.join([_print_row_index(row)+_print_row_grid(row) for row in data])
+        def _print_rows(data: List[List[Cell]], print_box:bool):
+            rows = [_print_row_index(row)+_print_row_grid(row, print_box) for row in data]
+            if print_box:
+                for i in [6, 3]:
+                    rows.insert(i, _print_line_break(9, True))
+                rows.append(_print_line_break(9, True))
+
+            return '\n'.join(rows)
         
-        def _print_header(row: List[Cell]):
+        def _print_line_break(col_num: int, print_box:bool):
+            sep = '   '
+            if print_box:
+                sep = '__|'
+                sep += '| '.join(['_'*6 for _ in range(3)])
+                sep += '|'
+            else:
+                sep += '_'*(col_num*2-1)
+            return sep
+        
+        def _print_header(row: List[Cell], print_box:bool):
             nums = [cell.column + 1 for cell in row]
             nums = [str(num) for num in nums]
-            nums = ' '.join(nums)
-            sep = '   ' + '_'*(len(row)*2-1)
-            return f'   {nums}\n{sep}\n'
+            nums = '   ' + ' '.join(nums)
+            if print_box:
+                nums = nums.replace(' 1', '|1')
+                nums = nums.replace('4', '| 4')
+                nums = nums.replace('7', '| 7')
+                nums += ' |'
+            sep = _print_line_break(len(row), print_box)
+            return f'{nums}\n{sep}\n'
         
-        grid = _print_header(self._data[0]) + _print_rows(self._data)
+        if self._col_count == 9 and self._row_count == 9:
+            print_box = True
+        else:
+            print_box = False
+        grid = _print_header(self._data[0], print_box) + _print_rows(self._data, print_box)
         return grid
     
     def __len__(self):
