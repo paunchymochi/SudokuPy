@@ -371,7 +371,7 @@ class Cells:
             values = self._flatten(values)
         return values
     
-    def get_candidates(self, flatten:False) -> Union[List[List[List[int]]], List[List[int]]]:
+    def get_candidates(self, flatten=False) -> Union[List[List[List[int]]], List[List[int]]]:
         candidates = [[cell.candidates for cell in row] for row in self._data]
         if flatten:
             candidates = self._flatten(candidates)
