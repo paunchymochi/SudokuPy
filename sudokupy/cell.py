@@ -22,6 +22,7 @@ class Candidate:
     def remove(self, values: Union[int, List[int]]):
         if type(values) is int:
             values = [values]
+        values = [value for value in values if value != 0]
         self._validate_values(values)
         self._values = [v for v in self._values if v not in values]
     
