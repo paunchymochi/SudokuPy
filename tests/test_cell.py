@@ -330,6 +330,31 @@ class TestCells:
         for cell in c.data[1]:
             assert cell.candidates == [2]
     
+    def test_candidate(self):
+        cells = Cells()
+        c = cells.candidates
+        assert len(c) == 9
+        for row in c:
+            assert len(row) == 9
+            for cell in c:
+                assert len(cell) == 9
+        
+        cells2 = cells[3]
+        c = cells2.candidates
+        assert len(c) == 1
+        assert len(c[0]) == 9
+        for cell in c[0]:
+            assert len(cell) == 9
+        
+        cells.set_candidates([1, 2, 3])
+        cells3 = cells[3:6, 0:3]
+        c = cells3.candidates
+        assert len(c) == 3
+        for row in c:
+            assert len(row) == 3
+            for cell in c:
+                assert len(cell) == 3
+    
     def test_topleft(self):
         c = Cells()
         assert c.topleft_row == 0
