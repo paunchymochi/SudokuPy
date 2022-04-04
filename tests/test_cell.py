@@ -309,8 +309,17 @@ class TestCells:
     
     def test_remove_candidates(self):
         c = Cells()
-
-        raise NotImplementedError
+        c.remove_candidates([1, 2])
+        for row in c.data:
+            for cell in row:
+                assert len(cell.candidates) == 7
+        
+        c2 = c[0]
+        c2.remove_candidates([3])
+        for cell in c.data[0]:
+            assert len(cell.candidates) == 6
+        for cell in c.data[1]:
+            assert len(cell.candidates) == 7
     
     def test_set_candidates(self):
         raise NotImplementedError
