@@ -320,6 +320,21 @@ class Cells:
         
         cell_values = self._flatten(self.values)
         return all([value in cell_values for value in values])
+    
+    def reset_candidates(self):
+        for row in self._data:
+            for cell in row:
+                cell.reset_candidates()
+
+    def remove_candidates(self, values:Union[int, List[int]]):
+        for row in self._data:
+            for cell in row:
+                cell.remove_candidates(values)
+
+    def set_candidates(self, values:Union[int, List[int]]):
+        for row in self._data:
+            for cell in row:
+                cell.set_candidates(values)
 
     def _make_default_cells(self):
         row_count = 9
