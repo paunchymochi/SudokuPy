@@ -126,7 +126,7 @@ class Board:
     def deduce_box(self, boxrow:int, boxcol:int):
         self._deduce(self.box[boxrow, boxcol])
     
-    def deduce_cell(self, row:int, col:int):
+    def deduce_adjacent(self, row:int, col:int):
         self.deduce_row(row)
         self.deduce_column(col)
         self.deduce_box(row//3, col//3)
