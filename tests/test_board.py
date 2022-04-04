@@ -124,7 +124,22 @@ class TestBoard:
             assert 9 not in candidate
     
     def test_deduce_column(self):
-        raise NotImplementedError
+        b = Board()
+        b.cell[1, 1].values = 5
+        b.deduce_column(1)
+        candidates = b.col[1].get_candidates(flatten=True)
+        for candidate in candidates:
+            assert len(candidate) == 8
+            assert 5 not in candidate
+        
+        b.cell[2, 1].values = 6
+        b.cell[3, 1].values = 7
+        b.cell[1, 8].values = 9
+        candidates = b.col[1].get_candidates(flatten=True)
+        for candidate in candidates:
+            assert len(candidate) == 6
+            assert 6 not in candidate
+            assert 7 not in candidate
     
     def test_deduce_box(self):
         raise NotImplementedError
