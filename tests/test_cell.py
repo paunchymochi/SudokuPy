@@ -296,6 +296,15 @@ class TestCells:
             with pytest.raises(ValueError):
                 c2.set_values(case)
     
+    def test_reset_candidates(self):
+        raise NotImplementedError
+    
+    def test_remove_candidates(self):
+        raise NotImplementedError
+    
+    def test_set_candidates(self):
+        raise NotImplementedError
+    
     def test_topleft(self):
         c = Cells()
         assert c.topleft_row == 0
