@@ -72,7 +72,57 @@ class TestCell:
         
         with pytest.raises(ValueError):
             Cell(0, '0', 0)
-    
+        
+    def test_set_candidates(self):
+        c = Cell(0, 0, 0)
+        assert c.candidates == list(range(1, 10))
+
+        c.set_candidates(1)
+        assert c.candidates == [1]
+
+        c.set_candidates([2])
+        assert c.candidates == [2]
+
+        c.set_candidates([1,2,3])
+        assert c.candidates == [1,2,3]
+
+        with pytest.raises(ValueError):
+            c.set_candidates(0)
+
+    def test_remove_candidates(self):
+        c = Cell(0, 0, 0)
+        assert len(c.candidates) == 9
+
+        c.remove_candidates(1)
+        assert len(c.candidates) == 8
+        assert 1 not in c.candidates
+
+        c.remove_candidates([2])
+        assert len(c.candidates) == 7
+        assert c.candidates == [3,4,5,6,7,8,9]
+
+        c.remove_candidates([1,2,3])
+        assert len(c.candidates) == 6
+        assert c.candidates == [4,5,6,7,8,9]
+
+        c.remove_candidates([1,2,3])
+        assert len(c.candidates) == 6
+        
+        with pytest.raises(ValueError):
+            c.remove_candidates(0)
+
+    def test_candidates(self):
+        c = Cell(0, 0, 0)
+        x = [1,3,5,7,9]
+        c.candidates = x
+        assert c.candidates == x
+
+        c.candidates = 1
+        assert c.candidates == [1]
+
+        with pytest.raises(ValueError):
+            c.candidates = 0
+
     def test_value(self):
         for val in range(10):
             assert Cell(1, 1, val).value == val
@@ -113,7 +163,7 @@ class TestCell:
     def test_repr(self):
         c = Cell(1, 2, 3)
         assert c.__repr__() == '<Cell row:1 column:2 value:3>'
-
+    
 class TestCells:
     def test_constructor(self):
         cells = Cells()
@@ -253,6 +303,11 @@ class TestCells:
         assert c[0].contains([0, 1]) == True
         assert c[0].contains([1, 2, 3]) == True
         assert c[:,1].contains([0, 2]) == True
+
+        with pytest.raises(ValueError):
+            c[0].contains(10)
+        with pytest.raises(ValueError):
+            c[:, 1].contains([['0']])
 
     def test_data(self):
         c1 = Cells()
