@@ -86,7 +86,23 @@ class TestBoard:
             b.cell[0, 10]
     
     def test_reset_candidates(self):
-        raise NotImplementedError
+        b = Board()
+        candidates = b.cells.candidates
+        for row in candidates:
+            for cell in row:
+                assert cell == list(range(1, 10))
+        
+        b.cells.set_candidates([1, 2, 3])
+        candidates = b.cells.candidates
+        for row in candidates:
+            for cell in row:
+                assert cell == [1, 2, 3]
+        
+        b.reset_candidates()
+        candidates = b.cells.candidates
+        for row in candidates:
+            for cell in row:
+                assert cell == list(range(1, 10))
     
     def test_deduce_row(self):
         raise NotImplementedError
