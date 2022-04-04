@@ -6,6 +6,12 @@ class Candidate:
     def __init__(self):
         self._values = self._get_default_values()
     
+    def __repr__(self):
+        return f'<Candidate\n{self.print_grid()}\n>'
+    
+    def __str__(self):
+        return self.print_grid()
+    
     @property
     def values(self) -> List[int]:
         return self._values
@@ -25,6 +31,9 @@ class Candidate:
         self._validate_values(values)
         self._values = values
     
+    def _get_removed(self) -> List[int]:
+        return [num for num in range(1, 10) if num not in self._values]
+    
     def count(self):
         return len(self._values)
 
@@ -32,6 +41,25 @@ class Candidate:
         for value in values:
             if value not in range(1, 10):
                 raise ValueError('cell value must be an integer between 1 and 9')
+    
+    def print_grid(self):
+        numbers = [[1,2,3],[4,5,6],[7,8,9]]
+        grid = '\n'.join([''.join([str(num) for num in row]) for row in numbers])
+        removed_vals = self._get_removed()
+        for removed_val in removed_vals:
+            grid = grid.replace(str(removed_val), '.')
+        return grid
+    
+    def print_list(self):
+        numbers = '123456789'
+        removed_vals = self._get_removed()
+        for removed_val in removed_vals:
+            numbers = numbers.replace(str(removed_val), '.')
+        num_list = []
+        num_list.append(numbers[0:3])
+        num_list.append(numbers[3:6])
+        num_list.append(numbers[6:9])
+        return num_list
 
 class Cell:
     __slots__ = ['_row', '_column', '_value', '_candidates']
@@ -84,6 +112,9 @@ class Cell:
     @property
     def boxcol(self) -> int:
         return self._column // 3
+    
+    def print_candidates(self):
+        return self._candidates.print_list()
     
     def set_value(self, value: int):
         self._validate_value(value)
@@ -187,7 +218,62 @@ class Cells:
     @values.setter
     def values(self, values: Union[int, List[int], List[List[int]]]):
         self.set_values(values)
-    
+
+    def print_candidates(self):
+        def get_candidates():
+            candidates = [[cell.print_candidates() for cell in row] for row in self.data]
+            return candidates
+        
+        def get_row_index():
+            return [row[0].row for row in self.data]
+        
+        def get_col_index():
+            return [cell.column for cell in self.data[0]]
+        
+        def print_header():
+            cols = get_col_index()
+            s = '   '
+            s += ' '.join(f' {col} ' for col in cols) 
+            s += ' '
+            return s
+
+        def print_line_break(top_newline=False, bottom_newline=False):
+            cols = len(get_col_index())
+            s = ''
+            if top_newline:
+                s += '\n'
+            s += '  ' + '-'*(cols*3 + cols + 1)
+            if bottom_newline:
+                s += '\n'
+            return s
+        
+        def print_subrow(candidates, row, subrow, row_index):
+            s = ''
+            candidate_row = candidates[row]
+            candidate_subrow = [cell[subrow] for cell in candidate_row]
+            if subrow == 1:
+                s += f'{row_index} '
+            else:
+                s += '  '
+            s += '|'
+            s += '|'.join(candidate_subrow)
+            s += '|'
+            return s
+        
+        def print_row(row, row_index):
+            s = ''
+            candidates = get_candidates()
+            subrows = [print_subrow(candidates, row, subrow, row_index) for subrow in range(3)]
+            return '\n'.join(subrows)
+
+        s = ''
+        s += print_header()
+        s += print_line_break(True, True)
+        rows = [print_row(row, row_index) for row, row_index in enumerate(get_row_index())]
+        s += print_line_break(True, True).join(rows)
+        s += print_line_break(top_newline=True)
+        return s
+
     def contains(self, values: Union[int, List[int]]) -> bool:
         if type(values) is int:
             values = [values]
