@@ -135,6 +135,7 @@ class TestBoard:
         b.cell[2, 1].values = 6
         b.cell[3, 1].values = 7
         b.cell[1, 8].values = 9
+        b.deduce_column(1)
         candidates = b.col[1].get_candidates(flatten=True)
         for candidate in candidates:
             assert len(candidate) == 6
