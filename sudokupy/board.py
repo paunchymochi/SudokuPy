@@ -93,7 +93,7 @@ class Board:
         return self.cells[row, col]
     
     def reset_candidates(self):
-        raise NotImplementedError
+        self.cells.reset_candidates()
     
     def deduce_row(self, row:int):
         raise NotImplementedError
