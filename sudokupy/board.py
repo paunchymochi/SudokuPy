@@ -3,6 +3,8 @@ try:
 except:
     from .cell import Cell, Cells
 
+from typing import List, Tuple
+
 class Board:
     class _Slice:
         def __init__(self, cells:Cells):
@@ -129,8 +131,30 @@ class Board:
         self.deduce_column(col)
         self.deduce_box(row//3, col//3)
     
-    def resolve_cell(self, row:int, col:int):
-        raise NotImplementedError
+    def resolve(self) -> Tuple[int, int]:
+        candidates = self.cells.get_candidates()
+        resolved_cells = self._resolve_selection(candidates)
+        return resolved_cells
+    
+    def resolve_adjacent(self, row:int, col:int) -> Tuple[int, int]:
+        box_cells = self.box[row//3, col//3]
+        row_cells = self.row[row]
+        col_cells = self.col[col]
 
+        resolved_cells = []
 
+        for cells in [box_cells, row_cells, col_cells]:
+            candidates = cells.get_candidates()
+            resolved_cells.extend(self._resolve_selection(candidates))
+        return resolved_cells
+
+    def _resolve_selection(self, candidates:List[List[List[int]]]) -> Tuple[int, int]:
+        resolved_cells = []
+        for i, row in enumerate(candidates):
+            for j, cell in enumerate(row):
+                if len(cell) == 1:
+                    self.cell[i, j].set_values(cell[0])
+                    self.cell[i, j].set_candidates([])
+                    resolved_cells.append((i, j))
+        return resolved_cells
     
