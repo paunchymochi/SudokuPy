@@ -1,3 +1,4 @@
+from distutils.util import subst_vars
 import pytest
 from ..sudokupy.cell import Cell, Cells, Candidate
 
@@ -18,8 +19,6 @@ class TestCandidate:
         c.remove([1,2,3])
         assert c.count() == 6
 
-        with pytest.raises(ValueError):
-            c.remove(0)
         with pytest.raises(ValueError):
             c.remove(['2'])
 
@@ -109,7 +108,16 @@ class TestCell:
         assert len(c.candidates) == 6
         
         with pytest.raises(ValueError):
-            c.remove_candidates(0)
+            c.remove_candidates('2')
+    
+    def test_reset_candidates(self):
+        c = Cell(0, 0, 0)
+        assert len(c.candidates) == 9
+
+        c.set_candidates([1])
+        assert len(c.candidates) == 1
+        c.reset_candidates()
+        assert len(c.candidates) == 9
 
     def test_candidates(self):
         c = Cell(0, 0, 0)
@@ -122,7 +130,7 @@ class TestCell:
 
         with pytest.raises(ValueError):
             c.candidates = 0
-
+    
     def test_value(self):
         for val in range(10):
             assert Cell(1, 1, val).value == val
@@ -132,7 +140,7 @@ class TestCell:
         
         with pytest.raises(ValueError):
             Cell(0, 0, '0')
-    
+        
     def test_value_setter(self):
         for val in range(10):
             c = Cell(0, 0, 0)
@@ -146,6 +154,13 @@ class TestCell:
         with pytest.raises(ValueError):
             c = Cell(0, 0, 0)
             c.value = '0'
+    
+    def test_print_value(self):
+        cell = Cell(0, 0, 0)
+        assert cell.print_value == '.'
+
+        for val in range(1, 10):
+            assert Cell(1, 1, val).print_value == str(val)
     
     def test_box(self):
         for row in [0, 3, 6]:
@@ -184,7 +199,7 @@ class TestCells:
         str = cells.__str__()
         repr = cells.__repr__()
 
-        assert str.count('\n') == 8 + 2 # 8 between grid, 2 for headers
+        assert str.count('\n') == 8 + 2 + 3 # 8 between grid, 2 for headers, 3 for box
         assert 'rows:9' in repr
         assert 'cols:9' in repr
 
@@ -192,7 +207,7 @@ class TestCells:
         str = cells2.__str__()
         repr = cells2.__repr__()
 
-        assert str.count('\n') == 4 + 2
+        assert str.count('\n') == 4 + 2 # 4 between grid, 2 for headers, no box
         assert 'rows:5' in repr
         assert 'cols:4' in repr
     
@@ -279,6 +294,99 @@ class TestCells:
             with pytest.raises(ValueError):
                 c2.set_values(case)
     
+    def test_reset_candidates(self):
+        c = Cells()
+        for row in c.data:
+            for cell in row:
+                cell.set_candidates(1)
+                assert len(cell.candidates) == 1
+        c.reset_candidates()
+        for row in c.data:
+            for cell in row:
+                assert len(cell.candidates) == 9
+    
+    def test_remove_candidates(self):
+        c = Cells()
+        c.remove_candidates([1, 2])
+        for row in c.data:
+            for cell in row:
+                assert len(cell.candidates) == 7
+        
+        c2 = c[0]
+        c2.remove_candidates([3])
+        for cell in c.data[0]:
+            assert len(cell.candidates) == 6
+        for cell in c.data[1]:
+            assert len(cell.candidates) == 7
+    
+    def test_set_candidates(self):
+        c = Cells()
+        c[0, 0].set_candidates([1,2,3])
+        assert c.data[0][0].candidates == [1, 2, 3]
+
+        c[1].set_candidates(2)
+        for cell in c.data[1]:
+            assert cell.candidates == [2]
+    
+    def test_get_values(self):
+        cells = Cells()
+
+        values = cells.get_values(flatten=False)
+
+        assert len(values) == 9
+        for row in values:
+            assert len(row) == 9
+            for cell in row:
+                assert cell == 0
+        
+        values = cells.get_values(flatten=True)
+
+        assert len(values) == 81
+        for cell in values:
+            assert cell == 0
+
+    def test_get_candidates(self):
+        cells = Cells()
+
+        candidates = cells.get_candidates(flatten=False)
+
+        assert len(candidates) == 9
+        for row in candidates:
+            assert len(row) == 9
+            for cell in row:
+                assert cell == list(range(1, 10))
+        
+        candidates = cells.get_candidates(flatten=True)
+
+        assert len(candidates) == 81
+        for cell in candidates:
+            assert cell == list(range(1, 10))
+    
+    def test_candidate(self):
+        cells = Cells()
+        c = cells.candidates
+        assert len(c) == 9
+        for row in c:
+            assert len(row) == 9
+            for cell in c:
+                assert len(cell) == 9
+        
+        cells2 = cells[3]
+        c = cells2.candidates
+        assert len(c) == 1
+        assert len(c[0]) == 9
+        for cell in c[0]:
+            assert len(cell) == 9
+        
+        cells.set_candidates([1, 2, 3])
+        cells3 = cells[3:6, 0:3]
+        c = cells3.candidates
+        assert len(c) == 3
+        for row in c:
+            assert len(row) == 3
+            for cell in c:
+                assert len(cell) == 3
+    
     def test_topleft(self):
         c = Cells()
         assert c.topleft_row == 0
@@ -341,4 +449,26 @@ class TestCells:
         for invalid_input in invalid_inputs:
             with pytest.raises(ValueError):
                 Cells(invalid_input)
+    
+    def test_print_candidates(self):
+        c = Cells()
+        s = c.print_candidates()
+        substrings = ['123', '456', '789']
+        for substring in substrings:
+            assert s.count(substring) == 81
+        
+        s = c[1].print_candidates()
+        for substring in substrings:
+            assert s.count(substring) == 9
+        
+        s = c[0,0].print_candidates()
+        for substring in substrings:
+            assert s.count(substring) == 1
+        
+        c.data[0][0].remove_candidates([1, 3])
+        s = c.print_candidates()
+        assert s.count('.2.') == 1
+        
+
+
     
