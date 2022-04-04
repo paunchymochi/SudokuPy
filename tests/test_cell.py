@@ -1,3 +1,4 @@
+from distutils.util import subst_vars
 import pytest
 from ..sudokupy.cell import Cell, Cells, Candidate
 
@@ -341,4 +342,26 @@ class TestCells:
         for invalid_input in invalid_inputs:
             with pytest.raises(ValueError):
                 Cells(invalid_input)
+    
+    def test_print_candidates(self):
+        c = Cells()
+        s = c.print_candidates()
+        substrings = ['123', '456', '789']
+        for substring in substrings:
+            assert s.count(substring) == 81
+        
+        s = c[1].print_candidates()
+        for substring in substrings:
+            assert s.count(substring) == 9
+        
+        s = c[0,0].print_candidates()
+        for substring in substrings:
+            assert s.count(substring) == 1
+        
+        c.data[0][0].remove_candidates([1, 3])
+        s = c.print_candidates()
+        assert s.count('.2.') == 1
+        
+
+
     
