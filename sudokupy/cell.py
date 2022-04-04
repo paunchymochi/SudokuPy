@@ -22,6 +22,7 @@ class Candidate:
     def remove(self, values: Union[int, List[int]]):
         if type(values) is int:
             values = [values]
+        values = [value for value in values if value != 0]
         self._validate_values(values)
         self._values = [v for v in self._values if v not in values]
     
@@ -124,6 +125,9 @@ class Cell:
         self._validate_value(value)
         self._value = value
     
+    def reset_candidates(self):
+        self._candidates = Candidate()
+    
     def set_candidates(self, values=Union[int, List[int]]):
         self._candidates.set(values)
     
@@ -137,7 +141,6 @@ class Cell:
     def _validate_value(self, value: int):
         if value not in range(0, 10):
             raise ValueError('cell value must be an integer between 0 and 9')
-
 
 class Cells:
     def __init__(self, _cells:List[List['Cell']]=None):
@@ -238,10 +241,6 @@ class Cells:
         return self._is_sliced
     
     @property
-    def values(self) -> List[List[int]]:
-        return self._get_values()
-    
-    @property
     def topleft_row(self):
         return self._data[0][0].row
     
@@ -249,6 +248,10 @@ class Cells:
     def topleft_column(self):
         return self._data[0][0].column
 
+    @property
+    def values(self) -> List[List[int]]:
+        return self.get_values()
+    
     @values.setter
     def values(self, values: Union[int, List[int], List[List[int]]]):
         self.set_values(values)
@@ -307,7 +310,11 @@ class Cells:
         s += print_line_break(True, True).join(rows)
         s += print_line_break(top_newline=True)
         return s
-
+    
+    @property
+    def candidates(self) -> List[List[List[int]]]:
+        return self.get_candidates()
+    
     def contains(self, values: Union[int, List[int]]) -> bool:
         if type(values) is int:
             values = [values]
@@ -318,6 +325,21 @@ class Cells:
         
         cell_values = self._flatten(self.values)
         return all([value in cell_values for value in values])
+    
+    def reset_candidates(self):
+        for row in self._data:
+            for cell in row:
+                cell.reset_candidates()
+
+    def remove_candidates(self, values:Union[int, List[int]]):
+        for row in self._data:
+            for cell in row:
+                cell.remove_candidates(values)
+
+    def set_candidates(self, values:Union[int, List[int]]):
+        for row in self._data:
+            for cell in row:
+                cell.set_candidates(values)
 
     def _make_default_cells(self):
         row_count = 9
@@ -344,9 +366,17 @@ class Cells:
         for i, value in enumerate(flat_values):
             flat_data[i].set_value(value)
     
-    def _get_values(self):
+    def get_values(self, flatten=False) -> Union[List[List[int]], List[int]]:
         values = [[cell.value for cell in row] for row in self._data]
+        if flatten:
+            values = self._flatten(values)
         return values
+    
+    def get_candidates(self, flatten=False) -> Union[List[List[List[int]]], List[List[int]]]:
+        candidates = [[cell.candidates for cell in row] for row in self._data]
+        if flatten:
+            candidates = self._flatten(candidates)
+        return candidates
 
     def _flatten(self, matrix) -> List:
 

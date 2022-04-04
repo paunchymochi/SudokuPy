@@ -20,8 +20,6 @@ class TestCandidate:
         assert c.count() == 6
 
         with pytest.raises(ValueError):
-            c.remove(0)
-        with pytest.raises(ValueError):
             c.remove(['2'])
 
     def test_set(self):
@@ -110,7 +108,16 @@ class TestCell:
         assert len(c.candidates) == 6
         
         with pytest.raises(ValueError):
-            c.remove_candidates(0)
+            c.remove_candidates('2')
+    
+    def test_reset_candidates(self):
+        c = Cell(0, 0, 0)
+        assert len(c.candidates) == 9
+
+        c.set_candidates([1])
+        assert len(c.candidates) == 1
+        c.reset_candidates()
+        assert len(c.candidates) == 9
 
     def test_candidates(self):
         c = Cell(0, 0, 0)
@@ -123,7 +130,7 @@ class TestCell:
 
         with pytest.raises(ValueError):
             c.candidates = 0
-
+    
     def test_value(self):
         for val in range(10):
             assert Cell(1, 1, val).value == val
@@ -286,6 +293,99 @@ class TestCells:
         for case in [ [1]*10, [1], ['1']*9]:
             with pytest.raises(ValueError):
                 c2.set_values(case)
+    
+    def test_reset_candidates(self):
+        c = Cells()
+        for row in c.data:
+            for cell in row:
+                cell.set_candidates(1)
+                assert len(cell.candidates) == 1
+        c.reset_candidates()
+        for row in c.data:
+            for cell in row:
+                assert len(cell.candidates) == 9
+    
+    def test_remove_candidates(self):
+        c = Cells()
+        c.remove_candidates([1, 2])
+        for row in c.data:
+            for cell in row:
+                assert len(cell.candidates) == 7
+        
+        c2 = c[0]
+        c2.remove_candidates([3])
+        for cell in c.data[0]:
+            assert len(cell.candidates) == 6
+        for cell in c.data[1]:
+            assert len(cell.candidates) == 7
+    
+    def test_set_candidates(self):
+        c = Cells()
+        c[0, 0].set_candidates([1,2,3])
+        assert c.data[0][0].candidates == [1, 2, 3]
+
+        c[1].set_candidates(2)
+        for cell in c.data[1]:
+            assert cell.candidates == [2]
+    
+    def test_get_values(self):
+        cells = Cells()
+
+        values = cells.get_values(flatten=False)
+
+        assert len(values) == 9
+        for row in values:
+            assert len(row) == 9
+            for cell in row:
+                assert cell == 0
+        
+        values = cells.get_values(flatten=True)
+
+        assert len(values) == 81
+        for cell in values:
+            assert cell == 0
+
+    def test_get_candidates(self):
+        cells = Cells()
+
+        candidates = cells.get_candidates(flatten=False)
+
+        assert len(candidates) == 9
+        for row in candidates:
+            assert len(row) == 9
+            for cell in row:
+                assert cell == list(range(1, 10))
+        
+        candidates = cells.get_candidates(flatten=True)
+
+        assert len(candidates) == 81
+        for cell in candidates:
+            assert cell == list(range(1, 10))
+    
+    def test_candidate(self):
+        cells = Cells()
+        c = cells.candidates
+        assert len(c) == 9
+        for row in c:
+            assert len(row) == 9
+            for cell in c:
+                assert len(cell) == 9
+        
+        cells2 = cells[3]
+        c = cells2.candidates
+        assert len(c) == 1
+        assert len(c[0]) == 9
+        for cell in c[0]:
+            assert len(cell) == 9
+        
+        cells.set_candidates([1, 2, 3])
+        cells3 = cells[3:6, 0:3]
+        c = cells3.candidates
+        assert len(c) == 3
+        for row in c:
+            assert len(row) == 3
+            for cell in c:
+                assert len(cell) == 3
     
     def test_topleft(self):
         c = Cells()

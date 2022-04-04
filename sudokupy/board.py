@@ -1,4 +1,9 @@
-from .cell import Cell, Cells
+try:
+    from cell import Cell, Cells
+except:
+    from .cell import Cell, Cells
+
+from typing import List, Tuple
 
 class Board:
     class _Slice:
@@ -68,11 +73,15 @@ class Board:
             return self._cells[key[0], key[1]]
 
     def __init__(self):
-        self.cells = Cells()
+        self._cells = Cells()
         self.row = self.Row(self.cells)
         self.col = self.Col(self.cells)
         self.box = self.Box(self.cells)
         self.cell = self.Cell(self.cells)
+    
+    @property
+    def cells(self) -> Cells:
+        return self._cells
     
     def get_row(self, row:int) -> Cells:
         return self.cells[row]
@@ -87,5 +96,65 @@ class Board:
 
     def get_cell(self, row:int, col:int) -> Cells:
         return self.cells[row, col]
+    
+    def reset_candidates(self):
+        self.cells.reset_candidates()
+    
+    def _deduce(self, cells:Cells):
+        self._validate_deduce_input(cells)
+        values = cells.get_values(flatten=True)
+        candidates = cells.get_candidates(flatten=True)
 
+        values = list(set(values))
+
+        for row in cells.data:
+            for cell in row:
+                cell.remove_candidates(values)
+    
+    def _validate_deduce_input(self, cells:Cells):
+        if len(cells) != 9:
+            raise ValueError('cells must have 9 elements')
+        if not isinstance(cells, Cells):
+            raise TypeError('cells must be instance of Cells')
+    
+    def deduce_row(self, row:int):
+        self._deduce(self.row[row])
+    
+    def deduce_column(self, col:int):
+        self._deduce(self.col[col])
+    
+    def deduce_box(self, boxrow:int, boxcol:int):
+        self._deduce(self.box[boxrow, boxcol])
+    
+    def deduce_adjacent(self, row:int, col:int):
+        self.deduce_row(row)
+        self.deduce_column(col)
+        self.deduce_box(row//3, col//3)
+    
+    def resolve(self) -> Tuple[int, int]:
+        candidates = self.cells.get_candidates()
+        resolved_cells = self._resolve_selection(candidates)
+        return resolved_cells
+    
+    def resolve_adjacent(self, row:int, col:int) -> Tuple[int, int]:
+        box_cells = self.box[row//3, col//3]
+        row_cells = self.row[row]
+        col_cells = self.col[col]
+
+        resolved_cells = []
+
+        for cells in [box_cells, row_cells, col_cells]:
+            candidates = cells.get_candidates()
+            resolved_cells.extend(self._resolve_selection(candidates))
+        return resolved_cells
+
+    def _resolve_selection(self, candidates:List[List[List[int]]]) -> Tuple[int, int]:
+        resolved_cells = []
+        for i, row in enumerate(candidates):
+            for j, cell in enumerate(row):
+                if len(cell) == 1:
+                    self.cell[i, j].set_values(cell[0])
+                    self.cell[i, j].set_candidates([])
+                    resolved_cells.append((i, j))
+        return resolved_cells
     
