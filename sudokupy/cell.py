@@ -240,10 +240,6 @@ class Cells:
         return self._is_sliced
     
     @property
-    def values(self) -> List[List[int]]:
-        return self._get_values()
-    
-    @property
     def topleft_row(self):
         return self._data[0][0].row
     
@@ -251,6 +247,10 @@ class Cells:
     def topleft_column(self):
         return self._data[0][0].column
 
+    @property
+    def values(self) -> List[List[int]]:
+        return self._get_values()
+    
     @values.setter
     def values(self, values: Union[int, List[int], List[List[int]]]):
         self.set_values(values)
@@ -309,7 +309,11 @@ class Cells:
         s += print_line_break(True, True).join(rows)
         s += print_line_break(top_newline=True)
         return s
-
+    
+    @property
+    def candidates(self) -> List[List[List[int]]]:
+        return self._get_candidates()
+    
     def contains(self, values: Union[int, List[int]]) -> bool:
         if type(values) is int:
             values = [values]
@@ -361,9 +365,13 @@ class Cells:
         for i, value in enumerate(flat_values):
             flat_data[i].set_value(value)
     
-    def _get_values(self):
+    def _get_values(self) -> List[List[int]]:
         values = [[cell.value for cell in row] for row in self._data]
         return values
+    
+    def _get_candidates(self) -> List[List[List[int]]]:
+        candidates = [[cell.candidates for cell in row] for row in self._data]
+        return candidates
 
     def _flatten(self, matrix) -> List:
 
