@@ -47,14 +47,14 @@ class Candidate:
         grid = '\n'.join([''.join([str(num) for num in row]) for row in numbers])
         removed_vals = self._get_removed()
         for removed_val in removed_vals:
-            grid = grid.replace(str(removed_val), ' ')
+            grid = grid.replace(str(removed_val), '.')
         return grid
     
     def print_list(self):
         numbers = '123456789'
         removed_vals = self._get_removed()
         for removed_val in removed_vals:
-            numbers = numbers.replace(str(removed_val), ' ')
+            numbers = numbers.replace(str(removed_val), '.')
         num_list = []
         num_list.append(numbers[0:3])
         num_list.append(numbers[3:6])
