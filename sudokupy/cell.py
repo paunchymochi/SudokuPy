@@ -249,7 +249,7 @@ class Cells:
 
     @property
     def values(self) -> List[List[int]]:
-        return self._get_values()
+        return self.get_values()
     
     @values.setter
     def values(self, values: Union[int, List[int], List[List[int]]]):
@@ -312,7 +312,7 @@ class Cells:
     
     @property
     def candidates(self) -> List[List[List[int]]]:
-        return self._get_candidates()
+        return self.get_candidates()
     
     def contains(self, values: Union[int, List[int]]) -> bool:
         if type(values) is int:
@@ -365,13 +365,13 @@ class Cells:
         for i, value in enumerate(flat_values):
             flat_data[i].set_value(value)
     
-    def _get_values(self, flatten=False) -> Union[List[List[int]], List[int]]:
+    def get_values(self, flatten=False) -> Union[List[List[int]], List[int]]:
         values = [[cell.value for cell in row] for row in self._data]
         if flatten:
             values = self._flatten(values)
         return values
     
-    def _get_candidates(self, flatten:False) -> Union[List[List[List[int]]], List[List[int]]]:
+    def get_candidates(self, flatten:False) -> Union[List[List[List[int]]], List[List[int]]]:
         candidates = [[cell.candidates for cell in row] for row in self._data]
         if flatten:
             candidates = self._flatten(candidates)
