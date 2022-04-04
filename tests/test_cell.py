@@ -133,7 +133,7 @@ class TestCell:
         
         with pytest.raises(ValueError):
             Cell(0, 0, '0')
-    
+        
     def test_value_setter(self):
         for val in range(10):
             c = Cell(0, 0, 0)
@@ -147,6 +147,13 @@ class TestCell:
         with pytest.raises(ValueError):
             c = Cell(0, 0, 0)
             c.value = '0'
+    
+    def test_print_value(self):
+        cell = Cell(0, 0, 0)
+        assert cell.print_value == '.'
+
+        for val in range(1, 10):
+            assert Cell(1, 1, val).print_value == str(val)
     
     def test_box(self):
         for row in [0, 3, 6]:
@@ -185,7 +192,7 @@ class TestCells:
         str = cells.__str__()
         repr = cells.__repr__()
 
-        assert str.count('\n') == 8 + 2 # 8 between grid, 2 for headers
+        assert str.count('\n') == 8 + 2 + 3 # 8 between grid, 2 for headers, 3 for box
         assert 'rows:9' in repr
         assert 'cols:9' in repr
 
@@ -193,7 +200,7 @@ class TestCells:
         str = cells2.__str__()
         repr = cells2.__repr__()
 
-        assert str.count('\n') == 4 + 2
+        assert str.count('\n') == 4 + 2 # 4 between grid, 2 for headers, no box
         assert 'rows:5' in repr
         assert 'cols:4' in repr
     
