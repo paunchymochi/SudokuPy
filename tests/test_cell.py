@@ -20,8 +20,6 @@ class TestCandidate:
         assert c.count() == 6
 
         with pytest.raises(ValueError):
-            c.remove(0)
-        with pytest.raises(ValueError):
             c.remove(['2'])
 
     def test_set(self):
@@ -110,7 +108,7 @@ class TestCell:
         assert len(c.candidates) == 6
         
         with pytest.raises(ValueError):
-            c.remove_candidates(0)
+            c.remove_candidates('2')
     
     def test_reset_candidates(self):
         c = Cell(0, 0, 0)
