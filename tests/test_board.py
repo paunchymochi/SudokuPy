@@ -105,7 +105,23 @@ class TestBoard:
                 assert cell == list(range(1, 10))
     
     def test_deduce_row(self):
-        raise NotImplementedError
+        b = Board()
+        b.cell[1, 1].values = 5
+        b.deduce_row(1)
+        candidates = b.row[1].get_candidates(flatten=True)
+        for candidate in candidates:
+            assert len(candidate) == 8
+            assert 5 not in candidate
+        
+        b.cell[1, 8].values = 6
+        b.cell[1, 7].values = 9
+        b.deduce_row(1)
+        candidattes = b.row[1].get_candidates(flatten=True)
+        for candidate in candidates:
+            assert len(candidate) == 6
+            assert 5 not in candidate
+            assert 6 not in candidate
+            assert 9 not in candidate
     
     def test_deduce_column(self):
         raise NotImplementedError
