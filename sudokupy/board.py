@@ -87,5 +87,24 @@ class Board:
 
     def get_cell(self, row:int, col:int) -> Cells:
         return self.cells[row, col]
+    
+    def reset_candidates(self):
+        raise NotImplementedError
+    
+    def deduce_row(self, row:int):
+        raise NotImplementedError
+    
+    def deduce_column(self, col:int):
+        raise NotImplementedError
+    
+    def deduce_box(self, boxrow:int, boxcol:int):
+        raise NotImplementedError
+    
+    def deduce_cell(self, row:int, col:int):
+        raise NotImplementedError
+    
+    def resolve_cell(self, row:int, col:int):
+        raise NotImplementedError
+
 
     
