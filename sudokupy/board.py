@@ -107,7 +107,7 @@ class Board:
         resolved_cells = self._resolve_selection(candidates)
         return resolved_cells
     
-    def resolve_adjacent(self, row:int, col:int) -> Tuple[int, int]:
+    def resolve_adjacent(self, row:int, col:int) -> List[Tuple[int, int]]:
         box_cells = self.box[row//3, col//3]
         row_cells = self.row[row]
         col_cells = self.col[col]
@@ -119,7 +119,7 @@ class Board:
             resolved_cells.extend(self._resolve_selection(candidates))
         return resolved_cells
 
-    def _resolve_selection(self, candidates:List[List[List[int]]]) -> Tuple[int, int]:
+    def _resolve_selection(self, candidates:List[List[List[int]]]) -> List[Tuple[int, int]]:
         resolved_cells = []
         for i, row in enumerate(candidates):
             for j, cell in enumerate(row):
