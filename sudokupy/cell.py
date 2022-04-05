@@ -174,7 +174,7 @@ class Cells:
             return ' '.join(rows_str)
         
         def _print_row_index(row: List[Cell]):
-            return f'{row[0].row + 1} |'
+            return f'{row[0].row} |'
         
         def _print_rows(data: List[List[Cell]], print_box:bool):
             rows = [_print_row_index(row)+_print_row_grid(row, print_box) for row in data]
@@ -196,13 +196,13 @@ class Cells:
             return sep
         
         def _print_header(row: List[Cell], print_box:bool):
-            nums = [cell.column + 1 for cell in row]
+            nums = [cell.column for cell in row]
             nums = [str(num) for num in nums]
             nums = '   ' + ' '.join(nums)
             if print_box:
-                nums = nums.replace(' 1', '|1')
-                nums = nums.replace('4', '| 4')
-                nums = nums.replace('7', '| 7')
+                nums = nums.replace(' 0', '|0')
+                nums = nums.replace('3', '| 3')
+                nums = nums.replace('6', '| 6')
                 nums += ' |'
             sep = _print_line_break(len(row), print_box)
             return f'{nums}\n{sep}\n'
