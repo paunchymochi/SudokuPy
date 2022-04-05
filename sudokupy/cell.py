@@ -29,6 +29,7 @@ class Candidate:
     def set(self, values: Union[int, List[int]]):
         if type(values) is int:
             values = [values]
+        values = list(set(values))
         self._validate_values(values)
         self._values = values
     
