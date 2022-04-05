@@ -134,10 +134,6 @@ class CompanionDeducer:
             values.remove(0)
         return 8 - len(values)
 
-    def _deduce_candidate_sets(self, cells:Cells):
-        candidates = cells.get_candidates(flatten=True)
-        candidate_sets = self._get_candidate_sets(candidates)
-
 class Deducer:
     def __init__(self, cells: Cells):
         self.cells = cells
