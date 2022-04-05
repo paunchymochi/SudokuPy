@@ -1,7 +1,6 @@
 import sys
 sys.path.append('..')
 from sudokupy.cell import Cell, Cells, Candidate
-from distutils.util import subst_vars
 import pytest
 
 class TestCandidate:
