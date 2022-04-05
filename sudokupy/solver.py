@@ -11,11 +11,11 @@ def _validate_cells(cells:Cells):
         print(f'type: {type(cells)}')
         raise TypeError('cells must be instance of Cells')
     
-class _CandidateSet:
+class _Companion:
     def __init__(self, cell:Cells, other=None):
         self.positions = []
         self.candidates = []
-        self.candidate_set = []
+        self.companion = []
         self.skip = True
         self.valid = False
         self._init_other(other)
@@ -24,7 +24,7 @@ class _CandidateSet:
             self.valid = self._is_valid()
     
     def __repr__(self):
-        return f'<_CandidateSet positions:{self.positions} candidate_set:{self.candidate_set}>'
+        return f'<_CandidateSet positions:{self.positions} companion:{self.companion}>'
     
     def __eq__(self, other):
         return len(self) == len(other) and all([pos in other.positions for pos in self.positions])
@@ -33,7 +33,7 @@ class _CandidateSet:
         return len(self.positions)
     
     def _is_valid(self) -> bool:
-        return len(self.positions) == len(self.candidate_set)
+        return len(self.positions) == len(self.companion)
     
     def _init_other(self, other):
         if other is None:
@@ -42,7 +42,7 @@ class _CandidateSet:
             raise TypeError()
         self.positions = other.positions.copy()
         self.candidates = other.candidates.copy()
-        self.candidate_set = other.candidate_set.copy()
+        self.companion = other.companion.copy()
     
     def _add(self, cell:Cells) -> bool:
         pos = self._get_position(cell)
@@ -56,7 +56,7 @@ class _CandidateSet:
 
         self.positions.append(pos)
         self.candidates.append(candidates)
-        self.candidate_set = list(set(self.candidate_set+candidates))
+        self.companion = list(set(self.companion+candidates))
 
         return True
     
@@ -66,7 +66,7 @@ class _CandidateSet:
     def _get_candidates(self, cell:Cell):
         return cell.candidates
 
-class _CandidateSets:
+class CompanionDeducer:
 
     def __init__(self, cells:Cells):
         _validate_cells(cells)
@@ -76,49 +76,49 @@ class _CandidateSets:
 
     def _deduce(self):
         max_level = self._get_max_level(self.cells)
-        self.sets = {}
-        self.valid_sets = []
+        self.companions = {}
+        self.valid_companions = []
         self.level = 1
 
-        self.sets[0] = [None]
+        self.companions[0] = [None]
 
-        while self.level <= max_level and len(self.valid_sets) == 0:
-            self.sets[self.level] = self._combine_candidate_sets(self.cells, self.sets[self.level-1])
+        while self.level <= max_level and len(self.valid_companions) == 0:
+            self.companions[self.level] = self._make_companions(self.cells, self.companions[self.level-1])
             self.level += 1
         
     def eliminate(self):
         affected_positions = []
-        for valid_set in self.valid_sets:
-            result = self._eliminate_set(valid_set)
+        for valid_companion in self.valid_companions:
+            result = self._eliminate_companion(valid_companion)
             affected_positions.extend(result)
         self.affected_positions = affected_positions
         return affected_positions
         
-    def _eliminate_set(self, valid_set:_CandidateSet):
+    def _eliminate_companion(self, valid_companion:_Companion):
         affected_positions = []
         for row in self.cells.data:
             for cell in row:
                 position = (cell.row, cell.column)
-                if position not in valid_set.positions:
+                if position not in valid_companion.positions:
                     affected_positions.append((cell.row, cell.column))
-                    cell.remove_candidates(valid_set.candidate_set)
+                    cell.remove_candidates(valid_companion.companion)
         return affected_positions
         
-    def _combine_candidate_sets(self, cells:Cells, sets:List[_CandidateSet]=None) -> List[_CandidateSet]:
-        if sets is None:
-            sets = [None]
-        new_sets = []
+    def _make_companions(self, cells:Cells, companions:List[_Companion]=None) -> List[_Companion]:
+        if companions is None:
+            companions = [None]
+        new_companions = []
         cells_data = self._flatten_cells_data(cells.data)
-        for other_set in sets:
+        for other_companion in companions:
             for row in cells.data:
                 for cell in row:
-                    candidate_set = _CandidateSet(cell, other_set)
-                    if candidate_set not in new_sets:
-                        if not candidate_set.skip:
-                            new_sets.append(candidate_set)
-                        if candidate_set.valid:
-                            self.valid_sets.append(candidate_set)
-        return new_sets
+                    companion = _Companion(cell, other_companion)
+                    if companion not in new_companions:
+                        if not companion.skip:
+                            new_companions.append(companion)
+                        if companion.valid:
+                            self.valid_companions.append(companion)
+        return new_companions
     
     def _flatten_cells_data(self, cells_data):
         flattened = []
