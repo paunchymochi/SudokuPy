@@ -1,7 +1,6 @@
-try:
-    from cell import Cell, Cells
-except:
-    from .cell import Cell, Cells
+import sys
+sys.path.append('..')
+from sudokupy.cell import Cells
 
 from typing import List, Tuple
 

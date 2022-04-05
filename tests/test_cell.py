@@ -1,6 +1,8 @@
+import sys
+sys.path.append('..')
+from sudokupy.cell import Cell, Cells, Candidate
 from distutils.util import subst_vars
 import pytest
-from ..sudokupy.cell import Cell, Cells, Candidate
 
 class TestCandidate:
     def test_constructor(self):

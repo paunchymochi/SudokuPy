@@ -1,4 +1,6 @@
-from ..sudokupy.board import Board
+import sys
+sys.path.append('..')
+from sudokupy.board import Board
 import pytest
 
 class TestBoard:
