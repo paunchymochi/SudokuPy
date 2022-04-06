@@ -218,8 +218,8 @@ class LineBoxDeducer(_BaseDeducer):
         return counts
     
     def _get_boxes(self) -> List[Cells]:
-        row = self.row
-        col = self.col
+        row = self._row
+        col = self._col
         rows = []
         cols = []
         toplefts = [0, 3, 6]
@@ -245,8 +245,8 @@ class LineBoxDeducer(_BaseDeducer):
         return candidate_set
     
     def _get_line(self) -> Cells:
-        row = self.row
-        col = self.col
+        row = self._row
+        col = self._col
 
         if row is not None:
             line = self._cells[row]
