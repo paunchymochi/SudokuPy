@@ -161,6 +161,22 @@ class LineBoxDeducer:
                 boxes.append(self.cells[r:r+3, c:c+3])
         return boxes
 
+class ValueDeducer:
+    def __init__(self):
+        pass
+
+    def eliminate(self, cells:Cells):
+        values = cells.get_values(flatten=True)
+        values = list(set(values))
+        if 0 in values:
+            values.remove(0)
+
+        for row in cells.data:
+            for cell in row:
+                cell.remove_candidates(values)
+                if cell.value != 0:
+                    cell.set_candidates([])
+
 class Deducer:
     def __init__(self, cells: Cells):
         self.cells = cells
