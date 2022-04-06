@@ -331,6 +331,10 @@ class Deducer:
         operations['value_deducer'] = self.value_deducer.print_pending_operations()
         operations['linebox_deducer'] = self.linebox_deducer.print_pending_operations()
         operations['companion_deducer'] = self.companion_deducer.print_pending_operations()
+    
+    @property
+    def pending_operations(self):
+        return self.value_deducer.pending_operations + self.linebox_deducer.pending_operations + self.companion_deducer.pending_operations
 
     def deduce_row(self, row:int, deduce_value=True, deduce_linebox=True, deduce_companion=True):
         cells = self.cells[row]
@@ -350,12 +354,15 @@ class Deducer:
         self.deduce_box(row//3, col//3)
     
     def deduce(self):
-        for i in range(9):
-            self.deduce_row(i)
-            self.deduce_column(i)
-        for i in range(3):
-            for j in range(3):
-                self.deduce_box(i, j)
+        for flag in [[True, False, False], [False, True, False], [False, False, True]]:
+            for i in range(9):
+                self.deduce_row(i, flag[0], flag[1], flag[2])
+                self.deduce_column(i, flag[0], flag[1], flag[2])
+            for i in range(3):
+                for j in range(3):
+                    self.deduce_box(i, j, flag[0], flag[2])
+            if self.pending_operations > 0:
+                return
     
     def eliminate(self):
         self.value_deducer.eliminate()
