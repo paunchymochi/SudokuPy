@@ -139,7 +139,7 @@ class LineBoxDeducer:
     def __init__(self, cells:Cells):
         self.cells = cells
 
-    def _get_boxes(self, row=None, col=None):
+    def _get_boxes(self, row=None, col=None) -> List[Cells]:
         rows = []
         cols = []
         toplefts = [0, 3, 6]
@@ -164,7 +164,7 @@ class LineBoxDeducer:
         candidate_set = list(set(candidate_set))
         return candidate_set
     
-    def _get_line(self, row:int, col:int):
+    def _get_line(self, row:int, col:int) -> Cells:
         if row is not None:
             line = self.cells[row]
         elif col is not None:
@@ -183,7 +183,9 @@ class LineBoxDeducer:
             line_segments.append(cells[i:i+3])
         return line_segments
     
-    def _get_candidate_segment_counts(self, line_segments:List[List[Cells]], line_candidates:List[int]):
+    def _get_candidate_segment_counts(self, 
+            line_segments:List[List[Cells]], 
+            line_candidates:List[int]) -> 'dict[int, dict[int, List[int]]]':
         counts = {}
         for candidate in line_candidates:
             counts[candidate] = {'count':0, 'segment_index':[]}
