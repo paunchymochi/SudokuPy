@@ -138,6 +138,7 @@ class CompanionDeducer:
 class LineBoxDeducer:
     def __init__(self, cells:Cells):
         self.cells = cells
+
     def _get_boxes(self, row=None, col=None):
         rows = []
         cols = []
@@ -171,10 +172,36 @@ class LineBoxDeducer:
         else:
             raise ValueError('must provide either row or col')
         return line
+    
+    def _get_line_segments(self, line:Cells) -> List[List[Cells]]:
+        cells = []
+        for row in line.data:
+            for cell in row:
+                cells.append(row)
+        line_segments = []
+        for i in [0, 3, 6]:
+            line_segments.append(cells[i:i+3])
+        return line_segments
+    
+    def _get_candidate_segment_counts(self, line_segments:List[List[Cells]], line_candidates:List[int]):
+        counts = {}
+        for candidate in line_candidates:
+            counts[candidate] = 0
+            for segment in line_segments:
+                if any([candidate in cell.candidates for cell in segment]):
+                    counts[candidate] += 1
+        return counts
 
     def deduce(self, row:int=None, col:int=None):
-        self._line = self._get_line(row, col)
-        self._boxes = self._get_boxes(row, col)
+        line = self._get_line(row, col)
+        boxes = self._get_boxes(row, col)
+        line_candidates = self._get_line_candidates(line)
+        line_segments = self._get_line_segments(line)
+        candidate_segment_counts = self._get_candidate_segment_counts(line_segments, line_candidates)
+
+        
+
+
     
     def eliminate(self):
         raise NotImplementedError
