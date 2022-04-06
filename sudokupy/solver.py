@@ -77,13 +77,13 @@ class _BaseDeducer:
         for operation in self._operations:
             operation.cell.remove_candidates(operation.candidates_to_remove)
             self._add_affected_cell(operation.cell)
-        self._clear_operations()
+        self.clear_operations()
 
     def _add_operation(self, cell:Cell, remove_candidates:List[int]=None, set_candidates:List[int]=None):
         operation = _DeduceOperation(cell, remove_candidates, set_candidates)
         self._operations.append(operation)
 
-    def _clear_operations(self):
+    def clear_operations(self):
         self._operations = []
 
     def _add_affected_cell(self, cell:Cell):
