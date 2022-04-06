@@ -75,34 +75,35 @@ class CompanionDeducer:
     def __init__(self):
         self.sliced_cells:Cells=None
         self.affected_positions = []
+        self._valid_companions = []
     
     def print_pending_operations(self):
         operations = {}
-        operations['companions'] = self.valid_companions
+        operations['companions'] = self._valid_companions
         return _get_pending_operations_message(operations)
     
     @property
     def pending_operations(self) -> int:
-        return len(self.valid_companions)
+        return len(self._valid_companions)
 
     def deduce(self, sliced_cells:Cells):
         self.sliced_cells = sliced_cells
         self.affected_positions = []
 
         max_level = self._get_max_level(self.sliced_cells)
-        self.companions = {}
-        self.valid_companions = []
-        self.level = 1
+        self._companions = {}
+        self._valid_companions = []
+        level = 1
 
-        self.companions[0] = [None]
+        self._companions[0] = [None]
 
-        while self.level <= max_level and len(self.valid_companions) == 0:
-            self.companions[self.level] = self._make_companions(self.sliced_cells, self.companions[self.level-1])
-            self.level += 1
+        while level <= max_level and len(self._valid_companions) == 0:
+            self._companions[level] = self._make_companions(self.sliced_cells, self._companions[level-1])
+            level += 1
         
     def eliminate(self):
         affected_positions = []
-        for valid_companion in self.valid_companions:
+        for valid_companion in self._valid_companions:
             result = self._eliminate_companion(valid_companion)
             affected_positions.extend(result)
         self.affected_positions = affected_positions
@@ -131,7 +132,7 @@ class CompanionDeducer:
                         if not companion.skip:
                             new_companions.append(companion)
                         if companion.valid:
-                            self.valid_companions.append(companion)
+                            self._valid_companions.append(companion)
         return new_companions
     
     def _flatten_cells_data(self, cells_data):
@@ -151,6 +152,7 @@ class CompanionDeducer:
 class LineBoxDeducer:
     def __init__(self, cells:Cells):
         self._cells = cells
+        self._elimination_cells = []
     
     def print_pending_operations(self):
         operations = {}
@@ -262,6 +264,8 @@ class ValueDeducer:
     def __init__(self):
         self.sliced_cells:Cells = None
         self.affected_positions = []
+        self._cells_with_assigned_candidates = []
+        self._cells_with_values = []
     
     @property
     def pending_operations(self) -> int:
@@ -311,6 +315,12 @@ class Deducer:
         self.value_deducer = ValueDeducer()
         self.companion_deducer = CompanionDeducer()
         self.linebox_deducer = LineBoxDeducer(cells)
+    
+    def print_pending_operations(self):
+        operations = {}
+        operations['value_deducer'] = self.value_deducer.print_pending_operations()
+        operations['linebox_deducer'] = self.linebox_deducer.print_pending_operations()
+        operations['companion_deducer'] = self.companion_deducer.print_pending_operations()
 
     def deduce_row(self, row:int):
         self._deduce_cells(self.cells[row])
@@ -342,8 +352,10 @@ class Deducer:
     def _deduce_cells(self, sliced_cells:Cells):
         _validate_cells(sliced_cells)
         self._deduce_values(sliced_cells)
-        self._deduce_lineboxes(sliced_cells)
-        self._deduce_companions(sliced_cells)
+        if self.value_deducer.pending_operations == 0:
+            self._deduce_lineboxes(sliced_cells)
+            if self.linebox_deducer.pending_operations == 0:
+                self._deduce_companions(sliced_cells)
     
     def _deduce_values(self, sliced_cells:Cells):
         self.value_deducer.deduce(sliced_cells)
