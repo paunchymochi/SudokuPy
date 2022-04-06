@@ -169,10 +169,12 @@ class LineBoxDeducer:
 class ValueDeducer:
     def __init__(self):
         self.sliced_cells:Cells = None
+        self.affected_positions = []
 
     def deduce(self, sliced_cells:Cells):
         _validate_cells(sliced_cells)
         self.sliced_cells = sliced_cells
+        self.affected_positions = []
 
     def eliminate(self):
         values = self.sliced_cells.get_values(flatten=True)
@@ -182,9 +184,14 @@ class ValueDeducer:
 
         for row in self.sliced_cells.data:
             for cell in row:
-                cell.remove_candidates(values)
+                candidates = cell.candidates
+                if any([value in candidates for value in values]):
+                    cell.remove_candidates(values)
+                    self.affected_positions.append((cell.row, cell.column))
+
                 if cell.value != 0:
                     cell.set_candidates([])
+                    self.affected_positions.append((cell.row, cell.column))
 
 class Deducer:
     def __init__(self, cells: Cells):
