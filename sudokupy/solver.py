@@ -85,20 +85,22 @@ class CompanionDeducer:
     @property
     def pending_operations(self) -> int:
         return len(self._valid_companions)
+    
+    def clear_pending_operations(self):
+        self._valid_companions = []
 
     def deduce(self, sliced_cells:Cells):
         self.sliced_cells = sliced_cells
         self.affected_positions = []
 
         max_level = self._get_max_level(self.sliced_cells)
-        self._companions = {}
-        self._valid_companions = []
+        companions = {}
         level = 1
 
-        self._companions[0] = [None]
+        companions[0] = [None]
 
         while level <= max_level and len(self._valid_companions) == 0:
-            self._companions[level] = self._make_companions(self.sliced_cells, self._companions[level-1])
+            companions[level] = self._make_companions(self.sliced_cells, companions[level-1])
             level += 1
         
     def eliminate(self):
@@ -107,6 +109,7 @@ class CompanionDeducer:
             result = self._eliminate_companion(valid_companion)
             affected_positions.extend(result)
         self.affected_positions = affected_positions
+        self.clear_pending_operations()
         return affected_positions
         
     def _eliminate_companion(self, valid_companion:_Companion):
@@ -158,6 +161,9 @@ class LineBoxDeducer:
         operations = {}
         operations['cells with eliminations'] = self._elimination_cells
         return _get_pending_operations_message(operations)
+    
+    def clear_pending_operations(self):
+        self._elimination_cells = []
     
     @property
     def pending_operations(self) -> int:
@@ -258,6 +264,7 @@ class LineBoxDeducer:
             for cell in cells:
                 cell.remove_candidates(candidate)
                 self.affected_positions.append((cell.row, cell.column))
+        self.clear_pending_operations()
         return self.affected_positions
 
 class ValueDeducer:
@@ -270,6 +277,10 @@ class ValueDeducer:
     @property
     def pending_operations(self) -> int:
         return len(self._cells_with_assigned_candidates) + len(self._cells_with_values)
+    
+    def clear_pending_operations(self):
+        self._cells_with_assigned_candidates = []
+        self._cells_with_values = []
     
     def print_pending_operations(self):
         operations = {}
@@ -288,8 +299,6 @@ class ValueDeducer:
         _validate_cells(sliced_cells)
         self.sliced_cells = sliced_cells
         self.affected_positions = []
-        self._cells_with_assigned_candidates:List[Cell] = []
-        self._cells_with_values:List[Cell] = []
         self._values = self._get_values(sliced_cells)
 
         for row in self.sliced_cells.data:
@@ -307,6 +316,7 @@ class ValueDeducer:
         for cell in self._cells_with_values:
             cell.set_candidates([])
             self.affected_positions.append((cell.row, cell.column))
+        self.clear_pending_operations()
         return self.affected_positions
 
 class Deducer:
@@ -322,14 +332,17 @@ class Deducer:
         operations['linebox_deducer'] = self.linebox_deducer.print_pending_operations()
         operations['companion_deducer'] = self.companion_deducer.print_pending_operations()
 
-    def deduce_row(self, row:int):
-        self._deduce_cells(self.cells[row])
+    def deduce_row(self, row:int, deduce_value=True, deduce_linebox=True, deduce_companion=True):
+        cells = self.cells[row]
+        self._deduce_cells(cells, deduce_value, deduce_linebox, deduce_companion)
     
-    def deduce_column(self, col:int):
-        self._deduce_cells(self.cells[:, col])
+    def deduce_column(self, col:int, deduce_value=True, deduce_linebox=True, deduce_companion=True):
+        cells = self.cells[:, col]
+        self._deduce_cells(cells, deduce_value, deduce_linebox, deduce_companion)
     
-    def deduce_box(self, boxrow:int, boxcol:int):
-        self._deduce_cells(self.cells[boxrow*3:boxrow*3+3,boxcol*3:boxcol*3+3])
+    def deduce_box(self, boxrow:int, boxcol:int, deduce_value=True, deduce_companion=True):
+        cells = self.cells[boxrow*3:boxrow*3+3,boxcol*3:boxcol*3+3]
+        self._deduce_cells(cells, deduce_value=deduce_value, deduce_linebox=False, deduce_companion=deduce_companion)
     
     def deduce_adjacent(self, row:int, col:int):
         self.deduce_row(row)
@@ -349,13 +362,14 @@ class Deducer:
         self.linebox_deducer.eliminate()
         self.companion_deducer.eliminate()
 
-    def _deduce_cells(self, sliced_cells:Cells):
+    def _deduce_cells(self, sliced_cells:Cells, deduce_value=False, deduce_linebox=False, deduce_companion=False):
         _validate_cells(sliced_cells)
-        self._deduce_values(sliced_cells)
-        if self.value_deducer.pending_operations == 0:
+        if deduce_value:
+            self._deduce_values(sliced_cells)
+        if deduce_linebox:
             self._deduce_lineboxes(sliced_cells)
-            if self.linebox_deducer.pending_operations == 0:
-                self._deduce_companions(sliced_cells)
+        if deduce_companion:
+            self._deduce_companions(sliced_cells)
     
     def _deduce_values(self, sliced_cells:Cells):
         self.value_deducer.deduce(sliced_cells)
