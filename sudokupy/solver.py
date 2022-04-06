@@ -170,28 +170,39 @@ class ValueDeducer:
     def __init__(self):
         self.sliced_cells:Cells = None
         self.affected_positions = []
+    
+    def _get_values(self, sliced_cells:Cells):
+        values = sliced_cells.get_values(flatten=True)
+        values = list(set(values))
+        if 0 in values:
+            values.remove(0)
+        return values
+        
 
     def deduce(self, sliced_cells:Cells):
         _validate_cells(sliced_cells)
         self.sliced_cells = sliced_cells
         self.affected_positions = []
-
-    def eliminate(self):
-        values = self.sliced_cells.get_values(flatten=True)
-        values = list(set(values))
-        if 0 in values:
-            values.remove(0)
+        self._cells_with_assigned_candidates:List[Cell] = []
+        self._cells_with_values:List[Cell] = []
+        self._values = self._get_values(sliced_cells)
 
         for row in self.sliced_cells.data:
             for cell in row:
                 candidates = cell.candidates
-                if any([value in candidates for value in values]):
-                    cell.remove_candidates(values)
-                    self.affected_positions.append((cell.row, cell.column))
-
+                if any([value in candidates for value in self._values]):
+                    self._cells_with_assigned_candidates.append(cell)
                 if cell.value != 0:
-                    cell.set_candidates([])
-                    self.affected_positions.append((cell.row, cell.column))
+                    self._cells_with_values.append(cell)
+
+    def eliminate(self):
+        for cell in self._cells_with_assigned_candidates:
+            cell.remove_candidates(self._values)
+            self.affected_positions.append((cell.row, cell.column))
+        for cell in self._cells_with_values:
+            cell.set_candidates([])
+            self.affected_positions.append((cell.row, cell.column))
+        return self.affected_positions
 
 class Deducer:
     def __init__(self, cells: Cells):
