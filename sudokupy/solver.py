@@ -215,23 +215,35 @@ class Deducer:
             for j in range(3):
                 self.deduce_box(i, j)
 
-    def _deduce_cells(self, cells:Cells):
-        _validate_cells(cells)
-        self._eliminate_values(cells)
-        self._eliminate_sets(cells)
+    def _deduce_cells(self, sliced_cells:Cells):
+        _validate_cells(sliced_cells)
+        self._eliminate_values(sliced_cells)
+        self._eliminate_companions(sliced_cells)
+        self._eliminate_lineboxes(sliced_cells)
     
-    def _eliminate_values(self, cells:Cells):
-        values = cells.get_values(flatten=True)
-        values = list(set(values))
+    def _eliminate_values(self, sliced_cells:Cells):
+        self.value_deducer.deduce(sliced_cells)
+    
+    def _eliminate_companions(self, sliced_cells:Cells):
+        self.companion_deducer.deduce(sliced_cells)
+    
+    def _eliminate_lineboxes(self, sliced_cells:Cells):
+        row_count = sliced_cells.row_count
+        col_count = sliced_cells.col_count
 
-        for row in cells.data:
-            for cell in row:
-                cell.remove_candidates(values)
-                if cell.value != 0:
-                    cell.set_candidates([])
-    
-    def _eliminate_sets(self, cells:Cells):
-        candidate_sets = _CandidateSets(cells)
-        candidate_sets.eliminate()
+        if row_count == 9:
+            row = sliced_cells.topleft_row
+        else:
+            row = None
+        if col_count == 9:
+            col = sliced_cells.topleft_column
+        else:
+            col = None
+        
+        if row is None and col is None:
+            return
+
+        self.linebox_deducer.deduce(row, col)
+        self.linebox_deducer.eliminate()
 
     
