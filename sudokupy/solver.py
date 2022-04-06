@@ -22,6 +22,14 @@ class DeduceOperation:
         self._cell = cell
         self._candidates_to_remove = self._get_candidates_to_remove(remove_candidates, set_candidates)
     
+    @property
+    def cell(self):
+        return self._cell
+    
+    @property
+    def candidates_to_remove(self):
+        return self._candidates_to_remove
+
     def _get_candidates_to_remove(self, remove_candidates:List[int]=None, set_candidates:List[int]=None):
         if remove_candidates is not None:
             if type(remove_candidates) is int:
