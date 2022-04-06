@@ -279,7 +279,7 @@ class ValueDeducer:
         return len(self._cells_with_assigned_candidates) + len(self._cells_with_values)
     
     def clear_pending_operations(self):
-        self._cells_with_assigned_candidates = []
+        self._cells_with_assigned_candidates = {}
         self._cells_with_values = []
     
     def print_pending_operations(self):
@@ -305,9 +305,20 @@ class ValueDeducer:
             for cell in row:
                 candidates = cell.candidates
                 if any([value in candidates for value in self._values]):
-                    self._cells_with_assigned_candidates.append(cell)
+                    self._add_cell_with_assigned_candidates(cell, candidates)
                 if cell.value != 0:
                     self._cells_with_values.append(cell)
+    
+    def _add_cell_with_assigned_candidates(self, cell:Cell, candidates:List[int]):
+        for candidate in candidates:
+            if candidate not in self._cells_with_assigned_candidates.keys():
+                self._cells_with_assigned_candidates[candidate] = []
+            if cell not in self._cells_with_assigned_candidates[candidate]:
+                self._cells_with_assigned_candidates[candidate].append(cell)
+
+    def _add_cell_with_values(self, cell:Cell):
+        if cell not in self._cells_with_values:
+            self._cells_with_values.append(cell)
 
     def eliminate(self):
         for cell in self._cells_with_assigned_candidates:
