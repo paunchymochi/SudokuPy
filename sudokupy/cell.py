@@ -165,6 +165,13 @@ class Cells:
     def __repr__(self):
         return f'<Cells \n{self._print_grid()}\nrows:{self._row_count} cols:{self._col_count}>'
     
+    @property
+    def row_count(self):
+        return self._row_count
+    @property
+    def col_count(self):
+        return self._col_count
+    
     def _print_grid(self):
         def _print_row_grid(row: List[Cell], print_box:bool):
             rows_str = [item.print_value for item in row]
