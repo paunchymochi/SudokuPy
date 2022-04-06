@@ -385,6 +385,9 @@ class Cells:
         if flatten:
             candidates = self._flatten(candidates)
         return candidates
+    
+    def flatten(self) -> List[Cell]:
+        return [[cell for cell in row] for row in self.data]
 
     def _flatten(self, matrix) -> List:
 
