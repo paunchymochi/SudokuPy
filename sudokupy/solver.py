@@ -185,7 +185,7 @@ class CompanionDeducer(_BaseDeducer):
         values = list(set(values))
         if 0 in values:
             values.remove(0)
-        return 8 - len(values)
+        return min(8 - len(values), 5)
 
 class LineBoxDeducer(_BaseDeducer):
     class _SegmentExclusiveCandidates:
