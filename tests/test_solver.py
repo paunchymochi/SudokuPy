@@ -95,6 +95,25 @@ class TestLineBoxDeducer:
         assert len(d.operations) == 12
         for operation in d.operations:
             assert operation.candidates_to_remove in [[2], [8]]
+        
+    def test_col_linebox(self):
+        board = Board()
+        d = LineBoxDeducer(board.cells)
+        for cell in board.col[4].flatten():
+            cell.set_candidates([])
+        
+        board.cell[0, 4].set_candidates([1, 3, 7, 8])
+        board.cell[1, 4].set_candidates([1, 4, 7, 9])
+        board.cell[2, 4].set_candidates([2, 4, 7, 9])
+        board.cell[3, 4].set_candidates([2, 3, 4, 7])
+        board.cell[4, 4].set_candidates([3, 5, 6, 8])
+        board.cell[7, 4].set_candidates([2, 5, 7, 8])
+        board.cell[8, 4].set_candidates([4, 5, 6])
+
+        d.deduce(col=4)
+        assert len(d.operations) == 12
+        for operation in d.operations:
+            assert operation.candidates_to_remove in [[1],[9]]
 
 class TestValueDeducer:
     pass
