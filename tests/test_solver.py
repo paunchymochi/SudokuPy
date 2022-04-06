@@ -18,12 +18,12 @@ class TestCompanionDeducer:
         board = Board()
         board.cell[0, 1].set_candidates(5)
 
-        d.deduce(board.row[1])
+        d.deduce(board.row[0])
         assert len(d.operations) == 8
 
-        board.cell[0, 2].remove_candidates(1)
+        board.cell[0, 2].remove_candidates(5)
         d.clear_operations()
-        d.deduce(board.row[1])
+        d.deduce(board.row[0])
         assert len(d.operations) == 7
 
 class TestLineBoxDeducer:
