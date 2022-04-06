@@ -50,21 +50,31 @@ class DeduceOperation:
             if self._candidates_to_remove == other._candidates_to_remove:
                 return True
         return False
-
+    
 class _BaseDeducer:
     def __init__(self):
         self._affected_cells:List[Cell] = []
         self._operations:List[DeduceOperation] = []
-        pass
+    
+    def count_pending_operations(self):
+        return len(self._operations)
+    
+    def list_pending_operations(self):
+        return [operation.__repr__() for operation in self._operations]
+
+    def eliminate(self):
+        self._clear_affected_cells()
+        for operation in self._operations:
+            operation.cell.remove_candidates(operation.candidates_to_remove)
+            self._add_affected_cell(operation.cell)
+        self._clear_operations()
 
     def _add_operation(self, cell:Cell, remove_candidates:List[int]=None, set_candidates:List[int]=None):
-        pass
+        operation = DeduceOperation(cell, remove_candidates, set_candidates)
+        self._operations.append(operation)
 
     def _clear_operations(self):
         self._operations = []
-
-    def eliminate(self):
-        pass
 
     def _add_affected_cell(self, cell:Cell):
         if cell not in self._affected_cells:
@@ -72,7 +82,6 @@ class _BaseDeducer:
 
     def _clear_affected_cells(self):
         self._affected_cells = []
-
     
 class _Companion:
     def __init__(self, cell:Cells, other=None):
