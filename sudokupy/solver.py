@@ -1,4 +1,5 @@
 
+from os import remove
 import sys
 sys.path.append('..')
 from sudokupy.cell import Cells, Cell
@@ -79,6 +80,10 @@ class CompanionDeducer:
         operations = {}
         operations['companions'] = self.valid_companions
         return _get_pending_operations_message(operations)
+    
+    @property
+    def pending_operations(self) -> int:
+        return len(self.valid_companions)
 
     def deduce(self, sliced_cells:Cells):
         self.sliced_cells = sliced_cells
@@ -151,6 +156,10 @@ class LineBoxDeducer:
         operations = {}
         operations['cells with eliminations'] = self._elimination_cells
         return _get_pending_operations_message(operations)
+    
+    @property
+    def pending_operations(self) -> int:
+        return len(self._elimination_cells)
 
     def _get_boxes(self) -> List[Cells]:
         row = self.row
@@ -220,7 +229,6 @@ class LineBoxDeducer:
         candidate_segment_counts = self._get_candidate_segment_counts()
         boxes = self._get_boxes()
         for candidate, value in candidate_segment_counts.items():
-            self._elimination_cells[candidate] = []
             if value['count'] == 1:
                 box = boxes[value['segment_index']]
                 for row in box.data:
@@ -232,6 +240,8 @@ class LineBoxDeducer:
             return
         
         if remove_candidate in cell.candidates:
+            if remove_candidate not in self._elimination_cells:
+                self._elimination_cells[remove_candidate] = []
             self._elimination_cells[remove_candidate].append(cell)
 
     def deduce(self, row:int=None, col:int=None):
@@ -252,6 +262,10 @@ class ValueDeducer:
     def __init__(self):
         self.sliced_cells:Cells = None
         self.affected_positions = []
+    
+    @property
+    def pending_operations(self) -> int:
+        return len(self._cells_with_assigned_candidates) + len(self._cells_with_values)
     
     def print_pending_operations(self):
         operations = {}
