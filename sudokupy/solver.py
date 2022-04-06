@@ -301,22 +301,25 @@ class Deducer:
         for i in range(3):
             for j in range(3):
                 self.deduce_box(i, j)
+    
+    def eliminate(self):
+        self.value_deducer.eliminate()
+        self.linebox_deducer.eliminate()
+        self.companion_deducer.eliminate()
 
     def _deduce_cells(self, sliced_cells:Cells):
         _validate_cells(sliced_cells)
-        self._eliminate_values(sliced_cells)
-        self._eliminate_companions(sliced_cells)
-        self._eliminate_lineboxes(sliced_cells)
+        self._deduce_values(sliced_cells)
+        self._deduce_lineboxes(sliced_cells)
+        self._deduce_companions(sliced_cells)
     
-    def _eliminate_values(self, sliced_cells:Cells):
+    def _deduce_values(self, sliced_cells:Cells):
         self.value_deducer.deduce(sliced_cells)
-        self.value_deducer.eliminate()
     
-    def _eliminate_companions(self, sliced_cells:Cells):
+    def _deduce_companions(self, sliced_cells:Cells):
         self.companion_deducer.deduce(sliced_cells)
-        self.companion_deducer.eliminate()
     
-    def _eliminate_lineboxes(self, sliced_cells:Cells):
+    def _deduce_lineboxes(self, sliced_cells:Cells):
         row_count = sliced_cells.row_count
         col_count = sliced_cells.col_count
 
@@ -333,6 +336,3 @@ class Deducer:
             return
 
         self.linebox_deducer.deduce(row, col)
-        self.linebox_deducer.eliminate()
-
-    
