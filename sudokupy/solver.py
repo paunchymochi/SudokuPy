@@ -154,9 +154,8 @@ class CompanionDeducer(_BaseDeducer):
         if companions is None:
             companions = [None]
         new_companions = []
-        cell_list = self._get_cell_list(sliced_cells)
         for other_companion in companions:
-            for cell in cell_list:
+            for cell in sliced_cells.flatten():
                 companion = _Companion(cell, other_companion)
                 if companion not in new_companions:
                     if not companion.skip:
@@ -166,18 +165,10 @@ class CompanionDeducer(_BaseDeducer):
         return new_companions
     
     def _make_new_operations(self, companion:_Companion, sliced_cells:Cells):
-        cell_list = self._get_cell_list(sliced_cells)
-        for cell in cell_list:
+        for cell in sliced_cells.flatten():
             if cell not in companion.cells:
                 if any([candidate in companion.companion for candidate in cell.candidates]):
                     self._add_operation(cell, remove_candidates=companion.companion)
-    
-    def _get_cell_list(self, cells:Cells) -> List[Cell]:
-        cell_list = []
-        for row in cells.data:
-            for cell in row:
-                cell_list.append(cell)
-        return cell_list
     
     def _get_max_level(self, cells:Cells):
         values = cells.get_values(flatten=True)
