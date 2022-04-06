@@ -162,14 +162,18 @@ class LineBoxDeducer:
             candidate_set.extend(candidate)
         candidate_set = list(set(candidate_set))
         return candidate_set
-
-    def deduce(self, row:int=None, col:int=None):
+    
+    def _get_line(self, row:int, col:int):
         if row is not None:
-            self._line = self.cells[row]
+            line = self.cells[row]
         elif col is not None:
-            self._line = self.cells[:, col]
+            line = self.cells[:, col]
         else:
             raise ValueError('must provide either row or col')
+        return line
+
+    def deduce(self, row:int=None, col:int=None):
+        self._line = self._get_line(row, col)
         self._boxes = self._get_boxes(row, col)
     
     def eliminate(self):
