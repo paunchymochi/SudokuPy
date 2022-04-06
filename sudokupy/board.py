@@ -78,6 +78,9 @@ class Board:
         self.box = self.Box(self.cells)
         self.cell = self.Cell(self.cells)
     
+    def __repr__(self):
+        return f'<Board\n{self.cells.__str__()}\n\n{self.cells.print_candidates()}\n>'
+    
     @property
     def cells(self) -> Cells:
         return self._cells
