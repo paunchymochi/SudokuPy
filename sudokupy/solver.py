@@ -19,6 +19,9 @@ class DeduceOperation:
         self._cell = cell
         self._candidates_to_remove = self._get_candidates_to_remove(remove_candidates, set_candidates)
     
+    def __repr__(self):
+        return f'DeduceOperation cell:{self._cell.__repr__()} candidates_to_remove:{self._candidates_to_remove}>'
+    
     @property
     def cell(self):
         return self._cell
