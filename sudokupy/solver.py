@@ -1,6 +1,3 @@
-
-from argparse import ArgumentError
-from os import remove
 import sys
 sys.path.append('..')
 from sudokupy.cell import Cells, Cell
