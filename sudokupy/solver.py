@@ -267,26 +267,27 @@ class LineBoxDeducer(_BaseDeducer):
         return segmented_line
     
     
-class ValueDeducer:
+class ValueDeducer(_BaseDeducer):
     def __init__(self):
-        self.sliced_cells:Cells = None
-        self.affected_positions = []
+        super().__init__()
         self._cells_with_assigned_candidates = []
         self._cells_with_values = []
     
-    @property
-    def pending_operations(self) -> int:
-        return len(self._cells_with_assigned_candidates) + len(self._cells_with_values)
-    
-    def clear_pending_operations(self):
-        self._cells_with_assigned_candidates = {}
-        self._cells_with_values = []
-    
-    def print_pending_operations(self):
-        operations = {}
-        operations['cells with assigned candidates'] = self._cells_with_assigned_candidates
-        operations['cells with values'] = self._cells_with_values
-        return _get_pending_operations_message(operations)
+    def deduce(self, sliced_cells:Cells):
+        _validate_cells(sliced_cells)
+        self._sliced_cells = sliced_cells
+
+        values = self._get_values(sliced_cells)
+
+        for cell in sliced_cells.flatten():
+            candidates = cell.candidates
+            if len(candidates) > 0:
+                if cell.value != 0:
+                    self._add_operation(cell, remove_candidates=candidates)
+                else:
+                    candidates_to_remove = [candidate for candidate in candidates if candidate in values]
+                    if len(candidates_to_remove) > 0:
+                        self._add_operation(cell, remove_candidates=candidates_to_remove)
     
     def _get_values(self, sliced_cells:Cells):
         values = sliced_cells.get_values(flatten=True)
@@ -294,41 +295,6 @@ class ValueDeducer:
         if 0 in values:
             values.remove(0)
         return values
-
-    def deduce(self, sliced_cells:Cells):
-        _validate_cells(sliced_cells)
-        self.sliced_cells = sliced_cells
-        self.affected_positions = []
-        self._values = self._get_values(sliced_cells)
-
-        for row in self.sliced_cells.data:
-            for cell in row:
-                candidates = cell.candidates
-                if any([value in candidates for value in self._values]):
-                    self._add_cell_with_assigned_candidates(cell, candidates)
-                if cell.value != 0:
-                    self._cells_with_values.append(cell)
-    
-    def _add_cell_with_assigned_candidates(self, cell:Cell, candidates:List[int]):
-        for candidate in candidates:
-            if candidate not in self._cells_with_assigned_candidates.keys():
-                self._cells_with_assigned_candidates[candidate] = []
-            if cell not in self._cells_with_assigned_candidates[candidate]:
-                self._cells_with_assigned_candidates[candidate].append(cell)
-
-    def _add_cell_with_values(self, cell:Cell):
-        if cell not in self._cells_with_values:
-            self._cells_with_values.append(cell)
-
-    def eliminate(self):
-        for cell in self._cells_with_assigned_candidates:
-            cell.remove_candidates(self._values)
-            self.affected_positions.append((cell.row, cell.column))
-        for cell in self._cells_with_values:
-            cell.set_candidates([])
-            self.affected_positions.append((cell.row, cell.column))
-        self.clear_pending_operations()
-        return self.affected_positions
 
 class Deducer:
     def __init__(self, cells: Cells):
