@@ -195,9 +195,9 @@ class LineBoxDeducer(_BaseDeducer):
 
         def _get_line(self, cells:Cells, row:Optional[int], col:Optional[int]) -> Cells:
             if row is not None:
-                line = self._cells[row]
+                line = cells[row]
             elif col is not None:
-                line = self._cells[:, col]
+                line = cells[:, col]
             else:
                 raise ValueError('must provide either row or col')
             return line
@@ -261,7 +261,7 @@ class LineBoxDeducer(_BaseDeducer):
         boxes = self._get_boxes()
 
         for candidate, segment_index in segment_exclusive_candidates:
-            box = boxes[segment_index]
+            box = boxes[segment_index[0]]
             for cell in box.flatten():
                 self._deduce_cell(cell, candidate)
                 
