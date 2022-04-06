@@ -25,6 +25,28 @@ class TestCompanionDeducer:
         d.clear_operations()
         d.deduce(board.row[0])
         assert len(d.operations) == 7
+    
+    def test_double_companion(self):
+        d = CompanionDeducer()
+        board = Board()
+        board.cell[3, 5].set_candidates([2, 4])
+        board.cell[7, 5].set_candidates([2, 4])
+
+        d.deduce(board.col[5])
+        assert len(d.operations) == 7
+        for operation in d.operations:
+            assert operation.candidates_to_remove == [2, 4]
+
+        board.cell[0, 5].set_candidates([1, 3])
+        board.cell[8, 5].set_candidates([1, 3])
+
+        d.clear_operations()
+        d.deduce(board.col[5])
+        assert len(d.operations) == 5 + 5
+        for operation in d.operations:
+            assert operation.candidates_to_remove in [[2, 4], [1, 3]]
+            assert operation.cell.column == 5
+
 
 class TestLineBoxDeducer:
     pass
