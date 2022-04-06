@@ -186,23 +186,46 @@ class CompanionDeducer(_BaseDeducer):
             values.remove(0)
         return 8 - len(values)
 
-class LineBoxDeducer:
+class LineBoxDeducer(_BaseDeducer):
     def __init__(self, cells:Cells):
+        super().__init__()
         self._cells = cells
-        self._elimination_cells = []
     
-    def print_pending_operations(self):
-        operations = {}
-        operations['cells with eliminations'] = self._elimination_cells
-        return _get_pending_operations_message(operations)
-    
-    def clear_pending_operations(self):
-        self._elimination_cells = []
-    
-    @property
-    def pending_operations(self) -> int:
-        return len(self._elimination_cells)
+    def deduce(self, row:int=None, col:int=None):
+        self._row = row
+        self._col = col
+        self._deduce_box()
 
+    def _deduce_box(self):
+        candidate_segment_counts = self._get_candidate_segment_counts()
+        boxes = self._get_boxes()
+        for candidate, value in candidate_segment_counts.items():
+            if value['count'] == 1:
+                box = boxes[value['segment_index']]
+                for cell in box.flatten():
+                    self._deduce_cell(cell, candidate)
+                
+    def _deduce_cell(self, cell:Cell, remove_candidate:int):
+        if cell.row == self._row or cell.column == self._col:
+            return
+        if remove_candidate in cell.candidates:
+            self._add_operation(cell, remove_candidates=[remove_candidate])
+
+    def _get_candidate_segment_counts(self):
+        
+        line = self._get_line()
+        line_candidates = self._get_line_candidates(line)
+        segmented_line = self._get_segmented_line(line)
+
+        counts = {}
+        for candidate in line_candidates:
+            counts[candidate] = {'count':0, 'segment_index':[]}
+            for segment_index, segment in enumerate(segmented_line):
+                if any([candidate in cell.candidates for cell in segment]):
+                    counts[candidate]['count'] += 1
+                    counts[candidate]['segment_index'].append(segment_index)
+        return counts
+    
     def _get_boxes(self) -> List[Cells]:
         row = self.row
         col = self.col
@@ -252,55 +275,7 @@ class LineBoxDeducer:
             segmented_line.append(cells[i:i+3])
         return segmented_line
     
-    def _get_candidate_segment_counts(self):
-        
-        line = self._get_line()
-        line_candidates = self._get_line_candidates(line)
-        segmented_line = self._get_segmented_line(line)
-
-        counts = {}
-        for candidate in line_candidates:
-            counts[candidate] = {'count':0, 'segment_index':[]}
-            for segment_index, segment in enumerate(segmented_line):
-                if any([candidate in cell.candidates for cell in segment]):
-                    counts[candidate]['count'] += 1
-                    counts[candidate]['segment_index'].append(segment_index)
-        return counts
     
-    def _deduce_box(self):
-        candidate_segment_counts = self._get_candidate_segment_counts()
-        boxes = self._get_boxes()
-        for candidate, value in candidate_segment_counts.items():
-            if value['count'] == 1:
-                box = boxes[value['segment_index']]
-                for row in box.data:
-                    for cell in row:
-                        self._deduce_cell(cell, candidate)
-                
-    def _deduce_cell(self, cell:Cell, remove_candidate:int):
-        if cell.row == self.row or cell.column == self.col:
-            return
-        
-        if remove_candidate in cell.candidates:
-            if remove_candidate not in self._elimination_cells:
-                self._elimination_cells[remove_candidate] = []
-            self._elimination_cells[remove_candidate].append(cell)
-
-    def deduce(self, row:int=None, col:int=None):
-        self.row = row
-        self.col = col
-        self._elimination_cells:dict[int, List[Cell]] = {}
-        self._deduce_box()
-    
-    def eliminate(self):
-        self.affected_positions = []
-        for candidate, cells in self._elimination_cells.items():
-            for cell in cells:
-                cell.remove_candidates(candidate)
-                self.affected_positions.append((cell.row, cell.column))
-        self.clear_pending_operations()
-        return self.affected_positions
-
 class ValueDeducer:
     def __init__(self):
         self.sliced_cells:Cells = None
