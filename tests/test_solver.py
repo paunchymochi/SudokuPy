@@ -77,7 +77,24 @@ class TestCompanionDeducer:
 
     
 class TestLineBoxDeducer:
-    pass
+
+    def test_row_linebox(self):
+        board = Board()
+        d = LineBoxDeducer(board.cells)
+        for cell in board.row[0].flatten():
+            cell.set_candidates([])
+        
+        board.cell[0, 0].set_candidates([1, 8, 9])
+        board.cell[0, 1].set_candidates([1, 3, 6, 8])
+        board.cell[0, 3].set_candidates([1, 4, 5, 6])
+        board.cell[0, 4].set_candidates([5, 6, 7, 9])
+        board.cell[0, 7].set_candidates([1, 2, 3, 5])
+        board.cell[0, 8].set_candidates([2, 4, 6, 7, 9])
+
+        d.deduce(row=0)
+        assert len(d.operations) == 12
+        for operation in d.operations:
+            assert operation.candidates_to_remove in [[2], [8]]
 
 class TestValueDeducer:
     pass
