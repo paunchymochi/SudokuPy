@@ -13,7 +13,7 @@ def _validate_cells(cells:Cells):
 def _get_pending_operations_message(operations:dict):
     return {'Number of operations': sum([len(x) for x in operations.values()]), 'Operations': operations}
 
-class DeduceOperation:
+class _DeduceOperation:
     __slots__ = ['_cell', '_candidates_to_remove']
     def __init__(self, cell:Cell, remove_candidates:List[int]=None, set_candidates:List[int]=None):
         self._cell = cell
@@ -57,7 +57,7 @@ class DeduceOperation:
 class _BaseDeducer:
     def __init__(self):
         self._affected_cells:List[Cell] = []
-        self._operations:List[DeduceOperation] = []
+        self._operations:List[_DeduceOperation] = []
     
     def __repr__(self):
         return f'<{__name__}\n' + '\n'.join(self.list_pending_operations()) + '>'
@@ -76,7 +76,7 @@ class _BaseDeducer:
         self._clear_operations()
 
     def _add_operation(self, cell:Cell, remove_candidates:List[int]=None, set_candidates:List[int]=None):
-        operation = DeduceOperation(cell, remove_candidates, set_candidates)
+        operation = _DeduceOperation(cell, remove_candidates, set_candidates)
         self._operations.append(operation)
 
     def _clear_operations(self):
