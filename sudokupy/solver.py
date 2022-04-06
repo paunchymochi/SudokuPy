@@ -134,6 +134,33 @@ class CompanionDeducer:
             values.remove(0)
         return 8 - len(values)
 
+class LineBoxDeducer:
+    def __init__(self, cells:Cells, row=None, col=None):
+        self.cells = cells
+        if row is not None:
+            self.line = cells[row]
+        elif col is not None:
+            self.line = cells[:, col]
+        else:
+            raise ValueError('must provide either row or col')
+    
+    def _get_boxes(self, row=None, col=None):
+        rows = []
+        cols = []
+        toplefts = [0, 3, 6]
+        if row is not None:
+            rows = [(row//3)*3]
+            cols = toplefts
+        elif col is not None:
+            cols = [(col//3)*3]
+            rows = toplefts
+        
+        boxes = []
+        for r in rows:
+            for c in cols:
+                boxes.append(self.cells[r:r+3, c:c+3])
+        return boxes
+
 class Deducer:
     def __init__(self, cells: Cells):
         self.cells = cells
