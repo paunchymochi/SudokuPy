@@ -59,6 +59,23 @@ class TestCompanionDeducer:
         for operation in d.operations:
             assert operation.candidates_to_remove == [1, 3, 5]
     
+    def test_quadruple_companion(self):
+        d = CompanionDeducer()
+        board = Board()
+        board.cell[0, 0].set_candidates([1,3])
+        board.cell[0, 2].set_candidates([3, 5])
+        board.cell[1, 1].set_candidates([1, 7])
+
+        d.deduce(board.box[0, 0])
+        assert len(d.operations) == 0
+
+        board.cell[1, 0].set_candidates([5, 7])
+        d.deduce(board.box[0, 0])
+        assert len(d.operations) == 5
+        for operation in d.operations:
+            assert operation.candidates_to_remove == [1, 3, 5, 7]
+
+    
 class TestLineBoxDeducer:
     pass
 
