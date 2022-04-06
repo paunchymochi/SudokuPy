@@ -85,7 +85,7 @@ class _BaseDeducer:
     
 class _Companion:
     def __init__(self, cell:Cells, other=None):
-        self.positions = []
+        self.cells:List[Cell] = []
         self.candidates = []
         self.companion = []
         self.skip = True
@@ -96,89 +96,68 @@ class _Companion:
             self.valid = self._is_valid()
     
     def __repr__(self):
-        return f'<_CandidateSet positions:{self.positions} companion:{self.companion}>'
+        return f'<_CandidateSet cells:{self.cells} companion:{self.companion}>'
     
     def __eq__(self, other):
-        return len(self) == len(other) and all([pos in other.positions for pos in self.positions])
+        return len(self) == len(other) and all([cell in other.cells for cell in self.cells])
     
     def __len__(self):
-        return len(self.positions)
+        return len(self.cells)
     
     def _is_valid(self) -> bool:
-        return len(self.positions) == len(self.companion)
+        return len(self.cells) == len(self.companion)
     
     def _init_other(self, other):
         if other is None:
             return
         if not isinstance(other, type(self)):
             raise TypeError()
-        self.positions = other.positions.copy()
+        self.cells = other.cells.copy()
         self.candidates = other.candidates.copy()
         self.companion = other.companion.copy()
     
     def _add(self, cell:Cells) -> bool:
-        pos = self._get_position(cell)
-        if pos in self.positions:
+        if cell in self.cells:
             return False
         
-        if len(cell.candidates) == 0:
-            return False
-        
-        candidates = self._get_candidates(cell)
+        candidates = cell.candidates
 
-        self.positions.append(pos)
+        if len(candidates) == 0:
+            return False
+
+        self.cells.append(cell)
         self.candidates.append(candidates)
         self.companion = list(set(self.companion+candidates))
 
         return True
     
-    def _get_position(self, cell:Cell):
-        return (cell.row, cell.column)
-    
-    def _get_candidates(self, cell:Cell):
-        return cell.candidates
-
-class CompanionDeducer:
+class CompanionDeducer(_BaseDeducer):
 
     def __init__(self):
-        self.sliced_cells:Cells=None
-        self.affected_positions = []
-        self._valid_companions = []
-    
-    def print_pending_operations(self):
-        operations = {}
-        operations['companions'] = self._valid_companions
-        return _get_pending_operations_message(operations)
-    
-    @property
-    def pending_operations(self) -> int:
-        return len(self._valid_companions)
-    
-    def clear_pending_operations(self):
-        self._valid_companions = []
+        super().__init__()
+        self._sliced_cells:Cells=None
 
     def deduce(self, sliced_cells:Cells):
-        self.sliced_cells = sliced_cells
-        self.affected_positions = []
+        self._sliced_cells = sliced_cells
 
-        max_level = self._get_max_level(self.sliced_cells)
+        max_level = self._get_max_level(self._sliced_cells)
         companions = {}
         level = 1
 
         companions[0] = [None]
 
-        while level <= max_level and len(self._valid_companions) == 0:
-            companions[level] = self._make_companions(self.sliced_cells, companions[level-1])
+        while level <= max_level and len(self._operations) == 0:
+            companions[level] = self._make_companions(self._sliced_cells, companions[level-1])
             level += 1
         
-    def eliminate(self):
-        affected_positions = []
-        for valid_companion in self._valid_companions:
-            result = self._eliminate_companion(valid_companion)
-            affected_positions.extend(result)
-        self.affected_positions = affected_positions
-        self.clear_pending_operations()
-        return affected_positions
+    # def eliminate(self):
+    #     affected_positions = []
+    #     for valid_companion in self._valid_companions:
+    #         result = self._eliminate_companion(valid_companion)
+    #         affected_positions.extend(result)
+    #     self.affected_positions = affected_positions
+    #     self.clear_pending_operations()
+    #     return affected_positions
         
     def _eliminate_companion(self, valid_companion:_Companion):
         affected_positions = []
@@ -190,28 +169,30 @@ class CompanionDeducer:
                     cell.remove_candidates(valid_companion.companion)
         return affected_positions
         
-    def _make_companions(self, cells:Cells, companions:List[_Companion]=None) -> List[_Companion]:
+    def _make_companions(self, sliced_cells:Cells, companions:List[_Companion]=None) -> List[_Companion]:
         if companions is None:
             companions = [None]
         new_companions = []
-        cells_data = self._flatten_cells_data(cells.data)
+        cell_list = self._get_cell_list(sliced_cells)
         for other_companion in companions:
-            for row in cells.data:
-                for cell in row:
-                    companion = _Companion(cell, other_companion)
-                    if companion not in new_companions:
-                        if not companion.skip:
-                            new_companions.append(companion)
-                        if companion.valid:
-                            self._valid_companions.append(companion)
+            for cell in cell_list:
+                companion = _Companion(cell, other_companion)
+                if companion not in new_companions:
+                    if not companion.skip:
+                        new_companions.append(companion)
+                    if companion.valid:
+                        self._make_new_operation(companion)
         return new_companions
     
-    def _flatten_cells_data(self, cells_data):
-        flattened = []
-        for row in cells_data:
+    def _make_new_operation(companion:_Companion):
+        pass
+    
+    def _get_cell_list(self, cells:Cells) -> List[Cell]:
+        cell_list = []
+        for row in cells.data:
             for cell in row:
-                flattened.append(cell)
-        return flattened
+                cell_list.append(cell)
+        return cell_list
     
     def _get_max_level(self, cells:Cells):
         values = cells.get_values(flatten=True)
