@@ -387,7 +387,11 @@ class Cells:
         return candidates
     
     def flatten(self) -> List[Cell]:
-        return [[cell for cell in row] for row in self.data]
+        flattened_cells = []
+        for row in self.data:
+            for cell in row:
+                flattened_cells.append(cell)
+        return flattened_cells
 
     def _flatten(self, matrix) -> List:
 
