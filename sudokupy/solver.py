@@ -241,9 +241,11 @@ class Deducer:
     
     def _eliminate_values(self, sliced_cells:Cells):
         self.value_deducer.deduce(sliced_cells)
+        self.value_deducer.eliminate()
     
     def _eliminate_companions(self, sliced_cells:Cells):
         self.companion_deducer.deduce(sliced_cells)
+        self.companion_deducer.eliminate()
     
     def _eliminate_lineboxes(self, sliced_cells:Cells):
         row_count = sliced_cells.row_count
