@@ -1,4 +1,5 @@
 
+from argparse import ArgumentError
 from os import remove
 import sys
 sys.path.append('..')
@@ -16,24 +17,57 @@ def _get_pending_operations_message(operations:dict):
     return {'Number of operations': sum([len(x) for x in operations.values()]), 'Operations': operations}
 
 class DeduceOperation:
+    __slots__ = ['_cell', '_candidates_to_remove']
     def __init__(self, cell:Cell, remove_candidates:List[int]=None, set_candidates:List[int]=None):
         self._cell = cell
-        self._remove_candidates = remove_candidates
-        self._set_candidates = set_candidates
+        self._candidates_to_remove = self._get_candidates_to_remove(remove_candidates, set_candidates)
+    
+    def _get_candidates_to_remove(self, remove_candidates:List[int]=None, set_candidates:List[int]=None):
+        if remove_candidates is not None:
+            if type(remove_candidates) is int:
+                remove_candidates = [remove_candidates]
+            candidates_to_remove = list(set(remove_candidates))
+        elif set_candidates is not None:
+            if type(set_candidates) is int:
+                set_candidates = [set_candidates]
+            candidates_to_remove = self._set_to_remove(set_candidates)
+        
+        candidates_to_remove.sort()
+        return candidates_to_remove
+
+    def _set_to_remove(self, set_candidates:List[int]):
+        existing_candidates = self._cell.candidates
+        remove_candidates = [candidate for candidate in existing_candidates if candidate not in set_candidates]
+        return remove_candidates
     
     def __eq__(self, other):
-        if self._cell == other.cell:
-            if self._remove_candidates == other._remove_candidates:
-                if self._set_candidates == other._set_candidates:
-                    return True
+        if self._cell == other._cell:
+            if self._candidates_to_remove == other._candidates_to_remove:
+                return True
         return False
 
 class _BaseDeducer:
     def __init__(self):
+        self._affected_cells:List[Cell] = []
+        self._operations:List[DeduceOperation] = []
         pass
 
     def _add_operation(self, cell:Cell, remove_candidates:List[int]=None, set_candidates:List[int]=None):
         pass
+
+    def _clear_operations(self):
+        self._operations = []
+
+    def eliminate(self):
+        pass
+
+    def _add_affected_cell(self, cell:Cell):
+        if cell not in self._affected_cells:
+            self._affected_cells.append(cell)
+
+    def _clear_affected_cells(self):
+        self._affected_cells = []
+
     
 class _Companion:
     def __init__(self, cell:Cells, other=None):
