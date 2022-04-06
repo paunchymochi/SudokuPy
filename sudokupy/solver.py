@@ -76,7 +76,7 @@ class CompanionDeducer:
         self.sliced_cells = sliced_cells
         self.affected_positions = []
 
-        max_level = self._get_max_level(self.cells)
+        max_level = self._get_max_level(self.sliced_cells)
         self.companions = {}
         self.valid_companions = []
         self.level = 1
@@ -178,11 +178,11 @@ class LineBoxDeducer:
             raise ValueError('must provide either row or col')
         return line
     
-    def _get_segmented_line(self, line:Cells) -> List[List[Cells]]:
+    def _get_segmented_line(self, line:Cells) -> List[List[Cell]]:
         cells = []
         for row in line.data:
             for cell in row:
-                cells.append(row)
+                cells.append(cell)
         segmented_line = []
         for i in [0, 3, 6]:
             segmented_line.append(cells[i:i+3])
@@ -206,7 +206,7 @@ class LineBoxDeducer:
     def _deduce_box(self):
         candidate_segment_counts = self._get_candidate_segment_counts()
         boxes = self._get_boxes()
-        for candidate, value in candidate_segment_counts:
+        for candidate, value in candidate_segment_counts.items():
             self._elimination_cells[candidate] = []
             if value['count'] == 1:
                 box = boxes[value['segment_index']]
@@ -277,7 +277,7 @@ class Deducer:
     def __init__(self, cells: Cells):
         self.cells = cells
         self.value_deducer = ValueDeducer()
-        self.companion_deducer = CompanionDeducer(cells)
+        self.companion_deducer = CompanionDeducer()
         self.linebox_deducer = LineBoxDeducer(cells)
 
     def deduce_row(self, row:int):
