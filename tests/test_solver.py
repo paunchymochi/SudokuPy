@@ -116,7 +116,29 @@ class TestLineBoxDeducer:
             assert operation.candidates_to_remove in [[1],[9]]
 
 class TestValueDeducer:
-    pass
+    def test_filled_cell_with_candidates(self):
+        board = Board()
+        d = ValueDeducer()
+        for cell in board.box[0, 0].flatten():
+            cell.set_candidates([])
+        cell = board.cell[0, 0]
+        cell.set_values(5)
+        cell.set_candidates(list(range(1, 10)))
+
+        d.deduce(board.box[0, 0])
+        assert len(d.operations) == 1
+        assert d.operations[0].candidates_to_remove == list(range(1, 10))
+
+        cell = board.cell[2, 2]
+        cell.set_values(6)
+        cell.set_candidates(list(range(1, 10)))
+
+        d.clear_operations()
+        d.deduce(board.box[0, 0])
+        assert len(d.operations) == 2
+        for operation in d.operations:
+            operation.candidates_to_remove == list(range(1, 10))
+
 
 class TestDeducer:
     pass
