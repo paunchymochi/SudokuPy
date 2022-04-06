@@ -14,6 +14,26 @@ def _validate_cells(cells:Cells):
 
 def _get_pending_operations_message(operations:dict):
     return {'Number of operations': sum([len(x) for x in operations.values()]), 'Operations': operations}
+
+class DeduceOperation:
+    def __init__(self, cell:Cell, remove_candidates:List[int]=None, set_candidates:List[int]=None):
+        self._cell = cell
+        self._remove_candidates = remove_candidates
+        self._set_candidates = set_candidates
+    
+    def __eq__(self, other):
+        if self._cell == other.cell:
+            if self._remove_candidates == other._remove_candidates:
+                if self._set_candidates == other._set_candidates:
+                    return True
+        return False
+
+class _BaseDeducer:
+    def __init__(self):
+        pass
+
+    def _add_operation(self, cell:Cell, remove_candidates:List[int]=None, set_candidates:List[int]=None):
+        pass
     
 class _Companion:
     def __init__(self, cell:Cells, other=None):
