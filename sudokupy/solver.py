@@ -137,9 +137,11 @@ class CompanionDeducer:
 
 class LineBoxDeducer:
     def __init__(self, cells:Cells):
-        self.cells = cells
+        self._cells = cells
 
-    def _get_boxes(self, row=None, col=None) -> List[Cells]:
+    def _get_boxes(self) -> List[Cells]:
+        row = self.row
+        col = self.col
         rows = []
         cols = []
         toplefts = [0, 3, 6]
@@ -153,7 +155,7 @@ class LineBoxDeducer:
         boxes = []
         for r in rows:
             for c in cols:
-                boxes.append(self.cells[r:r+3, c:c+3])
+                boxes.append(self._cells[r:r+3, c:c+3])
         return boxes
     
     def _get_line_candidates(self, line:Cells) -> List[int]:
@@ -164,38 +166,46 @@ class LineBoxDeducer:
         candidate_set = list(set(candidate_set))
         return candidate_set
     
-    def _get_line(self, row:int, col:int) -> Cells:
+    def _get_line(self) -> Cells:
+        row = self.row
+        col = self.col
+
         if row is not None:
-            line = self.cells[row]
+            line = self._cells[row]
         elif col is not None:
-            line = self.cells[:, col]
+            line = self._cells[:, col]
         else:
             raise ValueError('must provide either row or col')
         return line
     
-    def _get_line_segments(self, line:Cells) -> List[List[Cells]]:
+    def _get_segmented_line(self, line:Cells) -> List[List[Cells]]:
         cells = []
         for row in line.data:
             for cell in row:
                 cells.append(row)
-        line_segments = []
+        segmented_line = []
         for i in [0, 3, 6]:
-            line_segments.append(cells[i:i+3])
-        return line_segments
+            segmented_line.append(cells[i:i+3])
+        return segmented_line
     
-    def _get_candidate_segment_counts(self, 
-            line_segments:List[List[Cells]], 
-            line_candidates:List[int]) -> 'dict[int, dict[int, List[int]]]':
+    def _get_candidate_segment_counts(self):
+        
+        line = self._get_line()
+        line_candidates = self._get_line_candidates(line)
+        segmented_line = self._get_segmented_line(line)
+
         counts = {}
         for candidate in line_candidates:
             counts[candidate] = {'count':0, 'segment_index':[]}
-            for segment_index, segment in enumerate(line_segments):
+            for segment_index, segment in enumerate(segmented_line):
                 if any([candidate in cell.candidates for cell in segment]):
                     counts[candidate]['count'] += 1
                     counts[candidate]['segment_index'].append(segment_index)
         return counts
     
-    def _deduce_box(self, boxes:List[Cells], candidate_segment_counts):
+    def _deduce_box(self):
+        candidate_segment_counts = self._get_candidate_segment_counts()
+        boxes = self._get_boxes()
         for candidate, value in candidate_segment_counts:
             self._elimination_cells[candidate] = []
             if value['count'] == 1:
@@ -215,12 +225,7 @@ class LineBoxDeducer:
         self.row = row
         self.col = col
         self._elimination_cells:dict[int, List[Cell]] = {}
-        line = self._get_line(row, col)
-        boxes = self._get_boxes(row, col)
-        line_candidates = self._get_line_candidates(line)
-        line_segments = self._get_line_segments(line)
-        candidate_segment_counts = self._get_candidate_segment_counts(line_segments, line_candidates)
-        self._deduce_box(boxes, candidate_segment_counts)
+        self._deduce_box()
     
     def eliminate(self):
         self.affected_positions = []
