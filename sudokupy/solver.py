@@ -10,6 +10,9 @@ def _validate_cells(cells:Cells):
     if not isinstance(cells, Cells):
         print(f'type: {type(cells)}')
         raise TypeError('cells must be instance of Cells')
+
+def _get_pending_operations_message(operations:dict):
+    return {'Number of operations': sum([len(x) for x in operations.values()]), 'Operations': operations}
     
 class _Companion:
     def __init__(self, cell:Cells, other=None):
@@ -71,6 +74,11 @@ class CompanionDeducer:
     def __init__(self):
         self.sliced_cells:Cells=None
         self.affected_positions = []
+    
+    def print_pending_operations(self):
+        operations = {}
+        operations['companions'] = self.valid_companions
+        return _get_pending_operations_message(operations)
 
     def deduce(self, sliced_cells:Cells):
         self.sliced_cells = sliced_cells
@@ -138,6 +146,11 @@ class CompanionDeducer:
 class LineBoxDeducer:
     def __init__(self, cells:Cells):
         self._cells = cells
+    
+    def print_pending_operations(self):
+        operations = {}
+        operations['cells with eliminations'] = self._elimination_cells
+        return _get_pending_operations_message(operations)
 
     def _get_boxes(self) -> List[Cells]:
         row = self.row
@@ -240,13 +253,18 @@ class ValueDeducer:
         self.sliced_cells:Cells = None
         self.affected_positions = []
     
+    def print_pending_operations(self):
+        operations = {}
+        operations['cells with assigned candidates'] = self._cells_with_assigned_candidates
+        operations['cells with values'] = self._cells_with_values
+        return _get_pending_operations_message(operations)
+    
     def _get_values(self, sliced_cells:Cells):
         values = sliced_cells.get_values(flatten=True)
         values = list(set(values))
         if 0 in values:
             values.remove(0)
         return values
-        
 
     def deduce(self, sliced_cells:Cells):
         _validate_cells(sliced_cells)
