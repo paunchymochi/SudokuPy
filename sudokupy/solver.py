@@ -150,25 +150,6 @@ class CompanionDeducer(_BaseDeducer):
             companions[level] = self._make_companions(self._sliced_cells, companions[level-1])
             level += 1
         
-    # def eliminate(self):
-    #     affected_positions = []
-    #     for valid_companion in self._valid_companions:
-    #         result = self._eliminate_companion(valid_companion)
-    #         affected_positions.extend(result)
-    #     self.affected_positions = affected_positions
-    #     self.clear_pending_operations()
-    #     return affected_positions
-        
-    def _eliminate_companion(self, valid_companion:_Companion):
-        affected_positions = []
-        for row in self.sliced_cells.data:
-            for cell in row:
-                position = (cell.row, cell.column)
-                if position not in valid_companion.positions:
-                    affected_positions.append((cell.row, cell.column))
-                    cell.remove_candidates(valid_companion.companion)
-        return affected_positions
-        
     def _make_companions(self, sliced_cells:Cells, companions:List[_Companion]=None) -> List[_Companion]:
         if companions is None:
             companions = [None]
@@ -181,11 +162,15 @@ class CompanionDeducer(_BaseDeducer):
                     if not companion.skip:
                         new_companions.append(companion)
                     if companion.valid:
-                        self._make_new_operation(companion)
+                        self._make_new_operations(companion, sliced_cells)
         return new_companions
     
-    def _make_new_operation(companion:_Companion):
-        pass
+    def _make_new_operations(self, companion:_Companion, sliced_cells:Cells):
+        cell_list = self._get_cell_list(sliced_cells)
+        for cell in cell_list:
+            if cell not in companion.cells:
+                if any([candidate in companion.companion for candidate in cell.candidates]):
+                    self._add_operation(cell, remove_candidates=companion.companion)
     
     def _get_cell_list(self, cells:Cells) -> List[Cell]:
         cell_list = []
