@@ -68,13 +68,14 @@ class _Companion:
 
 class CompanionDeducer:
 
-    def __init__(self, cells:Cells):
-        _validate_cells(cells)
-        self.cells = cells
+    def __init__(self):
+        self.sliced_cells:Cells=None
         self.affected_positions = []
-        self._deduce()
 
-    def _deduce(self):
+    def deduce(self, sliced_cells:Cells):
+        self.sliced_cells = sliced_cells
+        self.affected_positions = []
+
         max_level = self._get_max_level(self.cells)
         self.companions = {}
         self.valid_companions = []
@@ -83,7 +84,7 @@ class CompanionDeducer:
         self.companions[0] = [None]
 
         while self.level <= max_level and len(self.valid_companions) == 0:
-            self.companions[self.level] = self._make_companions(self.cells, self.companions[self.level-1])
+            self.companions[self.level] = self._make_companions(self.sliced_cells, self.companions[self.level-1])
             self.level += 1
         
     def eliminate(self):
@@ -96,7 +97,7 @@ class CompanionDeducer:
         
     def _eliminate_companion(self, valid_companion:_Companion):
         affected_positions = []
-        for row in self.cells.data:
+        for row in self.sliced_cells.data:
             for cell in row:
                 position = (cell.row, cell.column)
                 if position not in valid_companion.positions:
@@ -135,15 +136,8 @@ class CompanionDeducer:
         return 8 - len(values)
 
 class LineBoxDeducer:
-    def __init__(self, cells:Cells, row=None, col=None):
+    def __init__(self, cells:Cells):
         self.cells = cells
-        if row is not None:
-            self.line = cells[row]
-        elif col is not None:
-            self.line = cells[:, col]
-        else:
-            raise ValueError('must provide either row or col')
-    
     def _get_boxes(self, row=None, col=None):
         rows = []
         cols = []
@@ -160,18 +154,33 @@ class LineBoxDeducer:
             for c in cols:
                 boxes.append(self.cells[r:r+3, c:c+3])
         return boxes
+    
+    def deduce(self, row:int=None, col:int=None):
+        if row is not None:
+            self.line = self.cells[row]
+        elif col is not None:
+            self.line = self.cells[:, col]
+        else:
+            raise ValueError('must provide either row or col')
+    
+    def eliminate(self):
+        raise NotImplementedError
 
 class ValueDeducer:
     def __init__(self):
-        pass
+        self.sliced_cells:Cells = None
 
-    def eliminate(self, cells:Cells):
-        values = cells.get_values(flatten=True)
+    def deduce(self, sliced_cells:Cells):
+        _validate_cells(sliced_cells)
+        self.sliced_cells = sliced_cells
+
+    def eliminate(self):
+        values = self.sliced_cells.get_values(flatten=True)
         values = list(set(values))
         if 0 in values:
             values.remove(0)
 
-        for row in cells.data:
+        for row in self.sliced_cells.data:
             for cell in row:
                 cell.remove_candidates(values)
                 if cell.value != 0:
@@ -180,6 +189,9 @@ class ValueDeducer:
 class Deducer:
     def __init__(self, cells: Cells):
         self.cells = cells
+        self.value_deducer = ValueDeducer()
+        self.companion_deducer = CompanionDeducer(cells)
+        self.linebox_deducer = LineBoxDeducer(cells)
 
     def deduce_row(self, row:int):
         self._deduce_cells(self.cells[row])
