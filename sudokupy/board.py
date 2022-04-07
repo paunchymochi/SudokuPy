@@ -1,7 +1,6 @@
-try:
-    from cell import Cell, Cells
-except:
-    from .cell import Cell, Cells
+import sys
+sys.path.append('..')
+from sudokupy.cell import Cells
 
 from typing import List, Tuple
 
@@ -78,6 +77,9 @@ class Board:
         self.col = self.Col(self.cells)
         self.box = self.Box(self.cells)
         self.cell = self.Cell(self.cells)
+    
+    def __repr__(self):
+        return f'<Board\n{self.cells.__str__()}\n\n{self.cells.print_candidates()}\n>'
     
     @property
     def cells(self) -> Cells:
