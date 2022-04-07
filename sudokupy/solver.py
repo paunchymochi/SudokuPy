@@ -420,11 +420,11 @@ class Deducer(_BaseDeducer):
         row_count = sliced_cells.row_count
         col_count = sliced_cells.col_count
 
-        if row_count == 9:
+        if col_count == 9:
             row = sliced_cells.topleft_row
         else:
             row = None
-        if col_count == 9:
+        if row_count == 9:
             col = sliced_cells.topleft_column
         else:
             col = None
