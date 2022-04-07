@@ -137,8 +137,20 @@ class TestValueDeducer:
         d.deduce(board.box[0, 0])
         assert len(d.operations) == 2
         for operation in d.operations:
-            operation.candidates_to_remove == list(range(1, 10))
+            assert operation.candidates_to_remove == list(range(1, 10))
+    
+    def test_one_value(self):
+        board = Board()
+        d = ValueDeducer()
+        board.cell[0, 0].values = 5
 
-
+        d.deduce(board.row[0])
+        assert len(d.operations) == 9
+        for operation in d.operations:
+            assert operation.candidates_to_remove in [[5], list(range(1, 10))]
+        
+        assert sum([[5] == operation.candidates_to_remove for operation in d.operations]) == 8
+        assert sum([list(range(1, 10)) == operation.candidates_to_remove for operation in d.operations]) == 1
+    
 class TestDeducer:
     pass
