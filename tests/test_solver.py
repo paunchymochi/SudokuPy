@@ -207,3 +207,16 @@ class TestDeducer:
         assert len(d.operations) == 8 + 6 + 6 # box, row, col
         for operation in d.operations:
             assert operation.candidates_to_remove == [5]
+    
+    def test_deduce__two_values(self):
+        board = Board()
+        d = Deducer(board.cells)
+        board.cell[1, 1].values = 5
+        board.cell[2, 2].values = 6
+        d.deduce()
+        assert len(d.operations) == 9 + 12 + 12 # box, row, col
+
+        assert sum([list(range(1, 10)) == x.candidates_to_remove for x in d.operations]) == 2
+        assert sum([5, 6] == x.candidates_to_remove for x in d.operations) == 9 - 2
+        assert sum([5] == x.candidates_to_remove for x in d.operations) == 6 + 6
+        assert sum([6] == x.candidates_to_remove for x in d.operations) == 6 + 6
