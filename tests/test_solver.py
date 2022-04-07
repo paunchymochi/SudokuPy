@@ -165,4 +165,9 @@ class TestValueDeducer:
         assert sum([list(range(1, 10)) == operation.candidates_to_remove for operation in d.operations]) == 2
     
 class TestDeducer:
-    pass
+    def test_deduce_value(self):
+        board = Board()
+        d = Deducer(board.cells)
+        board.cell[0, 0].values = 5
+        d.deduce_value(board.box[0, 0])
+        assert len(d.operations) == 9
