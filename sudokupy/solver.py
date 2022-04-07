@@ -76,7 +76,7 @@ class _DeduceOperations:
         self._operations_dict = {}
 
     def get_operations(self) -> List[_DeduceOperation]:
-        return self._operations_dict.values()
+        return list(self._operations_dict.values())
 
     def _append_operation(self, position:Tuple[int], remove_candidates:Union[int, List[int]]):
         remove_candidates = self._validate_candidates(remove_candidates)
