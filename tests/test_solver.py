@@ -151,6 +151,18 @@ class TestValueDeducer:
         
         assert sum([[5] == operation.candidates_to_remove for operation in d.operations]) == 8
         assert sum([list(range(1, 10)) == operation.candidates_to_remove for operation in d.operations]) == 1
+
+    def test_two_values(self):
+        board = Board()
+        d = ValueDeducer()
+        board.cell[3, 3].values = 2
+        board.cell[4, 5].values = 7
+
+        d.deduce(board.box[1, 1])
+        assert len(d.operations) == 9
+
+        assert sum([[2, 7] == operation.candidates_to_remove for operation in d.operations]) == 7
+        assert sum([list(range(1, 10)) == operation.candidates_to_remove for operation in d.operations]) == 2
     
 class TestDeducer:
     pass
