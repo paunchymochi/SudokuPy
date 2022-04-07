@@ -102,6 +102,7 @@ class TestLineBoxDeducer:
         for cell in board.col[4].flatten():
             cell.set_candidates([])
         
+        # remove 1 & 9 in box[0, 1]
         board.cell[0, 4].set_candidates([1, 3, 7, 8])
         board.cell[1, 4].set_candidates([1, 4, 7, 9])
         board.cell[2, 4].set_candidates([2, 4, 7, 9])
@@ -111,9 +112,9 @@ class TestLineBoxDeducer:
         board.cell[8, 4].set_candidates([4, 5, 6])
 
         d.deduce(col=4)
-        assert len(d.operations) == 12
+        assert len(d.operations) == 6
         for operation in d.operations:
-            assert operation.candidates_to_remove in [[1],[9]]
+            assert operation.candidates_to_remove == [1, 9]
 
 class TestValueDeducer:
     def test_filled_cell_with_candidates(self):
