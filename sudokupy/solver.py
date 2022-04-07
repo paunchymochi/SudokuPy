@@ -140,6 +140,7 @@ class _BaseDeducer:
         self._affected_cells = []
     
 class _Companion:
+    __slots__ = ['cells', 'candidates', 'companion', 'skip', 'valid']
     def __init__(self, cell:Cells, other=None):
         self.cells:List[Cell] = []
         self.candidates = []
@@ -193,11 +194,11 @@ class CompanionDeducer(_BaseDeducer):
         super().__init__()
         self._sliced_cells:Cells=None
 
-    def deduce(self, sliced_cells:Cells):
+    def deduce(self, sliced_cells:Cells, max_companion_count:int=3):
         self._sliced_cells = sliced_cells
         self._operations_in_current_slice = False
 
-        max_level = self._get_max_level(self._sliced_cells)
+        max_level = self._get_max_level(self._sliced_cells, max_companion_count)
         companions = {}
         level = 1
 
@@ -229,12 +230,12 @@ class CompanionDeducer(_BaseDeducer):
                     self._operations_in_current_slice = True
                     self._add_operation(cell, remove_candidates=companion.companion)
     
-    def _get_max_level(self, cells:Cells):
+    def _get_max_level(self, cells:Cells, max_companion_count:int):
         values = cells.get_values(flatten=True)
         values = list(set(values))
         if 0 in values:
             values.remove(0)
-        return min(8 - len(values), 5)
+        return min(8 - len(values), max_companion_count)
 
 class LineBoxDeducer(_BaseDeducer):
     class _SegmentExclusiveCandidates:
