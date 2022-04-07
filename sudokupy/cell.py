@@ -29,6 +29,7 @@ class Candidate:
     def set(self, values: Union[int, List[int]]):
         if type(values) is int:
             values = [values]
+        values = list(set(values))
         self._validate_values(values)
         self._values = values
     
@@ -163,6 +164,13 @@ class Cells:
     
     def __repr__(self):
         return f'<Cells \n{self._print_grid()}\nrows:{self._row_count} cols:{self._col_count}>'
+    
+    @property
+    def row_count(self):
+        return self._row_count
+    @property
+    def col_count(self):
+        return self._col_count
     
     def _print_grid(self):
         def _print_row_grid(row: List[Cell], print_box:bool):
@@ -315,6 +323,10 @@ class Cells:
     def candidates(self) -> List[List[List[int]]]:
         return self.get_candidates()
     
+    @candidates.setter
+    def candidates(self, values:Union[int, List[int]]):
+        self.set_candidates(values)
+    
     def contains(self, values: Union[int, List[int]]) -> bool:
         if type(values) is int:
             values = [values]
@@ -377,6 +389,13 @@ class Cells:
         if flatten:
             candidates = self._flatten(candidates)
         return candidates
+    
+    def flatten(self) -> List[Cell]:
+        flattened_cells = []
+        for row in self.data:
+            for cell in row:
+                flattened_cells.append(cell)
+        return flattened_cells
 
     def _flatten(self, matrix) -> List:
 
