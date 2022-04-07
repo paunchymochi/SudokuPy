@@ -196,3 +196,16 @@ class TestDeducer:
         assert len(d.operations) == 6
         for operation in d.operations:
             assert operation.candidates_to_remove == [1]
+    
+    def test_deduce__one_value(self):
+        board = Board()
+        d = Deducer(board.cells)
+        board.cell[0, 0].values = 5
+        d.deduce()
+        assert len(d.operations) == 9 + 6 + 6 # box, row, col
+        for operation in d.operations:
+            assert operation.candidates_to_remove == [5]
+
+        cells_with_operations = [operation.cell for operation in d.operations]
+        for cell in board.row[0].flatten():
+            assert cell in cells_with_operations
