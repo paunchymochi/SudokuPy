@@ -202,11 +202,8 @@ class TestDeducer:
         board = Board()
         d = Deducer(board.cells)
         board.cell[0, 0].values = 5
+        board.cell[0, 0].candidates = []
         d.deduce()
-        assert len(d.operations) == 9 + 6 + 6 # box, row, col
+        assert len(d.operations) == 8 + 6 + 6 # box, row, col
         for operation in d.operations:
             assert operation.candidates_to_remove == [5]
-
-        cells_with_operations = [operation.cell for operation in d.operations]
-        for cell in board.row[0].flatten():
-            assert cell in cells_with_operations
