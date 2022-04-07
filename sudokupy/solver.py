@@ -63,6 +63,10 @@ class _BaseDeducer:
     def operations(self):
         return self._operations
     
+    @property
+    def affected_cells(self):
+        return self._affected_cells
+    
     def __repr__(self):
         return f'<{__name__}\n' + '\n'.join(self.list_pending_operations()) + '>'
     
