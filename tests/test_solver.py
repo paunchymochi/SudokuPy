@@ -35,7 +35,7 @@ class TestCompanionDeducer:
         d.deduce(board.col[5])
         assert len(d.operations) == 7
         for operation in d.operations:
-            assert operation.candidates_to_remove == [2, 4]
+            assert operation.candidates == [2, 4]
 
         board.cell[0, 5].set_candidates([1, 3])
         board.cell[8, 5].set_candidates([1, 3])
@@ -44,7 +44,7 @@ class TestCompanionDeducer:
         d.deduce(board.col[5])
         assert len(d.operations) == 5
         for operation in d.operations:
-            assert operation.candidates_to_remove == [1, 2, 3, 4]
+            assert operation.candidates == [1, 2, 3, 4]
             assert operation.cell.column == 5
 
     def test_triple_companion(self):
@@ -57,7 +57,7 @@ class TestCompanionDeducer:
         d.deduce(board.box[0, 0])
         assert len(d.operations) == 6
         for operation in d.operations:
-            assert operation.candidates_to_remove == [1, 3, 5]
+            assert operation.candidates == [1, 3, 5]
     
     def test_quadruple_companion(self):
         d = CompanionDeducer()
@@ -73,7 +73,7 @@ class TestCompanionDeducer:
         d.deduce(board.box[0, 0])
         assert len(d.operations) == 5
         for operation in d.operations:
-            assert operation.candidates_to_remove == [1, 3, 5, 7]
+            assert operation.candidates == [1, 3, 5, 7]
 
     
 class TestLineBoxDeducer:
@@ -94,7 +94,7 @@ class TestLineBoxDeducer:
         d.deduce(row=0)
         assert len(d.operations) == 12
         for operation in d.operations:
-            assert operation.candidates_to_remove in [[2], [8]]
+            assert operation.candidates in [[2], [8]]
         
     def test_col_linebox(self):
         board = Board()
@@ -114,7 +114,7 @@ class TestLineBoxDeducer:
         d.deduce(col=4)
         assert len(d.operations) == 6
         for operation in d.operations:
-            assert operation.candidates_to_remove == [1, 9]
+            assert operation.candidates == [1, 9]
 
 class TestValueDeducer:
     def test_filled_cell_with_candidates(self):
@@ -128,7 +128,7 @@ class TestValueDeducer:
 
         d.deduce(board.box[0, 0])
         assert len(d.operations) == 1
-        assert d.operations[0].candidates_to_remove == list(range(1, 10))
+        assert d.operations[0].candidates == list(range(1, 10))
 
         cell = board.cell[2, 2]
         cell.set_values(6)
@@ -138,7 +138,7 @@ class TestValueDeducer:
         d.deduce(board.box[0, 0])
         assert len(d.operations) == 2
         for operation in d.operations:
-            assert operation.candidates_to_remove == list(range(1, 10))
+            assert operation.candidates == list(range(1, 10))
     
     def test_one_value(self):
         board = Board()
@@ -148,10 +148,10 @@ class TestValueDeducer:
         d.deduce(board.row[0])
         assert len(d.operations) == 9
         for operation in d.operations:
-            assert operation.candidates_to_remove in [[5], list(range(1, 10))]
+            assert operation.candidates in [[5], list(range(1, 10))]
         
-        assert sum([[5] == operation.candidates_to_remove for operation in d.operations]) == 8
-        assert sum([list(range(1, 10)) == operation.candidates_to_remove for operation in d.operations]) == 1
+        assert sum([[5] == operation.candidates for operation in d.operations]) == 8
+        assert sum([list(range(1, 10)) == operation.candidates for operation in d.operations]) == 1
 
     def test_two_values(self):
         board = Board()
@@ -162,8 +162,8 @@ class TestValueDeducer:
         d.deduce(board.box[1, 1])
         assert len(d.operations) == 9
 
-        assert sum([[2, 7] == operation.candidates_to_remove for operation in d.operations]) == 7
-        assert sum([list(range(1, 10)) == operation.candidates_to_remove for operation in d.operations]) == 2
+        assert sum([[2, 7] == operation.candidates for operation in d.operations]) == 7
+        assert sum([list(range(1, 10)) == operation.candidates for operation in d.operations]) == 2
     
 class TestDeducer:
     def test_deduce_value(self):
@@ -196,7 +196,7 @@ class TestDeducer:
         d.deduce_linebox(board.col[2])
         assert len(d.operations) == 6
         for operation in d.operations:
-            assert operation.candidates_to_remove == [1]
+            assert operation.candidates == [1]
     
     def test_deduce__one_value(self):
         board = Board()
@@ -206,7 +206,7 @@ class TestDeducer:
         d.deduce()
         assert len(d.operations) == 8 + 6 + 6 # box, row, col
         for operation in d.operations:
-            assert operation.candidates_to_remove == [5]
+            assert operation.candidates == [5]
     
     def test_deduce__two_values(self):
         board = Board()
@@ -216,7 +216,7 @@ class TestDeducer:
         d.deduce()
         assert len(d.operations) == 9 + 12 + 12 # box, row, col
 
-        assert sum([list(range(1, 10)) == x.candidates_to_remove for x in d.operations]) == 2
-        assert sum([5, 6] == x.candidates_to_remove for x in d.operations) == 9 - 2
-        assert sum([5] == x.candidates_to_remove for x in d.operations) == 6 + 6
-        assert sum([6] == x.candidates_to_remove for x in d.operations) == 6 + 6
+        assert sum([list(range(1, 10)) == x.candidates for x in d.operations]) == 2
+        assert sum([5, 6] == x.candidates for x in d.operations) == 9 - 2
+        assert sum([5] == x.candidates for x in d.operations) == 6 + 6
+        assert sum([6] == x.candidates for x in d.operations) == 6 + 6
