@@ -25,6 +25,9 @@ class TestCompanionDeducer:
         d.clear_operations()
         d.deduce(board.row[0])
         assert len(d.operations) == 7
+        
+        d.eliminate()
+        assert len(d.affected_cells) == 7
     
     def test_double_companion(self):
         d = CompanionDeducer()
@@ -46,7 +49,7 @@ class TestCompanionDeducer:
         for operation in d.operations:
             assert operation.candidates == [1, 2, 3, 4]
             assert operation.cell.column == 5
-
+    
     def test_triple_companion(self):
         d = CompanionDeducer()
         board = Board()
