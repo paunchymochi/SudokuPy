@@ -180,3 +180,19 @@ class TestDeducer:
         board.cell[2, 2].candidates = [1, 5]
         d.deduce_companion(board.box[0, 0])
         assert len(d.operations) == 6
+    
+    def test_deduce_linebox(self):
+        board = Board()
+        d = Deducer(board.cells)
+        for cell in board.col[2].flatten():
+            cell.candidates = []
+        board.cell[0, 2].candidates = [1, 4, 6]
+        board.cell[1, 2].candidates = [1, 2, 3, 8]
+        board.cell[4, 2].candidates = [2, 3, 4, 8]
+        board.cell[6, 2].candidates = [2, 3, 4]
+        board.cell[7, 2].candidates = [2, 3, 6, 8]
+
+        d.deduce_linebox(board.col[2])
+        assert len(d.operations) == 6
+        for operation in d.operations:
+            assert operation.candidates_to_remove == [1]
