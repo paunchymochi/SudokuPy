@@ -14,33 +14,33 @@ def _get_pending_operations_message(operations:dict):
     return {'Number of operations': sum([len(x) for x in operations.values()]), 'Operations': operations}
 
 class _DeduceOperation:
-    __slots__ = ['_cell', '_candidates_to_remove']
+    __slots__ = ['_cell', '_candidates']
     def __init__(self, cell:Cell):
         self._cell = cell
-        self._candidates_to_remove = []
+        self._candidates = []
     
     def __repr__(self):
-        return f'DeduceOperation cell:{self._cell.__repr__()} candidates_to_remove:{self._candidates_to_remove}>'
+        return f'DeduceOperation cell:{self._cell.__repr__()} candidates:{self._candidates}>'
     
     @property
     def cell(self):
         return self._cell
     
     @property
-    def candidates_to_remove(self):
-        return self._candidates_to_remove
+    def candidates(self):
+        return self._candidates
     
-    def add(self, candidates_to_remove: List[int]):
-        if len(self._candidates_to_remove) == 0:
-            self._candidates_to_remove = candidates_to_remove.copy()
+    def add(self, candidates: List[int]):
+        if len(self._candidates) == 0:
+            self._candidates = candidates.copy()
         else:
-            self._candidates_to_remove.extend(candidates_to_remove)
+            self._candidates.extend(candidates)
             self._remove_duplicate_candidates()
-        self._candidates_to_remove.sort()
+        self._candidates.sort()
     
     def _remove_duplicate_candidates(self):
-        candidates = list(set(self._candidates_to_remove))
-        self._candidates_to_remove = candidates
+        candidates = list(set(self._candidates))
+        self._candidates = candidates
 
     def __eq__(self, other):
         return self._cell == other._cell
@@ -70,7 +70,7 @@ class _DeduceOperations:
     def extend_operations(self, other:'_DeduceOperations'):
         other_operations = other.operations
         for operation in other_operations:
-            self.add_operation(operation.cell, operation.candidates_to_remove)
+            self.add_operation(operation.cell, operation.candidates)
 
     def clear_operations(self):
         self._operations_dict = {}
@@ -122,7 +122,7 @@ class _BaseDeducer:
     def eliminate(self):
         self._clear_affected_cells()
         for operation in self._operations:
-            operation.cell.remove_candidates(operation.candidates_to_remove)
+            operation.cell.remove_candidates(operation.candidates)
             self._add_affected_cell(operation.cell)
         self.clear_operations()
 
@@ -352,9 +352,9 @@ class ValueDeducer(_BaseDeducer):
                 if cell.value != 0:
                     self._add_operation(cell, remove_candidates=candidates)
                 else:
-                    candidates_to_remove = [candidate for candidate in candidates if candidate in values]
-                    if len(candidates_to_remove) > 0:
-                        self._add_operation(cell, remove_candidates=candidates_to_remove)
+                    candidates = [candidate for candidate in candidates if candidate in values]
+                    if len(candidates) > 0:
+                        self._add_operation(cell, remove_candidates=candidates)
     
     def _get_values(self, sliced_cells:Cells):
         values = sliced_cells.get_values(flatten=True)
