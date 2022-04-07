@@ -42,9 +42,9 @@ class TestCompanionDeducer:
 
         d.clear_operations()
         d.deduce(board.col[5])
-        assert len(d.operations) == 5 + 5
+        assert len(d.operations) == 5
         for operation in d.operations:
-            assert operation.candidates_to_remove in [[2, 4], [1, 3]]
+            assert operation.candidates_to_remove == [1, 2, 3, 4]
             assert operation.cell.column == 5
 
     def test_triple_companion(self):
