@@ -238,3 +238,24 @@ class TestDeducer:
         assert len(d.operations) == 12
         assert sum([9] == x.candidates for x in d.operations) == 6
         assert sum([8] == x.candidates for x in d.operations) == 6
+    
+    def test_deduce__companion(self):
+        board = Board()
+        d = Deducer(board.cells)
+        
+        # [1,3,5] in box[0][0], [3,5,8] in col[1]
+        candidates_dict = {
+            (0, 0): [1, 3],
+            (1, 1): [3, 5],
+            (2, 2): [1, 5],
+            (6, 1): [3, 8],
+            (7, 1): [5, 8]
+        }
+        for (x, y), candidates in candidates_dict.items():
+            board.cell[x, y].candidates = candidates
+        d.deduce()
+        assert len(d.operations) == 6 + (6-2)
+        assert sum([1, 3, 5] == x.candidates for x in d.operations) == 4
+        assert sum([3, 5, 8] == x.candidates for x in d.operations) == 4
+        assert sum([1, 3, 5, 8] == x.candidates for x in d.operations) == 2
+
