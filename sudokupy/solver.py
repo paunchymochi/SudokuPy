@@ -147,6 +147,8 @@ class _Companion:
         self.companion = []
         self.skip = True
         self.valid = False
+        if not self._validate_cell(cell):
+            return
         self._init_other(other)
         if self._add(cell):
             self.skip = False
@@ -179,14 +181,17 @@ class _Companion:
         
         candidates = cell.candidates
 
-        if len(candidates) == 0:
-            return False
-
         self.cells.append(cell)
         self.candidates.append(candidates)
         self.companion = list(set(self.companion+candidates))
 
         return True
+    
+    def _validate_cell(self, cell:Cell) -> bool:
+        if len(cell.candidates) == 0:
+            return False
+        return True
+    
     
 class CompanionDeducer(_BaseDeducer):
 
