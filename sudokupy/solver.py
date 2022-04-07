@@ -195,6 +195,7 @@ class CompanionDeducer(_BaseDeducer):
 
     def deduce(self, sliced_cells:Cells):
         self._sliced_cells = sliced_cells
+        self._operations_in_current_slice = False
 
         max_level = self._get_max_level(self._sliced_cells)
         companions = {}
@@ -202,7 +203,8 @@ class CompanionDeducer(_BaseDeducer):
 
         companions[0] = [None]
 
-        while level <= max_level and len(self._operations) == 0:
+
+        while level <= max_level and not self._operations_in_current_slice:
             companions[level] = self._make_companions(self._sliced_cells, companions[level-1])
             level += 1
         
@@ -224,6 +226,7 @@ class CompanionDeducer(_BaseDeducer):
         for cell in sliced_cells.flatten():
             if cell not in companion.cells:
                 if any([candidate in companion.companion for candidate in cell.candidates]):
+                    self._operations_in_current_slice = True
                     self._add_operation(cell, remove_candidates=companion.companion)
     
     def _get_max_level(self, cells:Cells):
