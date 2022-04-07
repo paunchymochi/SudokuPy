@@ -121,7 +121,7 @@ class _BaseDeducer:
 
     def eliminate(self):
         self._clear_affected_cells()
-        for operation in self._operations:
+        for operation in self.operations:
             operation.cell.remove_candidates(operation.candidates)
             self._add_affected_cell(operation.cell)
         self.clear_operations()
