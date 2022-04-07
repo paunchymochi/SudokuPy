@@ -321,33 +321,24 @@ class ValueDeducer(_BaseDeducer):
             values.remove(0)
         return values
 
-class Deducer:
+class Deducer(_BaseDeducer):
     def __init__(self, cells: Cells):
-        self.cells = cells
+        super().__init__()
+        self._cells = cells
         self.value_deducer = ValueDeducer()
         self.companion_deducer = CompanionDeducer()
         self.linebox_deducer = LineBoxDeducer(cells)
     
-    def print_pending_operations(self):
-        operations = {}
-        operations['value_deducer'] = self.value_deducer.print_pending_operations()
-        operations['linebox_deducer'] = self.linebox_deducer.print_pending_operations()
-        operations['companion_deducer'] = self.companion_deducer.print_pending_operations()
-    
-    @property
-    def pending_operations(self):
-        return self.value_deducer.pending_operations + self.linebox_deducer.pending_operations + self.companion_deducer.pending_operations
-
     def deduce_row(self, row:int, deduce_value=True, deduce_linebox=True, deduce_companion=True):
-        cells = self.cells[row]
+        cells = self._get_row(row)
         self._deduce_cells(cells, deduce_value, deduce_linebox, deduce_companion)
     
     def deduce_column(self, col:int, deduce_value=True, deduce_linebox=True, deduce_companion=True):
-        cells = self.cells[:, col]
+        cells = self._get_col(col)
         self._deduce_cells(cells, deduce_value, deduce_linebox, deduce_companion)
     
     def deduce_box(self, boxrow:int, boxcol:int, deduce_value=True, deduce_companion=True):
-        cells = self.cells[boxrow*3:boxrow*3+3,boxcol*3:boxcol*3+3]
+        cells = self._get_box(boxrow, boxcol)
         self._deduce_cells(cells, deduce_value=deduce_value, deduce_linebox=False, deduce_companion=deduce_companion)
     
     def deduce_adjacent(self, row:int, col:int):
@@ -356,20 +347,21 @@ class Deducer:
         self.deduce_box(row//3, col//3)
     
     def deduce(self):
-        for flag in [[True, False, False], [False, True, False], [False, False, True]]:
-            for i in range(9):
-                self.deduce_row(i, flag[0], flag[1], flag[2])
-                self.deduce_column(i, flag[0], flag[1], flag[2])
-            for i in range(3):
-                for j in range(3):
-                    self.deduce_box(i, j, flag[0], flag[2])
-            if self.pending_operations > 0:
-                return
+        self._deduce_all_values()
+        if len(self.operations) > 0: return
+        self._deduce_all_lineboxes()
+        if len(self.operations) > 0: return
+        self._deduce_all_companions()
     
     def eliminate(self):
+        self._clear_affected_cells()
         self.value_deducer.eliminate()
         self.linebox_deducer.eliminate()
         self.companion_deducer.eliminate()
+        self._affected_cells.extend(self.value_deducer.affected_cells)
+        self._affected_cells.extend(self.linebox_deducer.affected_cells)
+        self._affected_cells.extend(self.companion_deducer.affected_cells)
+        self.clear_operations()
 
     def _deduce_cells(self, sliced_cells:Cells, deduce_value=False, deduce_linebox=False, deduce_companion=False):
         _validate_cells(sliced_cells)
@@ -380,11 +372,54 @@ class Deducer:
         if deduce_companion:
             self._deduce_companions(sliced_cells)
     
+    def _get_all_rows(self) -> List[Cells]:
+        return [self._get_row(i) for i in range(9)]
+    
+    def _get_all_cols(self) -> List[Cells]:
+        return [self._get_col(i) for i in range(9)]
+    
+    def _get_all_boxes(self) -> List[Cells]:
+        return [self._get_box(i, j) for i in range(3) for j in range(3)]
+    
+    def _get_all_sliced_cells(self, include_boxes=True) -> List[Cells]:
+        cells_list = []
+        cells_list.extend(self._get_all_rows())
+        cells_list.extend(self._get_all_cols())
+        if include_boxes:
+            cells_list.extend(self._get_all_boxes())
+        return cells_list
+    
+    def _get_row(self, row:int) -> Cells:
+        return self._cells[row]
+    
+    def _get_col(self, col:int) -> Cells:
+        return self._cells[:, col]
+    
+    def _get_box(self, boxrow:int, boxcol:int) -> Cells:
+        return self._cells[boxrow*3:boxrow*3+3,boxcol*3:boxcol*3+3]
+    
+    def _deduce_all_values(self):
+        cells_list = self._get_all_sliced_cells(True)
+        for cells in cells_list:
+            self._deduce_values(cells)
+
+    def _deduce_all_companions(self):
+        cells_list = self._get_all_sliced_cells(True)
+        for cells in cells_list:
+            self._deduce_companions(cells)
+
+    def _deduce_all_lineboxes(self):
+        cells_list = self._get_all_sliced_cells(False)
+        for cells in cells_list:
+            self._deduce_lineboxes(cells)
+    
     def _deduce_values(self, sliced_cells:Cells):
         self.value_deducer.deduce(sliced_cells)
+        self._operations.append(self.value_deducer.operations)
     
     def _deduce_companions(self, sliced_cells:Cells):
         self.companion_deducer.deduce(sliced_cells)
+        self._operations.append(self.companion_deducer.operations)
     
     def _deduce_lineboxes(self, sliced_cells:Cells):
         row_count = sliced_cells.row_count
@@ -403,3 +438,4 @@ class Deducer:
             return
 
         self.linebox_deducer.deduce(row, col)
+        self._operations.append(self.linebox_deducer.operations)
