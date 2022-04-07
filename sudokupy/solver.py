@@ -1,7 +1,7 @@
 import sys
 sys.path.append('..')
 from sudokupy.cell import Cells, Cell
-from typing import List, Dict, Optional, Union
+from typing import List, Dict, Optional, Union, Tuple
 
 def _validate_cells(cells:Cells):
     if len(cells) != 9:
@@ -15,9 +15,9 @@ def _get_pending_operations_message(operations:dict):
 
 class _DeduceOperation:
     __slots__ = ['_cell', '_candidates_to_remove']
-    def __init__(self, cell:Cell, remove_candidates:List[int]=None, set_candidates:List[int]=None):
+    def __init__(self, cell:Cell):
         self._cell = cell
-        self._candidates_to_remove = self._get_candidates_to_remove(remove_candidates, set_candidates)
+        self._candidates_to_remove = []
     
     def __repr__(self):
         return f'DeduceOperation cell:{self._cell.__repr__()} candidates_to_remove:{self._candidates_to_remove}>'
@@ -29,39 +29,82 @@ class _DeduceOperation:
     @property
     def candidates_to_remove(self):
         return self._candidates_to_remove
-
-    def _get_candidates_to_remove(self, remove_candidates:List[int]=None, set_candidates:List[int]=None):
-        if remove_candidates is not None:
-            if type(remove_candidates) is int:
-                remove_candidates = [remove_candidates]
-            candidates_to_remove = list(set(remove_candidates))
-        elif set_candidates is not None:
-            if type(set_candidates) is int:
-                set_candidates = [set_candidates]
-            candidates_to_remove = self._set_to_remove(set_candidates)
-        
-        candidates_to_remove.sort()
-        return candidates_to_remove
-
-    def _set_to_remove(self, set_candidates:List[int]):
-        existing_candidates = self._cell.candidates
-        remove_candidates = [candidate for candidate in existing_candidates if candidate not in set_candidates]
-        return remove_candidates
     
+    def add(self, candidates_to_remove: List[int]):
+        if len(self._candidates_to_remove) == 0:
+            self._candidates_to_remove = candidates_to_remove.copy()
+        else:
+            self._candidates_to_remove.extend(candidates_to_remove)
+            self._remove_duplicate_candidates()
+        self._candidates_to_remove.sort()
+    
+    def _remove_duplicate_candidates(self):
+        candidates = list(set(self._candidates_to_remove))
+        self._candidates_to_remove = candidates
+
     def __eq__(self, other):
-        if self._cell == other._cell:
-            if self._candidates_to_remove == other._candidates_to_remove:
-                return True
-        return False
+        return self._cell == other._cell
+
+class _DeduceOperations:
+    __slots__ = '_operations_dict'
+    def __init__(self):
+        self._operations_dict:Dict[Tuple[int], List[_DeduceOperation]] = {}
+        self.clear_operations()
+    
+    def __repr__(self):
+        return f'<_DeduceOperations >'
+    
+    def __len__(self):
+        return len(self._operations_dict)
+    
+    @property
+    def operations(self) -> List[_DeduceOperation]:
+        return self.get_operations()
+
+    def add_operation(self, cell:Cell, remove_candidates:Union[int, List[int]]):
+        position = self._get_position(cell)
+        if not self._cell_in_operations(position):
+            self._make_new_operations_entry(cell)
+        self._append_operation(position, remove_candidates)
+    
+    def extend_operations(self, other:'_DeduceOperations'):
+        other_operations = other.operations
+        for operation in other_operations:
+            self.add_operation(operation.cell, operation.candidates_to_remove)
+
+    def clear_operations(self):
+        self._operations_dict = {}
+
+    def get_operations(self) -> List[_DeduceOperation]:
+        return self._operations_dict.values()
+
+    def _append_operation(self, position:Tuple[int], remove_candidates:Union[int, List[int]]):
+        remove_candidates = self._validate_candidates(remove_candidates)
+        self._operations_dict[position].add(remove_candidates)
+    
+    def _validate_candidates(self, candidates:Union[int, List[int]]) -> List[int]:
+        if type(candidates) is int:
+            candidates = [candidates]
+        return candidates
+    
+    def _make_new_operations_entry(self, cell:Cell):
+        position = self._get_position(cell)
+        self._operations_dict[position] = _DeduceOperation(cell)
+
+    def _cell_in_operations(self, position:Tuple[int]) -> bool:
+        return position in self._operations_dict.keys()
+    
+    def _get_position(self, cell:Cell) -> Tuple[int]:
+        return (cell.row, cell.column)
     
 class _BaseDeducer:
     def __init__(self):
         self._affected_cells:List[Cell] = []
-        self._operations:List[_DeduceOperation] = []
+        self._operations = _DeduceOperations()
     
     @property
     def operations(self):
-        return self._operations
+        return self._operations.get_operations()
     
     @property
     def affected_cells(self):
@@ -73,8 +116,8 @@ class _BaseDeducer:
     def count_pending_operations(self):
         return len(self._operations)
     
-    def list_pending_operations(self):
-        return [operation.__repr__() for operation in self._operations]
+    # def list_pending_operations(self):
+    #     return [operation.__repr__() for operation in self._operations]
 
     def eliminate(self):
         self._clear_affected_cells()
@@ -83,12 +126,11 @@ class _BaseDeducer:
             self._add_affected_cell(operation.cell)
         self.clear_operations()
 
-    def _add_operation(self, cell:Cell, remove_candidates:List[int]=None, set_candidates:List[int]=None):
-        operation = _DeduceOperation(cell, remove_candidates, set_candidates)
-        self._operations.append(operation)
+    def _add_operation(self, cell:Cell, remove_candidates:List[int]=None):
+        self._operations.add_operation(cell, remove_candidates)
 
     def clear_operations(self):
-        self._operations = []
+        self._operations.clear_operations()
 
     def _add_affected_cell(self, cell:Cell):
         if cell not in self._affected_cells:
@@ -410,11 +452,11 @@ class Deducer(_BaseDeducer):
     
     def deduce_value(self, sliced_cells:Cells):
         self.value_deducer.deduce(sliced_cells)
-        self._operations.extend(self.value_deducer.operations)
+        self._operations.extend_operations(self.value_deducer._operations)
     
     def deduce_companion(self, sliced_cells:Cells):
         self.companion_deducer.deduce(sliced_cells)
-        self._operations.extend(self.companion_deducer.operations)
+        self._operations.extend_operations(self.companion_deducer._operations)
     
     def deduce_linebox(self, sliced_cells:Cells):
         row_count = sliced_cells.row_count
@@ -433,4 +475,4 @@ class Deducer(_BaseDeducer):
             return
 
         self.linebox_deducer.deduce(row, col)
-        self._operations.extend(self.linebox_deducer.operations)
+        self._operations.extend_operations(self.linebox_deducer._operations)
