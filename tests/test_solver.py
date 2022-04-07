@@ -220,3 +220,21 @@ class TestDeducer:
         assert sum([5, 6] == x.candidates for x in d.operations) == 9 - 2
         assert sum([5] == x.candidates for x in d.operations) == 6 + 6
         assert sum([6] == x.candidates for x in d.operations) == 6 + 6
+    
+    def test_deduce__linebox(self):
+        board = Board()
+        d = Deducer(board.cells)
+        board.row[0].candidates = []
+
+        # remove 9 from box 1, 8 from box 3
+        candidates = [
+            [1, 2, 9], [2, 3, 4], [2, 3, 9],
+            [2, 3, 4, 5], [1, 2, 3, 4, 5], [3, 4, 5],
+            [3, 4, 5, 8], [1, 2, 5], [2, 3, 4, 5]
+        ]
+        for i, candidate in enumerate(candidates):
+            board.cell[0, i].candidates = candidate
+        d.deduce()
+        assert len(d.operations) == 12
+        assert sum([9] == x.candidates for x in d.operations) == 6
+        assert sum([8] == x.candidates for x in d.operations) == 6
