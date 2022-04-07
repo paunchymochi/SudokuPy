@@ -323,6 +323,10 @@ class Cells:
     def candidates(self) -> List[List[List[int]]]:
         return self.get_candidates()
     
+    @candidates.setter
+    def candidates(self, values:Union[int, List[int]]):
+        self.set_candidates(values)
+    
     def contains(self, values: Union[int, List[int]]) -> bool:
         if type(values) is int:
             values = [values]
