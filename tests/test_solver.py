@@ -171,3 +171,12 @@ class TestDeducer:
         board.cell[0, 0].values = 5
         d.deduce_value(board.box[0, 0])
         assert len(d.operations) == 9
+    
+    def test_deduce_companion(self):
+        board = Board()
+        d = Deducer(board.cells)
+        board.cell[0, 0].candidates = [1, 3]
+        board.cell[1, 1].candidates = [3, 5]
+        board.cell[2, 2].candidates = [1, 5]
+        d.deduce_companion(board.box[0, 0])
+        assert len(d.operations) == 6
