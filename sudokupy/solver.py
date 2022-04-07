@@ -51,8 +51,10 @@ class _DeduceOperations:
         self._operations_dict:Dict[Tuple[int], List[_DeduceOperation]] = {}
         self.clear_operations()
     
+    def __str__(self):
+        return f'# of operations:{len(self._operations_dict)}\n' + '\n'.join(operation.__repr__() for operation in self.operations)
     def __repr__(self):
-        return f'<_DeduceOperations >'
+        return f'<_DeduceOperations\n{self.__str__()}\n>'
     
     def __len__(self):
         return len(self._operations_dict)
@@ -111,14 +113,11 @@ class _BaseDeducer:
         return self._affected_cells
     
     def __repr__(self):
-        return f'<{__name__}\n' + '\n'.join(self.list_pending_operations()) + '>'
+        return f'<{self.__class__.__name__} {self._operations.__str__()} \n>'
     
     def count_pending_operations(self):
         return len(self._operations)
     
-    # def list_pending_operations(self):
-    #     return [operation.__repr__() for operation in self._operations]
-
     def eliminate(self):
         self._clear_affected_cells()
         for operation in self.operations:
