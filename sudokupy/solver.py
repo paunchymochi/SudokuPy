@@ -3,6 +3,24 @@ sys.path.append('..')
 from sudokupy.cell import Cells, Cell
 from typing import List, Dict, Optional, Union, Tuple
 
+class Injector:
+    class _Injection:
+        def __init__(self, cell:Cell, value:int):
+            self.cell = cell
+            self.candidates = cell.candidates
+            self.previous_value = cell.value
+            self.value = value
+            pass
+    def __init__(self):
+        self._revert_head = -1
+        self._injections = []
+        raise NotImplementedError
+    
+    def inject(self, cell:Cell, value:int):
+        injection = self._Injection(cell, value)
+        self._injections.append(injection)
+        cell.value = value
+
 class _DeduceOperation:
     __slots__ = ['_cell', '_candidates']
     def __init__(self, cell:Cell):
