@@ -102,37 +102,6 @@ class Board:
     def reset_candidates(self):
         self.cells.reset_candidates()
     
-    def _deduce(self, cells:Cells):
-        self._validate_deduce_input(cells)
-        values = cells.get_values(flatten=True)
-        candidates = cells.get_candidates(flatten=True)
-
-        values = list(set(values))
-
-        for row in cells.data:
-            for cell in row:
-                cell.remove_candidates(values)
-    
-    def _validate_deduce_input(self, cells:Cells):
-        if len(cells) != 9:
-            raise ValueError('cells must have 9 elements')
-        if not isinstance(cells, Cells):
-            raise TypeError('cells must be instance of Cells')
-    
-    def deduce_row(self, row:int):
-        self._deduce(self.row[row])
-    
-    def deduce_column(self, col:int):
-        self._deduce(self.col[col])
-    
-    def deduce_box(self, boxrow:int, boxcol:int):
-        self._deduce(self.box[boxrow, boxcol])
-    
-    def deduce_adjacent(self, row:int, col:int):
-        self.deduce_row(row)
-        self.deduce_column(col)
-        self.deduce_box(row//3, col//3)
-    
     def resolve(self) -> Tuple[int, int]:
         candidates = self.cells.get_candidates()
         resolved_cells = self._resolve_selection(candidates)
