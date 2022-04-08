@@ -2,6 +2,7 @@ import sys
 sys.path.append('..')
 from sudokupy.board import Board
 from sudokupy.solver import Deducer
+from sudokupy.cell import Cell
 import random
 from typing import List, Tuple
 
@@ -9,6 +10,7 @@ class Generator:
     def __init__(self, seed:int=None):
         self.board = Board()
         self.deducer = Deducer(self.board.cells)
+        self._injected_values = []
         # self.generate(seed)
     
     def __repr__(self):
@@ -26,7 +28,7 @@ class Generator:
         self._generate_diagonal_boxes()
         while not self._is_board_complete():
             self._deduce_resolve()
-            self._set_cell_value()
+            self._inject_value()
 
     def _is_board_complete(self) -> bool:
         cells = self.board.cells.get_values(flatten=True)
@@ -57,20 +59,18 @@ class Generator:
             results = self.board.resolve()
             if len(results) == 0:
                 break
-        # while len(results) > 0:
-        #     for pos in results:
-        #         results.remove(pos)
-        #         results2 = self.board.resolve_adjacent(pos[0], pos[1])
-        #         results.extend(results2)
     
-    def _set_cell_value(self):
-        # x, y = self._get_random_unfilled_cell()
-        x, y = self._get_next_unfilled_cell()
-        candidates = self.board.cell[x, y].get_candidates(flatten=True)[0]
+    def _inject_value(self):
+        cell = self._get_next_unfilled_cell()
+        candidates = cell.candidates
         value = random.choice(candidates)
-        self.board.cell[x, y].set_values(value)
+
+        cell.value = value
+        cell.candidates = []
+
+        self._injected_values.append({'cell':cell, 'candidates':candidates, 'chosen_value':value})
     
-    def _get_next_unfilled_cell(self) -> Tuple[int, int]:
+    def _get_next_unfilled_cell(self) -> Cell:
         # fill boxes clockwise starting from box[0, 1]
         boxes = [(0, 1), (0, 2), (1, 2), (2, 1), (2, 0)]
 
@@ -80,7 +80,7 @@ class Generator:
                 for col in range(3):
                     cell = box.data[row][col]
                     if cell.value == 0:
-                        return (cell.row, cell.column)
+                        cell
 
     def _get_random_unfilled_cell(self) -> Tuple[int, int]:
         while True:
