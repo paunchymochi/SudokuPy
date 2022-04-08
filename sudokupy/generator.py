@@ -1,12 +1,14 @@
 import sys
 sys.path.append('..')
 from sudokupy.board import Board
+from sudokupy.solver import Deducer
 import random
 from typing import List, Tuple
 
 class Generator:
     def __init__(self, seed:int=None):
         self.board = Board()
+        self.deducer = Deducer(self.board.cells)
         # self.generate(seed)
     
     def __repr__(self):
@@ -47,13 +49,19 @@ class Generator:
         return random_numbers
     
     def _deduce_resolve(self):
-        self.board.deduce()
-        results = self.board.resolve()
-        while len(results) > 0:
-            for pos in results:
-                results.remove(pos)
-                results2 = self.board.resolve_adjacent(pos[0], pos[1])
-                results.extend(results2)
+        while True:
+            self.deducer.deduce()
+            while len(self.deducer.operations) > 0:
+                self.deducer.eliminate()
+                self.deducer.deduce()
+            results = self.board.resolve()
+            if len(results) == 0:
+                break
+        # while len(results) > 0:
+        #     for pos in results:
+        #         results.remove(pos)
+        #         results2 = self.board.resolve_adjacent(pos[0], pos[1])
+        #         results.extend(results2)
     
     def _set_cell_value(self):
         # x, y = self._get_random_unfilled_cell()
