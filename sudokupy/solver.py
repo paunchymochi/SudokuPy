@@ -374,14 +374,14 @@ class SingleCandidateDeducer(_BaseDeducer):
     def __init__(self, cells: Cells):
         super().__init__()
         self._cells = cells
-        self._unchecked_cells = cells.flatten()
+        self._checked_cells:List[Cell]=[]
     
     def deduce(self, sliced_cells:Cells):
         for cell in sliced_cells.flatten():
-            if cell not in self._unchecked_cells:
+            if cell not in self._checked_cells:
                 if len(cell.candidates) == 1:
                     self._deduce_adjacent(cell)
-                    self._unchecked_cells.remove(cell)
+                    self._checked_cells.append(cell)
     
     def _deduce_adjacent(self, cell:Cell):
         row = cell.row
