@@ -3,13 +3,6 @@ sys.path.append('..')
 from sudokupy.cell import Cells, Cell
 from typing import List, Dict, Optional, Union, Tuple
 
-def _validate_cells(cells:Cells):
-    if len(cells) != 9:
-        raise ValueError('cells must have 9 elements')
-    if not isinstance(cells, Cells):
-        print(f'type: {type(cells)}')
-        raise TypeError('cells must be instance of Cells')
-
 def _get_pending_operations_message(operations:dict):
     return {'Number of operations': sum([len(x) for x in operations.values()]), 'Operations': operations}
 
@@ -115,6 +108,13 @@ class _BaseDeducer:
     def __repr__(self):
         return f'<{self.__class__.__name__} {self._operations.__str__()} \n>'
     
+    def _validate_sliced_cells(self, sliced_cells:Cells):
+        if len(sliced_cells) != 9:
+            raise ValueError('cells must have 9 elements')
+        if not isinstance(sliced_cells, Cells):
+            print(f'type: {type(sliced_cells)}')
+            raise TypeError('cells must be instance of Cells')
+
     def count_pending_operations(self):
         return len(self._operations)
     
@@ -348,7 +348,7 @@ class ValueDeducer(_BaseDeducer):
         self._cells_with_values = []
     
     def deduce(self, sliced_cells:Cells):
-        _validate_cells(sliced_cells)
+        self._validate_sliced_cells(sliced_cells)
         self._sliced_cells = sliced_cells
 
         values = self._get_values(sliced_cells)
@@ -370,11 +370,47 @@ class ValueDeducer(_BaseDeducer):
             values.remove(0)
         return values
 
+class SingleCandidateDeducer(_BaseDeducer):
+    def __init__(self, cells: Cells):
+        super().__init__()
+        self._cells = cells
+        self._checked_cells:List[Cell]=[]
+    
+    def deduce(self, sliced_cells:Cells):
+        for cell in sliced_cells.flatten():
+            if cell not in self._checked_cells:
+                if len(cell.candidates) == 1:
+                    self._deduce_adjacent(cell)
+                    self._checked_cells.append(cell)
+    
+    def _deduce_adjacent(self, cell:Cell):
+        row = cell.row
+        col = cell.column
+
+        rows = self._cells[row].flatten()
+        cols = self._cells[:, col].flatten()
+        topleft_row = (row//3) * 3
+        topleft_col = (col//3) * 3
+        boxes = self._cells[topleft_row:topleft_row+3, topleft_col:topleft_col+3].flatten()
+        print(cell)
+        print(boxes)
+        rows.remove(cell)
+        cols.remove(cell)
+        boxes.remove(cell)
+
+        adjacent_cells = rows + cols + boxes
+
+        candidate = cell.candidates[0]
+        for adjacent_cell in adjacent_cells:
+            if candidate in adjacent_cell.candidates:
+                self._add_operation(adjacent_cell, candidate)
+
 class Deducer(_BaseDeducer):
     def __init__(self, cells: Cells):
         super().__init__()
         self._cells = cells
         self.value_deducer = ValueDeducer()
+        self.single_candidate_deducer = SingleCandidateDeducer(cells)
         self.companion_deducer = CompanionDeducer()
         self.linebox_deducer = LineBoxDeducer(cells)
     
@@ -387,6 +423,8 @@ class Deducer(_BaseDeducer):
     def deduce_adjacent(self, row:int, col:int):
         self._deduce_adjacent_values(row, col)
         if len(self.operations) > 0: return
+        self._deduce_adjacent_single_candidates(row, col)
+        if len(self.operations) > 0: return
         self._deduce_adjacent_lineboxes(row, col)
         if len(self.operations) > 0: return
         self._deduce_adjacent_companions(row, col)
@@ -395,6 +433,11 @@ class Deducer(_BaseDeducer):
         self.deduce_value(self._get_row(row))
         self.deduce_value(self._get_col(col))
         self.deduce_value(self._get_box(row//3, col//3))
+    
+    def _deduce_adjacent_single_candidates(self, row:int, col:int):
+        self.deduce_single_candidate(self._get_row(row))
+        self.deduce_single_candidate(self._get_col(col))
+        self.deduce_single_candidate(self._get_box(row//3, col//3))
     
     def _deduce_adjacent_lineboxes(self, row:int, col:int):
         self.deduce_linebox(self._get_row(row))
@@ -415,9 +458,11 @@ class Deducer(_BaseDeducer):
     def eliminate(self):
         self._clear_affected_cells()
         self.value_deducer.eliminate()
+        self.single_candidate_deducer.eliminate()
         self.linebox_deducer.eliminate()
         self.companion_deducer.eliminate()
         self._affected_cells.extend(self.value_deducer.affected_cells)
+        self._affected_cells.extend(self.single_candidate_deducer.affected_cells)
         self._affected_cells.extend(self.linebox_deducer.affected_cells)
         self._affected_cells.extend(self.companion_deducer.affected_cells)
         self.clear_operations()
@@ -452,7 +497,12 @@ class Deducer(_BaseDeducer):
         cells_list = self._get_all_sliced_cells(True)
         for cells in cells_list:
             self.deduce_value(cells)
-
+    
+    def _deduce_all_single_candidates(self):
+        cells_list = self._get_all_rows()
+        for cells in cells_list:
+            self.deduce_single_candidate(cells)
+    
     def _deduce_all_companions(self):
         cells_list = self._get_all_sliced_cells(True)
         for cells in cells_list:
@@ -466,6 +516,10 @@ class Deducer(_BaseDeducer):
     def deduce_value(self, sliced_cells:Cells):
         self.value_deducer.deduce(sliced_cells)
         self._operations.extend_operations(self.value_deducer._operations)
+    
+    def deduce_single_candidate(self, sliced_cells:Cells):
+        self.single_candidate_deducer.deduce(sliced_cells)
+        self._operations.extend_operations(self.single_candidate_deducer._operations)
     
     def deduce_companion(self, sliced_cells:Cells):
         self.companion_deducer.deduce(sliced_cells)
@@ -489,3 +543,4 @@ class Deducer(_BaseDeducer):
 
         self.linebox_deducer.deduce(row, col)
         self._operations.extend_operations(self.linebox_deducer._operations)
+    
