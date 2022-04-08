@@ -3,7 +3,7 @@ import sys
 sys.path.append('..')
 from sudokupy.cell import Cells
 from sudokupy.board import Board
-from sudokupy.solver import CompanionDeducer, LineBoxDeducer, ValueDeducer, Deducer
+from sudokupy.solver import CompanionDeducer, LineBoxDeducer, ValueDeducer, SingleCandidateDeducer, Deducer
 
 @pytest.fixture
 def blank_board():
@@ -167,6 +167,17 @@ class TestValueDeducer:
 
         assert sum([[2, 7] == operation.candidates for operation in d.operations]) == 7
         assert sum([list(range(1, 10)) == operation.candidates for operation in d.operations]) == 2
+
+class TestSingleCandidateDeducer:
+    def test_deduce(self):
+        board = Board()
+        d = SingleCandidateDeducer(board.cells)
+        board.cell[0, 0].candidates = [1]
+        d.deduce(board.box[0, 0])
+        assert len(d.operations) == (9-1) + 6 + 6  # box, row, col
+        
+        for operation in d.operations:
+            assert operation.candidates == [1]
     
 class TestDeducer:
     def test_is_solvable(self):
