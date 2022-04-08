@@ -466,6 +466,8 @@ class Deducer(_BaseDeducer):
     def deduce(self):
         self._deduce_all_values()
         if len(self.operations) > 0: return
+        self._deduce_all_single_candidates()
+        if len(self.operations) > 0: return
         self._deduce_all_lineboxes()
         if len(self.operations) > 0: return
         self._deduce_all_companions()
