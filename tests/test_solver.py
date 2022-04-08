@@ -179,6 +179,18 @@ class TestSingleCandidateDeducer:
         for operation in d.operations:
             assert operation.candidates == [1]
     
+    def test_deduce_two_single_candidates(self):
+        board = Board()
+        d = SingleCandidateDeducer(board.cells)
+        board.cell[3, 3].candidates = [1]
+        board.cell[3, 8].candidates = [3]
+        d.deduce(board.row[3])
+        assert len(d.operations) == (8 + 8) + 3 + (6 + 6) # box, row, col
+
+        assert sum([[1, 3] == operation.candidates for operation in d.operations]) == 7
+        assert sum([[1] == operation.candidates for operation in d.operations]) == 6 + 6
+        assert sum([[3] == operation.candidates for operation in d.operations]) == 6 + 6
+    
 class TestDeducer:
     def test_is_solvable(self):
         board = Board()
