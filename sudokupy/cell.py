@@ -64,14 +64,15 @@ class Candidate:
         return num_list
 
 class Cell:
-    __slots__ = ['_row', '_column', '_value', '_candidates']
+    __slots__ = ['_row', '_column', '_value', '_candidates', '_is_permanent']
 
-    def __init__(self, row: int, column: int, value: int):
+    def __init__(self, row: int, column: int, value: int, is_value_permanent: bool = False):
         self._validate_position(row, 'row')
         self._validate_position(column, 'column')
         self._row = row
         self._column = column
         self._candidates = Candidate()
+        self._is_permanent = is_value_permanent
 
         self.set_value(value)
     
@@ -119,10 +120,16 @@ class Cell:
     def boxcol(self) -> int:
         return self._column // 3
     
+    @property
+    def is_permanent(self):
+        return self._is_permanent
+    
     def print_candidates(self):
         return self._candidates.print_list()
     
     def set_value(self, value: int):
+        if self._is_permanent:
+            raise ValueError(f'value of cell {self.__repr__()} cannot be be changed')
         self._validate_value(value)
         self._value = value
     
