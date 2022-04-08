@@ -385,7 +385,7 @@ class SingleCandidateDeducer(_BaseDeducer):
     
     def _deduce_adjacent(self, cell:Cell):
         row = cell.row
-        col = cell.col
+        col = cell.column
 
         rows = self._cells[row].flatten()
         cols = self._cells[:, col].flatten()
