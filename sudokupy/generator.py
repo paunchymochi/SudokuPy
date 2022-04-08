@@ -71,16 +71,16 @@ class Generator:
         self.board.cell[x, y].set_values(value)
     
     def _get_next_unfilled_cell(self) -> Tuple[int, int]:
-        for row in range(9):
-            for col in range(9):
-                if self.board.cell[row, col].get_values(flatten=True) == [0]:
-                    return (row, col)
+        # fill boxes clockwise starting from box[0, 1]
+        boxes = [(0, 1), (0, 2), (1, 2), (2, 1), (2, 0)]
 
-        while True:
-            x = random.randrange(9)
-            y = random.randrange(9)
-            if self.board.cell[x, y].get_values(flatten=True) == [0]:
-                return (x, y)
+        for (boxrow, boxcol) in boxes:
+            box = self.board.box[boxrow, boxcol]
+            for row in range(3):
+                for col in range(3):
+                    cell = box.data[row][col]
+                    if cell.value == 0:
+                        return (cell.row, cell.column)
 
     def _get_random_unfilled_cell(self) -> Tuple[int, int]:
         while True:
