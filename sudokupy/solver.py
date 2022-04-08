@@ -389,7 +389,11 @@ class SingleCandidateDeducer(_BaseDeducer):
 
         rows = self._cells[row].flatten()
         cols = self._cells[:, col].flatten()
-        boxes = self._cells[row//3:row//3+3, col//3:col//3+3].flatten()
+        topleft_row = (row//3) * 3
+        topleft_col = (col//3) * 3
+        boxes = self._cells[topleft_row:topleft_row+3, topleft_col:topleft_col+3].flatten()
+        print(cell)
+        print(boxes)
         rows.remove(cell)
         cols.remove(cell)
         boxes.remove(cell)
