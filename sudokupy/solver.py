@@ -3,9 +3,6 @@ sys.path.append('..')
 from sudokupy.cell import Cells, Cell
 from typing import List, Dict, Optional, Union, Tuple
 
-def _get_pending_operations_message(operations:dict):
-    return {'Number of operations': sum([len(x) for x in operations.values()]), 'Operations': operations}
-
 class _DeduceOperation:
     __slots__ = ['_cell', '_candidates']
     def __init__(self, cell:Cell):
