@@ -379,15 +379,7 @@ class Deducer(_BaseDeducer):
         self.linebox_deducer = LineBoxDeducer(cells)
     
     def is_solvable(self) -> bool:
-        slices = self._get_all_boxes() + self._get_all_rows() + self._get_all_cols()
-        for sliced_cells in slices:
-            if not self._is_slice_solvable(sliced_cells):
-                return False
-        return True
-
-    def _is_slice_solvable(self, sliced_cells:Cells) -> bool:
-        cells = sliced_cells.flatten()
-        for cell in cells:
+        for cell in self._cells.flatten():
             if cell.value == 0 and cell.candidates == []:
                 return False
         return True
