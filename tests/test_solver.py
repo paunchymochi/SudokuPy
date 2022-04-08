@@ -169,6 +169,16 @@ class TestValueDeducer:
         assert sum([list(range(1, 10)) == operation.candidates for operation in d.operations]) == 2
     
 class TestDeducer:
+    def test_is_solvable(self):
+        board = Board()
+        d = Deducer(board.cells)
+        board.row[0].candidates = []
+        board.row[0].values = [1, 2, 3, 4, 5, 6, 0, 0, 0]
+        board.cell[0, 6].candidates = [7, 9]
+        board.cell[0, 7].candidates = [7, 8]
+
+        assert d.is_solvable() == False
+
     def test_deduce_value(self):
         board = Board()
         d = Deducer(board.cells)
