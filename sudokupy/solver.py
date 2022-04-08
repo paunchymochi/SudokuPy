@@ -3,13 +3,6 @@ sys.path.append('..')
 from sudokupy.cell import Cells, Cell
 from typing import List, Dict, Optional, Union, Tuple
 
-def _validate_cells(cells:Cells):
-    if len(cells) != 9:
-        raise ValueError('cells must have 9 elements')
-    if not isinstance(cells, Cells):
-        print(f'type: {type(cells)}')
-        raise TypeError('cells must be instance of Cells')
-
 def _get_pending_operations_message(operations:dict):
     return {'Number of operations': sum([len(x) for x in operations.values()]), 'Operations': operations}
 
@@ -115,6 +108,13 @@ class _BaseDeducer:
     def __repr__(self):
         return f'<{self.__class__.__name__} {self._operations.__str__()} \n>'
     
+    def _validate_sliced_cells(self, sliced_cells:Cells):
+        if len(sliced_cells) != 9:
+            raise ValueError('cells must have 9 elements')
+        if not isinstance(sliced_cells, Cells):
+            print(f'type: {type(sliced_cells)}')
+            raise TypeError('cells must be instance of Cells')
+
     def count_pending_operations(self):
         return len(self._operations)
     
@@ -348,7 +348,7 @@ class ValueDeducer(_BaseDeducer):
         self._cells_with_values = []
     
     def deduce(self, sliced_cells:Cells):
-        _validate_cells(sliced_cells)
+        self._validate_sliced_cells(sliced_cells)
         self._sliced_cells = sliced_cells
 
         values = self._get_values(sliced_cells)
