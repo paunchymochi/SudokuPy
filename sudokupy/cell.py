@@ -124,8 +124,8 @@ class Cell:
     def is_permanent(self):
         return self._is_permanent
     
-    def set_permanance(self, is_permanant:bool):
-        self._is_permanent = is_permanant
+    def set_permanence(self, is_permanent:bool):
+        self._is_permanent = is_permanent
     
     def print_candidates(self):
         return self._candidates.print_list()
