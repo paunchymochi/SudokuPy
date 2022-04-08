@@ -378,6 +378,30 @@ class Deducer(_BaseDeducer):
         self.companion_deducer = CompanionDeducer()
         self.linebox_deducer = LineBoxDeducer(cells)
     
+    def is_solvable(self) -> bool:
+        slices = self._get_all_boxes() + self._get_all_rows() + self._get_all_cols()
+        for sliced_cells in slices:
+            if not self._is_slice_solvable(sliced_cells):
+                return False
+        return True
+
+    def _is_slice_solvable(self, sliced_cells:Cells) -> bool:
+        cells = sliced_cells.flatten()
+        values = []
+        for cell in cells:
+            if cell.value == 0 and cell.candidates == []:
+                return False
+            values.append(cell.value)
+            values.append(cell.candidates)
+        values = list(set(values))
+        values.sort()
+        if 0 in values:
+            values.remove(0)
+        if len(values) == 9:
+            return True
+        else:
+            return False
+    
     def deduce_adjacent(self, row:int, col:int):
         self._deduce_adjacent_values(row, col)
         if len(self.operations) > 0: return
