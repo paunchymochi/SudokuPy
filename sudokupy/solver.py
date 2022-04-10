@@ -2,24 +2,75 @@ import sys
 sys.path.append('..')
 from sudokupy.cell import Cells, Cell
 from typing import List, Dict, Optional, Union, Tuple
+import random
+
+class _InjectionCell:
+    def __init__(self, cell:Cell):
+        self._cell = cell
+        self._candidates = cell.candidates
+        self._untried_candidates = cell.candidates.copy()
+    
+    def __repr__(self):
+        return f'<InjectionCell value:{self._value} candidates:{self._candidates}>'
+
+    def guess(self) -> int:
+        new_value = random.choice(self._untried_candidates)
+        self._untried_candidates.remove(new_value)
+        self._value = new_value
+        self._cell.value = new_value
+    
+    def has_untried_candidates(self) -> bool:
+        return len(self._untried_candidates) > 0
 
 class Injector:
-    class _Injection:
-        def __init__(self, cell:Cell, value:int):
-            self.cell = cell
-            self.candidates = cell.candidates
-            self.previous_value = cell.value
-            self.value = value
-            pass
-    def __init__(self):
-        self._revert_head = -1
-        self._injections = []
-        raise NotImplementedError
+
+    def __init__(self, cells:Cells):
+        self._cells = cells
+        self._injection_cells: List[_InjectionCell] = []
+        self._guesses = 0
     
-    def inject(self, cell:Cell, value:int):
-        injection = self._Injection(cell, value)
-        self._injections.append(injection)
-        cell.value = value
+    def inject(self):
+        injection_cell = self._get_current_injection_cell()
+        self._make_new_guess(injection_cell)
+    
+    def _get_current_injection_cell(self) -> _InjectionCell:
+        if self._guesses == 0:
+            return self._make_new_injection_cell()
+        
+        pop_count = 0
+
+        while len(self._injection_cells) > 0:
+            injection_cell = self._injection_cells.pop()
+            pop_count += 1
+            if pop_count > 1:
+                self._cells.candidates = list(range(1, 10))
+            if injection_cell.has_untried_candidates():
+                return injection_cell
+            else:
+                return self._make_new_injection_cell()
+
+        raise ValueError('No solution found')
+
+    def _make_new_injection_cell(self) -> _InjectionCell:
+        cell = self._get_next_unfilled_cell()
+        return _InjectionCell(cell)
+    
+    def _make_new_guess(self, injection_cell:_InjectionCell):
+        injection_cell.guess()
+        self._injection_cells.append(injection_cell)
+
+    def _get_next_unfilled_cell(self):
+        # fill boxes clockwise starting from box[0, 0]
+        boxes = [(0, 0), (0, 1), (0, 2), (1, 2), (2, 2), (2, 1), (2, 0), (1, 0), (1, 1) ]
+
+        for (boxrow, boxcol) in boxes:
+            box = self._cells[boxrow*3:boxrow*3+3, boxcol*3:boxcol*3+3]
+            for row in range(3):
+                for col in range(3):
+                    cell = box.data[row][col]
+                    if cell.value == 0:
+                        return cell
+    
 
 class _DeduceOperation:
     __slots__ = ['_cell', '_candidates']
