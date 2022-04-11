@@ -14,10 +14,6 @@ class _Injection:
     def __repr__(self):
         return f'<InjectionCell value:{self._value} candidates:{self._candidates}>'
     
-    @property
-    def position(self):
-        return (self._cell.row, self._cell.column)
-
     def guess(self) -> int:
         new_value = random.choice(self._untried_candidates)
         self._untried_candidates.remove(new_value)
