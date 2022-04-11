@@ -88,7 +88,7 @@ class Cell:
         return self._column
     
     @property
-    def candidates(self) -> Candidate:
+    def candidates(self) -> List[int]:
         return self._candidates.values
     
     @candidates.setter

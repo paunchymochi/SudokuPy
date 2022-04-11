@@ -37,7 +37,8 @@ class File:
         folder = self._folder
         if folder is None:
             folder = 'boards'
-        return Path(folder)
+        board_folder = Path(__file__).parent.parent.joinpath(folder)
+        return board_folder
 
     def get_path(self, filename:str) -> Path:
         folder = self.get_folder()
