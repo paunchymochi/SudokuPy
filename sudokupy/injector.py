@@ -4,7 +4,7 @@ from sudokupy.cell import Cells, Cell
 from typing import List, Dict
 import random
 
-class _InjectionCell:
+class _Injection:
     def __init__(self, cell:Cell):
         self._cell = cell
         self._candidates = cell.candidates
@@ -26,11 +26,12 @@ class _InjectionCell:
     def has_untried_candidates(self) -> bool:
         return len(self._untried_candidates) > 0
 
+
 class Injector:
 
     def __init__(self, cells:Cells):
         self._cells = cells
-        self._injection_cells: List[_InjectionCell] = []
+        self._injection_cells: List[_Injection] = []
         self._guesses = 0
         self._popped = False
         self._backups = {}
@@ -39,7 +40,7 @@ class Injector:
         injection_cell = self._get_current_injection_cell()
         self._make_new_guess(injection_cell)
     
-    def _get_current_injection_cell(self) -> _InjectionCell:
+    def _get_current_injection_cell(self) -> _Injection:
         if self._guesses == 0:
             return self._make_new_injection_cell()
         
@@ -50,20 +51,20 @@ class Injector:
 
         return injection_cell
     
-    def _rollback_to_valid_injection_cell(self) -> _InjectionCell:
+    def _rollback_to_valid_injection_cell(self) -> _Injection:
         while len(self._injection_cells) > 0:
             injection_cell = self._pop_injection_cell()
             if injection_cell.has_untried_candidates:
                 return injection_cell
         raise ValueError('No Solution for board')
     
-    def _make_new_injection_cell(self) -> _InjectionCell:
+    def _make_new_injection_cell(self) -> _Injection:
         cell = self._get_next_unfilled_cell()
-        injection_cell = _InjectionCell(cell)
+        injection_cell = _Injection(cell)
         self._save_backup(injection_cell)
         return injection_cell
     
-    def _make_new_guess(self, injection_cell:_InjectionCell):
+    def _make_new_guess(self, injection_cell:_Injection):
         if self._popped:
             self._restore_backup(injection_cell)
             self._popped = False
@@ -71,23 +72,23 @@ class Injector:
         injection_cell.guess()
         self._push_injection_cell(injection_cell)
     
-    def _push_injection_cell(self, injection_cell:_InjectionCell):
+    def _push_injection_cell(self, injection_cell:_Injection):
         self._injection_cells.append(injection_cell)
 
-    def _pop_injection_cell(self) -> _InjectionCell:
+    def _pop_injection_cell(self) -> _Injection:
         injection_cell = self._injection_cells.pop()
         self._popped = True
         return injection_cell
 
-    def _save_backup(self, injection_cell:_InjectionCell):
+    def _save_backup(self, injection_cell:_Injection):
         position = injection_cell.position
         self._backups[position] = self._cells.get_candidates(True)
     
-    def _retrieve_backup(self, injection_cell:_InjectionCell):
+    def _retrieve_backup(self, injection_cell:_Injection):
         position = injection_cell.position
         return self._backups[position]
     
-    def _restore_backup(self, injection_cell:_InjectionCell):
+    def _restore_backup(self, injection_cell:_Injection):
         candidates = self._backups[injection_cell]
         self._cells.candidates = candidates
     
