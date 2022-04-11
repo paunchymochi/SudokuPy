@@ -5,10 +5,11 @@ from typing import List, Dict
 import random
 
 class _Injection:
-    def __init__(self, cell:Cell):
+    def __init__(self, cell:Cell, board_candidates:List[List[int]]):
         self._cell = cell
         self._candidates = cell.candidates
         self._untried_candidates = cell.candidates.copy()
+        self._board_candidates = board_candidates
     
     def __repr__(self):
         return f'<InjectionCell value:{self._value} candidates:{self._candidates}>'
@@ -26,75 +27,72 @@ class _Injection:
     def has_untried_candidates(self) -> bool:
         return len(self._untried_candidates) > 0
 
-
 class Injector:
-
     def __init__(self, cells:Cells):
         self._cells = cells
-        self._injection_cells: List[_Injection] = []
-        self._guesses = 0
+        self._injections: List[_Injection] = []
         self._popped = False
-        self._backups = {}
+        self._history = []
+    
+    @property
+    def injections(self):
+        return self._injections
+    
+    def get_history(self):
+        return self._history
+    
+    def get_injections(self):
+        return self._injections
     
     def inject(self):
-        injection_cell = self._get_current_injection_cell()
-        self._make_new_guess(injection_cell)
+        injection = self._get_injection()
+        injection.guess()
     
-    def _get_current_injection_cell(self) -> _Injection:
-        if self._guesses == 0:
-            return self._make_new_injection_cell()
-        
-        injection_cell = self._get_next_unfilled_cell()
-
-        if injection_cell is None:
-            injection_cell = self._rollback_to_valid_injection_cell()
-
-        return injection_cell
+    def _get_injection(self) -> _Injection:
+        self._popped = False
+        injection = self._new_injection()
+        while injection is None:
+            if len(self._injections) == 0:
+                raise ValueError('No Solution')
+            injection = self._pop_injection()
+        self._rollback_candidates(injection)
+        return injection
     
-    def _rollback_to_valid_injection_cell(self) -> _Injection:
-        while len(self._injection_cells) > 0:
-            injection_cell = self._pop_injection_cell()
-            if injection_cell.has_untried_candidates:
-                return injection_cell
-        raise ValueError('No Solution for board')
-    
-    def _make_new_injection_cell(self) -> _Injection:
-        cell = self._get_next_unfilled_cell()
-        injection_cell = _Injection(cell)
-        self._save_backup(injection_cell)
-        return injection_cell
-    
-    def _make_new_guess(self, injection_cell:_Injection):
+    def _rollback_candidates(self, injection:_Injection):
         if self._popped:
-            self._restore_backup(injection_cell)
-            self._popped = False
-        self._guesses += 1
-        injection_cell.guess()
-        self._push_injection_cell(injection_cell)
+            self._cells.candidates = injection._board_candidates
     
-    def _push_injection_cell(self, injection_cell:_Injection):
-        self._injection_cells.append(injection_cell)
-
-    def _pop_injection_cell(self) -> _Injection:
-        injection_cell = self._injection_cells.pop()
+    def _pop_injection(self) -> _Injection:
         self._popped = True
-        return injection_cell
+        injection = self._injections.pop()
+        self._history.append({'action': 'pop', 'injection': injection})
+        if injection.has_untried_candidates:
+            return injection
+        else:
+            return None
+    
+    def _new_injection(self) -> _Injection:
+        cell = self._get_next_unfilled_cell()
+        self._validate_cell(cell)
 
-    def _save_backup(self, injection_cell:_Injection):
-        position = injection_cell.position
-        self._backups[position] = self._cells.get_candidates(True)
+        board_candidates = self._get_board_candidates()
+        injection = _Injection(cell, board_candidates)
+        self._history.append({'action': 'new', 'injection': injection})
+        self._injections.append(injection)
+        return injection
     
-    def _retrieve_backup(self, injection_cell:_Injection):
-        position = injection_cell.position
-        return self._backups[position]
+    def _validate_cell(self, cell: Cell):
+        if cell is None:
+            raise ValueError('No unfilled cell available')
+        if len(cell.candidates) == 0:
+            raise ValueError('No Solution')
     
-    def _restore_backup(self, injection_cell:_Injection):
-        candidates = self._backups[injection_cell]
-        self._cells.candidates = candidates
-    
-    def _get_next_unfilled_cell(self):
+    def _get_board_candidates(self) -> List[List[int]]:
+        return self._cells.get_candidates(flatten=True)
+
+    def _get_next_unfilled_cell(self) -> Cell:
         # fill boxes clockwise starting from box[0, 0]
-        boxes = [(0, 0), (0, 1), (0, 2), (1, 2), (2, 2), (2, 1), (2, 0), (1, 0), (1, 1) ]
+        boxes = [(0, 0), (0, 1), (0, 2), (1, 2), (2, 2), (2, 1), (2, 0), (1, 0), (1, 1)]
 
         for (boxrow, boxcol) in boxes:
             cells = self._get_cells_in_box(boxrow, boxcol)
@@ -106,4 +104,3 @@ class Injector:
     def _get_cells_in_box(self, boxrow:int, boxcol:int) -> List[Cell]:
         box = self._cells[boxrow*3:boxrow*3+3, boxcol*3:boxcol*3+3]
         return box.flatten()
-    
