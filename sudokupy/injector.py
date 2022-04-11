@@ -43,15 +43,19 @@ class Injector:
         if self._guesses == 0:
             return self._make_new_injection_cell()
         
-        injection_cell = self._injection_cells[-1]
+        injection_cell = self._get_next_unfilled_cell()
 
-        while True:
-            if injection_cell.has_untried_candidates():
-                return injection_cell
-            if len(self._injection_cells) == 0:
-                break
+        if injection_cell is None:
+            injection_cell = self._rollback_to_valid_injection_cell()
+
+        return injection_cell
+    
+    def _rollback_to_valid_injection_cell(self) -> _InjectionCell:
+        while len(self._injection_cells) > 0:
             injection_cell = self._pop_injection_cell()
-        raise ValueError('No solution found')
+            if injection_cell.has_untried_candidates:
+                return injection_cell
+        raise ValueError('No Solution for board')
     
     def _make_new_injection_cell(self) -> _InjectionCell:
         cell = self._get_next_unfilled_cell()
@@ -92,10 +96,13 @@ class Injector:
         boxes = [(0, 0), (0, 1), (0, 2), (1, 2), (2, 2), (2, 1), (2, 0), (1, 0), (1, 1) ]
 
         for (boxrow, boxcol) in boxes:
-            box = self._cells[boxrow*3:boxrow*3+3, boxcol*3:boxcol*3+3]
-            for row in range(3):
-                for col in range(3):
-                    cell = box.data[row][col]
-                    if cell.value == 0:
-                        return cell
+            cells = self._get_cells_in_box(boxrow, boxcol)
+            for cell in cells:
+                if cell.value == 0:
+                    return cell
+            return None
+    
+    def _get_cells_in_box(self, boxrow:int, boxcol:int) -> List[Cell]:
+        box = self._cells[boxrow*3:boxrow*3+3, boxcol*3:boxcol*3+3]
+        return box.flatten()
     
