@@ -10,8 +10,7 @@ class TestInjector:
         j = Injector(board.cells)
         j.inject()
         assert board.cell[0, 0].flatten()[0].value in list(range(1, 10))
-        assert len(j._backups) == 1
-        assert j._guesses == 1
+        assert len(j.injections) == 1
     
     def test_inject_no_solution(self):
         board = Board()
