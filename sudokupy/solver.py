@@ -63,6 +63,7 @@ class Injector:
         if self._popped:
             self._restore_backup(injection_cell)
             self._popped = False
+        self._guesses += 1
         injection_cell.guess()
         self._push_injection_cell(injection_cell)
     
