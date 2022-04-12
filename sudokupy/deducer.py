@@ -114,9 +114,6 @@ class _BaseDeducer:
         if len(sliced_cells) != 9:
             raise ValueError('cells must have 9 elements')
 
-    def count_pending_transactions(self):
-        return len(self._transactions)
-    
     def eliminate(self):
         self._clear_affected_cells()
         for transaction in self.transactions:
