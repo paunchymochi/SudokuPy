@@ -7,14 +7,28 @@ import random
 class _Injection:
     def __init__(self, cell:Cell, board_candidates:List[List[int]]):
         self._cell = cell
-        self._candidates = cell.candidates
+        self._available_candidates = cell.candidates
         self._untried_candidates = cell.candidates.copy()
         self._board_candidates = board_candidates
     
+    @property
+    def cell(self) -> Cell:
+        return self._cell
+    
+    @property
+    def untried_candidates(self) -> List[List[int]]:
+        return self._untried_candidates
+    
+    @property
+    def available_candidates(self) -> List[List[int]]:
+        return self._available_candidates
+    
     def __repr__(self):
-        return f'<InjectionCell value:{self._value} candidates:{self._candidates}>'
+        return f'<InjectionCell value:{self._cell.value} available_candidates:{self._available_candidates} untried_candidates:{self._untried_candidates}>'
     
     def guess(self) -> int:
+        if not self.has_untried_candidates():
+            raise ValueError('No guesses left')
         new_value = random.choice(self._untried_candidates)
         self._untried_candidates.remove(new_value)
         self._value = new_value
@@ -57,31 +71,31 @@ class Injector:
     def _rollback_candidates(self, injection:_Injection):
         if self._popped:
             self._cells.candidates = injection._board_candidates
+            self._append_injection(injection)
     
     def _pop_injection(self) -> _Injection:
         self._popped = True
         injection = self._injections.pop()
         self._history.append({'action': 'pop', 'injection': injection})
-        if injection.has_untried_candidates:
+        injection.cell.value = 0
+        if injection.has_untried_candidates():
             return injection
         else:
             return None
     
     def _new_injection(self) -> _Injection:
         cell = self._get_next_unfilled_cell()
-        self._validate_cell(cell)
+        if cell is None:
+            return None
 
         board_candidates = self._get_board_candidates()
         injection = _Injection(cell, board_candidates)
-        self._history.append({'action': 'new', 'injection': injection})
-        self._injections.append(injection)
+        self._append_injection(injection)
         return injection
     
-    def _validate_cell(self, cell: Cell):
-        if cell is None:
-            raise ValueError('No unfilled cell available')
-        if len(cell.candidates) == 0:
-            raise ValueError('No Solution')
+    def _append_injection(self, injection:_Injection):
+        self._history.append({'action': 'new', 'injection': injection})
+        self._injections.append(injection)
     
     def _get_board_candidates(self) -> List[List[int]]:
         return self._cells.get_candidates(flatten=True)
@@ -94,7 +108,8 @@ class Injector:
             cells = self._get_cells_in_box(boxrow, boxcol)
             for cell in cells:
                 if cell.value == 0:
-                    return cell
+                    if len(cell.candidates) > 0:
+                        return cell
             return None
     
     def _get_cells_in_box(self, boxrow:int, boxcol:int) -> List[Cell]:

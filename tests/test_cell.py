@@ -4,6 +4,27 @@ from sudokupy.cell import Cell, Cells, Candidate
 import pytest
 
 class TestCandidate:
+    def test_repr(self):
+        c = Candidate()
+        repr = c.__repr__()
+        for i in range(1, 10):
+            assert repr.count(str(i)) == 1
+        assert repr.count('<') == 1
+        assert repr.count('>') == 1
+    
+    def test_str(self):
+        c = Candidate()
+        s = c.__str__()
+        for i in range(1, 10):
+            assert s.count(str(i)) == 1
+    
+    def test_print_grid(self):
+        c = Candidate()
+        c.set([1])
+        s = c.print_grid()
+        assert s.count('1') == 1
+        assert s.count('.') == 8
+
     def test_constructor(self):
         c = Candidate()
         assert c.count() == 9
@@ -179,6 +200,20 @@ class TestCell:
     def test_repr(self):
         c = Cell(1, 2, 3)
         assert c.__repr__() == '<Cell row:1 column:2 value:3>'
+    
+    def test_set_permanence(self):
+        c = Cell(1, 2, 3)
+        assert c.is_permanent == False
+        c.set_permanence(True)
+        assert c.is_permanent == True
+    
+    def test_set_value(self):
+        c = Cell(1, 2, 3)
+        c.set_value(7)
+        assert c.value == 7
+        c.set_permanence(True)
+        with pytest.raises(ValueError):
+            c.set_value(5)
     
 class TestCells:
     def test_constructor(self):

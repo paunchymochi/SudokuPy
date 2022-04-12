@@ -9,9 +9,6 @@ class Board:
         def __init__(self, cells:Cells):
             self._cells = cells
 
-        def __getitem__(self, key):
-            raise NotImplementedError
-        
         def _cast_tuple(self, key):
             if type(key) is not tuple:
                 key = (key, )

@@ -4,6 +4,12 @@ from sudokupy.board import Board
 import pytest
 
 class TestBoard:
+    def test_repr(self):
+        b = Board()
+        repr = b.__repr__()
+        assert b.cells.__str__() in repr
+        assert b.cells.print_candidates() in repr
+
     def test_row(self):
         b = Board()
         row = b.row[1]
