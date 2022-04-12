@@ -285,6 +285,19 @@ class TestValueDeducer:
 
         assert sum([[2, 7] == transaction.candidates for transaction in d.transactions]) == 7
         assert sum([list(range(1, 10)) == transaction.candidates for transaction in d.transactions]) == 2
+    
+    def test_invalid_slice(self):
+        b = Board()
+        d = ValueDeducer()
+
+        with pytest.raises(ValueError):
+            d.deduce(b.cells[0, 0:4])
+    
+    def test_invalid_cell_type(self):
+        d = ValueDeducer()
+
+        with pytest.raises(TypeError):
+            d.deduce('invalid type')
 
 class TestSingleCandidateDeducer:
     def test_repr(self):
