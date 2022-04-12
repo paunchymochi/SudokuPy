@@ -3,14 +3,7 @@ import sys
 sys.path.append('..')
 from sudokupy.cell import Cells
 from sudokupy.board import Board
-from sudokupy.deducer import CompanionDeducer, LineBoxDeducer, ValueDeducer, SingleCandidateDeducer, Deducer
-
-@pytest.fixture
-def blank_board():
-    board = Board()
-    for cell in board.cells.flatten():
-        cell.set_candidates([])
-    return board
+from sudokupy.deducer import CompanionDeducer, LineBoxDeducer, ValueDeducer, SingleCandidateDeducer, Deducer, Transaction, Transactions
 
 class TestCompanionDeducer:
     def test_single_companion(self):
