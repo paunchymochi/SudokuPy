@@ -64,7 +64,25 @@ class TestTransactions:
         assert isinstance(t.transactions[0], Transaction)
 
     def test_extend_transactions(self):
-        raise NotImplementedError
+        t1 = Transactions()
+        t2 = Transactions()
+        t3 = Transactions()
+
+        assert len(t1.transactions) == 0
+        t2.add_transaction(Cell(0, 0, 0), [1, 2])
+        t1.extend_transactions(t2)
+        assert len(t1.transactions) == 1
+        assert isinstance(t1.transactions[0], Transaction)
+        assert t1.transactions[0].candidates == [1, 2]
+        t3.add_transaction(Cell(0, 0, 0), [3, 4])
+        t1.extend_transactions(t3)
+        assert len(t1.transactions) == 1
+        assert t1.transactions[0].candidates == [1, 2, 3, 4]
+
+        t2.add_transaction(Cell(8, 8, 0), [7, 8, 9])
+        t1.extend_transactions(t2)
+        assert len(t1.transactions) == 2
+        assert t1.transactions[-1].candidates == [7, 8, 9]
 
     def test_clear_transactions(self):
         raise NotImplementedError
