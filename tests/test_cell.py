@@ -201,6 +201,12 @@ class TestCell:
         c = Cell(1, 2, 3)
         assert c.__repr__() == '<Cell row:1 column:2 value:3>'
     
+    def test_set_permanence(self):
+        c = Cell(1, 2, 3)
+        assert c.is_permanent == False
+        c.set_permanence(True)
+        assert c.is_permanent == True
+    
 class TestCells:
     def test_constructor(self):
         cells = Cells()
