@@ -118,6 +118,11 @@ class TestTransactions:
         assert len(result) == 1
 
 class TestCompanionDeducer:
+    def test_repr(self):
+        d = CompanionDeducer()
+        repr = d.__repr__()
+        assert 'CompanionDeducer' in repr
+
     def test_single_companion(self):
         d = CompanionDeducer()
         board = Board()
@@ -185,6 +190,9 @@ class TestCompanionDeducer:
 
     
 class TestLineBoxDeducer:
+    def test_repr(self):
+        d = LineBoxDeducer(Board.cells)
+        assert 'LineBoxDeducer' in d.__repr__()
 
     def test_row_linebox(self):
         board = Board()
@@ -225,6 +233,11 @@ class TestLineBoxDeducer:
             assert transaction.candidates == [1, 9]
 
 class TestValueDeducer:
+    def test_repr(self):
+        d = ValueDeducer()
+        repr = d.__repr__()
+        assert 'ValueDeducer' in repr
+
     def test_filled_cell_with_candidates(self):
         board = Board()
         d = ValueDeducer()
@@ -274,6 +287,11 @@ class TestValueDeducer:
         assert sum([list(range(1, 10)) == transaction.candidates for transaction in d.transactions]) == 2
 
 class TestSingleCandidateDeducer:
+    def test_repr(self):
+        d = SingleCandidateDeducer(Board.cells)
+        repr = d.__repr__()
+        assert 'SingleCandidateDeducer' in repr
+
     def test_deduce(self):
         board = Board()
         d = SingleCandidateDeducer(board.cells)
@@ -297,6 +315,11 @@ class TestSingleCandidateDeducer:
         assert sum([[3] == transaction.candidates for transaction in d.transactions]) == 6 + 6
     
 class TestDeducer:
+    def test_repr(self):
+        d = Deducer(Board.cells)
+        repr = d.__repr__()
+        assert 'Deducer' in repr
+
     def test_is_solvable(self):
         board = Board()
         d = Deducer(board.cells)
