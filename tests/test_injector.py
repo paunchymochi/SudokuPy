@@ -114,10 +114,11 @@ class TestInjector:
         with pytest.raises(ValueError):
             j.inject()
     
-    def test_inject_no_solution_2(self):
+    def test_inject_no_solution_one_cell(self):
         b = Board()
         j = Injector(b.cells)
-        b.cell[0, 3].candidates = []
+        b.cells.candidates = []
+        b.cell[1, 1].candidates = list(range(1, 10))
 
         for i in range(9):
             j.inject()
