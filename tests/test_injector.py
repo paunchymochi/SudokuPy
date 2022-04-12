@@ -41,6 +41,12 @@ class TestInjection:
         injection = _Injection(b.cells.data[1][1], b.cells.get_candidates(True))
         assert len(injection.available_candidates) == 3
     
+    def test_cell(self):
+        b = Board()
+        cell = b.cells.data[0][0]
+        injection = _Injection(cell, b.cells.get_candidates(True))
+        assert injection.cell == cell
+    
     def test_guess(self):
         b = Board()
         cell = b.cells.data[0][0]
