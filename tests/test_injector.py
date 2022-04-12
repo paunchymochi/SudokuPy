@@ -40,6 +40,23 @@ class TestInjection:
         b.cell[1, 1].candidates = [3, 5, 7]
         injection = _Injection(b.cells.data[1][1], b.cells.get_candidates(True))
         assert len(injection.available_candidates) == 3
+    
+    def test_guess(self):
+        b = Board()
+        cell = b.cells.data[0][0]
+        injection = _Injection(cell, b.cells.get_candidates(True))
+
+        for i in range(9):
+            print(i)
+            injection.guess()
+            cell_value = cell.value
+            assert len(injection.untried_candidates) == 8 - i
+            assert cell_value not in injection.untried_candidates
+        
+        with pytest.raises(ValueError):
+            injection.guess()
+
+
 
 class TestInjector:
     def test_inject_one_value(self):
