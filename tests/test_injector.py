@@ -65,6 +65,16 @@ class TestInjection:
 
 
 class TestInjector:
+    def test_injections(self):
+        b = Board()
+        j = Injector(b.cells)
+
+        assert j.injections == []
+
+        j.inject()
+        assert len(j.injections) == 1
+        assert j.injections[0].cell == b.cells.data[0][0]
+
     def test_inject_one_value(self):
         board = Board()
         j = Injector(board.cells)
