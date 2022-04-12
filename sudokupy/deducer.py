@@ -44,6 +44,7 @@ class Transactions:
     
     def __str__(self):
         return f'# of transactions:{len(self._transactions_dict)}\n' + '\n'.join(transaction.__repr__() for transaction in self.transactions)
+
     def __repr__(self):
         return f'<Transactions\n{self.__str__()}\n>'
     
@@ -107,11 +108,11 @@ class _BaseDeducer:
         return f'<{self.__class__.__name__} {self._transactions.__str__()} \n>'
     
     def _validate_sliced_cells(self, sliced_cells:Cells):
-        if len(sliced_cells) != 9:
-            raise ValueError('cells must have 9 elements')
         if not isinstance(sliced_cells, Cells):
             print(f'type: {type(sliced_cells)}')
             raise TypeError('cells must be instance of Cells')
+        if len(sliced_cells) != 9:
+            raise ValueError('cells must have 9 elements')
 
     def count_pending_transactions(self):
         return len(self._transactions)
