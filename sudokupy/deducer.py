@@ -11,7 +11,7 @@ class Transaction:
         self._candidates = []
     
     def __repr__(self):
-        return f'Deducetransaction cell:{self._cell.__repr__()} candidates:{self._candidates}>'
+        return f'<Transaction cell:{self._cell.__repr__()} candidates:{self._candidates}>'
     
     @property
     def cell(self):
