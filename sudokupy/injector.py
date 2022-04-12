@@ -27,6 +27,8 @@ class _Injection:
         return f'<InjectionCell value:{self._cell.value} available_candidates:{self._available_candidates}>'
     
     def guess(self) -> int:
+        if not self.has_untried_candidates():
+            raise ValueError('No guesses left')
         new_value = random.choice(self._untried_candidates)
         self._untried_candidates.remove(new_value)
         self._value = new_value
