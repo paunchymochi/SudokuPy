@@ -78,6 +78,9 @@ class Cell:
     
     def __repr__(self):
         return f'<Cell row:{self._row} column:{self._column} value:{self._value}>'
+    
+    def __eq__(self, other):
+        return self._row == other._row and self._column == other._column
 
     @property
     def row(self) -> int:
