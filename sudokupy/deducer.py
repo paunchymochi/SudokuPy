@@ -4,14 +4,14 @@ from sudokupy.cell import Cells, Cell
 from typing import List, Dict, Optional, Union, Tuple
 import random
 
-class _DeduceOperation:
+class Transaction:
     __slots__ = ['_cell', '_candidates']
     def __init__(self, cell:Cell):
         self._cell = cell
         self._candidates = []
     
     def __repr__(self):
-        return f'DeduceOperation cell:{self._cell.__repr__()} candidates:{self._candidates}>'
+        return f'Deducetransaction cell:{self._cell.__repr__()} candidates:{self._candidates}>'
     
     @property
     def cell(self):
@@ -36,56 +36,56 @@ class _DeduceOperation:
     def __eq__(self, other):
         return self._cell == other._cell
 
-class _DeduceOperations:
-    __slots__ = '_operations_dict'
+class Transactions:
+    __slots__ = '_transactions_dict'
     def __init__(self):
-        self._operations_dict:Dict[Tuple[int], List[_DeduceOperation]] = {}
-        self.clear_operations()
+        self._transactions_dict:Dict[Tuple[int], List[Transaction]] = {}
+        self.clear_transactions()
     
     def __str__(self):
-        return f'# of operations:{len(self._operations_dict)}\n' + '\n'.join(operation.__repr__() for operation in self.operations)
+        return f'# of transactions:{len(self._transactions_dict)}\n' + '\n'.join(transaction.__repr__() for transaction in self.transactions)
     def __repr__(self):
-        return f'<_DeduceOperations\n{self.__str__()}\n>'
+        return f'<Transactions\n{self.__str__()}\n>'
     
     def __len__(self):
-        return len(self._operations_dict)
+        return len(self._transactions_dict)
     
     @property
-    def operations(self) -> List[_DeduceOperation]:
-        return self.get_operations()
+    def transactions(self) -> List[Transaction]:
+        return self.get_transactions()
 
-    def add_operation(self, cell:Cell, remove_candidates:Union[int, List[int]]):
+    def add_transaction(self, cell:Cell, remove_candidates:Union[int, List[int]]):
         position = self._get_position(cell)
-        if not self._cell_in_operations(position):
-            self._make_new_operations_entry(cell)
-        self._append_operation(position, remove_candidates)
+        if not self._cell_in_transactions(position):
+            self._make_new_transactions_entry(cell)
+        self._append_transaction(position, remove_candidates)
     
-    def extend_operations(self, other:'_DeduceOperations'):
-        other_operations = other.operations
-        for operation in other_operations:
-            self.add_operation(operation.cell, operation.candidates)
+    def extend_transactions(self, other:'Transactions'):
+        other_transactions = other.transactions
+        for transaction in other_transactions:
+            self.add_transaction(transaction.cell, transaction.candidates)
 
-    def clear_operations(self):
-        self._operations_dict = {}
+    def clear_transactions(self):
+        self._transactions_dict = {}
 
-    def get_operations(self) -> List[_DeduceOperation]:
-        return list(self._operations_dict.values())
+    def get_transactions(self) -> List[Transaction]:
+        return list(self._transactions_dict.values())
 
-    def _append_operation(self, position:Tuple[int], remove_candidates:Union[int, List[int]]):
+    def _append_transaction(self, position:Tuple[int], remove_candidates:Union[int, List[int]]):
         remove_candidates = self._validate_candidates(remove_candidates)
-        self._operations_dict[position].add(remove_candidates)
+        self._transactions_dict[position].add(remove_candidates)
     
     def _validate_candidates(self, candidates:Union[int, List[int]]) -> List[int]:
         if type(candidates) is int:
             candidates = [candidates]
         return candidates
     
-    def _make_new_operations_entry(self, cell:Cell):
+    def _make_new_transactions_entry(self, cell:Cell):
         position = self._get_position(cell)
-        self._operations_dict[position] = _DeduceOperation(cell)
+        self._transactions_dict[position] = Transaction(cell)
 
-    def _cell_in_operations(self, position:Tuple[int]) -> bool:
-        return position in self._operations_dict.keys()
+    def _cell_in_transactions(self, position:Tuple[int]) -> bool:
+        return position in self._transactions_dict.keys()
     
     def _get_position(self, cell:Cell) -> Tuple[int]:
         return (cell.row, cell.column)
@@ -93,18 +93,18 @@ class _DeduceOperations:
 class _BaseDeducer:
     def __init__(self):
         self._affected_cells:List[Cell] = []
-        self._operations = _DeduceOperations()
+        self._transactions = Transactions()
     
     @property
-    def operations(self):
-        return self._operations.get_operations()
+    def transactions(self):
+        return self._transactions.get_transactions()
     
     @property
     def affected_cells(self):
         return self._affected_cells
     
     def __repr__(self):
-        return f'<{self.__class__.__name__} {self._operations.__str__()} \n>'
+        return f'<{self.__class__.__name__} {self._transactions.__str__()} \n>'
     
     def _validate_sliced_cells(self, sliced_cells:Cells):
         if len(sliced_cells) != 9:
@@ -113,21 +113,21 @@ class _BaseDeducer:
             print(f'type: {type(sliced_cells)}')
             raise TypeError('cells must be instance of Cells')
 
-    def count_pending_operations(self):
-        return len(self._operations)
+    def count_pending_transactions(self):
+        return len(self._transactions)
     
     def eliminate(self):
         self._clear_affected_cells()
-        for operation in self.operations:
-            operation.cell.remove_candidates(operation.candidates)
-            self._add_affected_cell(operation.cell)
-        self.clear_operations()
+        for transaction in self.transactions:
+            transaction.cell.remove_candidates(transaction.candidates)
+            self._add_affected_cell(transaction.cell)
+        self.clear_transactions()
 
-    def _add_operation(self, cell:Cell, remove_candidates:List[int]=None):
-        self._operations.add_operation(cell, remove_candidates)
+    def _add_transaction(self, cell:Cell, remove_candidates:List[int]=None):
+        self._transactions.add_transaction(cell, remove_candidates)
 
-    def clear_operations(self):
-        self._operations.clear_operations()
+    def clear_transactions(self):
+        self._transactions.clear_transactions()
 
     def _add_affected_cell(self, cell:Cell):
         if cell not in self._affected_cells:
@@ -196,7 +196,7 @@ class CompanionDeducer(_BaseDeducer):
         super().__init__()
 
     def deduce(self, sliced_cells:Cells, max_companion_count:int=3):
-        self._operations_in_current_slice = False
+        self._transactions_in_current_slice = False
 
         max_level = self._get_max_level(sliced_cells, max_companion_count)
         companions = {}
@@ -206,7 +206,7 @@ class CompanionDeducer(_BaseDeducer):
 
         flattened_sliced_cells = sliced_cells.flatten()
 
-        while level <= max_level and not self._operations_in_current_slice:
+        while level <= max_level and not self._transactions_in_current_slice:
             companions[level] = self._make_companions(flattened_sliced_cells, companions[level-1])
             level += 1
         
@@ -221,15 +221,15 @@ class CompanionDeducer(_BaseDeducer):
                     if not companion.skip:
                         new_companions.append(companion)
                     if companion.valid:
-                        self._make_new_operations(companion, flattened_sliced_cells)
+                        self._make_new_transactions(companion, flattened_sliced_cells)
         return new_companions
     
-    def _make_new_operations(self, companion:_Companion, flattened_sliced_cells:List[Cell]):
+    def _make_new_transactions(self, companion:_Companion, flattened_sliced_cells:List[Cell]):
         for cell in flattened_sliced_cells:
             if cell not in companion.cells:
                 if any([candidate in companion.companion for candidate in cell.candidates]):
-                    self._operations_in_current_slice = True
-                    self._add_operation(cell, remove_candidates=companion.companion)
+                    self._transactions_in_current_slice = True
+                    self._add_transaction(cell, remove_candidates=companion.companion)
     
     def _get_max_level(self, cells:Cells, max_companion_count:int):
         values = cells.get_values(flatten=True)
@@ -320,7 +320,7 @@ class LineBoxDeducer(_BaseDeducer):
         if cell.row == self._row or cell.column == self._col:
             return
         if remove_candidate in cell.candidates:
-            self._add_operation(cell, remove_candidates=[remove_candidate])
+            self._add_transaction(cell, remove_candidates=[remove_candidate])
     
     def _get_boxes(self) -> List[Cells]:
         row = self._row
@@ -355,11 +355,11 @@ class ValueDeducer(_BaseDeducer):
             candidates = cell.candidates
             if len(candidates) > 0:
                 if cell.value != 0:
-                    self._add_operation(cell, remove_candidates=candidates)
+                    self._add_transaction(cell, remove_candidates=candidates)
                 else:
                     candidates = [candidate for candidate in candidates if candidate in values]
                     if len(candidates) > 0:
-                        self._add_operation(cell, remove_candidates=candidates)
+                        self._add_transaction(cell, remove_candidates=candidates)
     
     def _get_values(self, sliced_cells:Cells):
         values = sliced_cells.get_values(flatten=True)
@@ -400,7 +400,7 @@ class SingleCandidateDeducer(_BaseDeducer):
         candidate = cell.candidates[0]
         for adjacent_cell in adjacent_cells:
             if candidate in adjacent_cell.candidates:
-                self._add_operation(adjacent_cell, candidate)
+                self._add_transaction(adjacent_cell, candidate)
 
 class Deducer(_BaseDeducer):
     def __init__(self, cells: Cells):
@@ -419,11 +419,11 @@ class Deducer(_BaseDeducer):
     
     def deduce_adjacent(self, row:int, col:int):
         self._deduce_adjacent_values(row, col)
-        if len(self.operations) > 0: return
+        if len(self.transactions) > 0: return
         self._deduce_adjacent_single_candidates(row, col)
-        if len(self.operations) > 0: return
+        if len(self.transactions) > 0: return
         self._deduce_adjacent_lineboxes(row, col)
-        if len(self.operations) > 0: return
+        if len(self.transactions) > 0: return
         self._deduce_adjacent_companions(row, col)
     
     def _deduce_adjacent_values(self, row:int, col:int):
@@ -447,11 +447,11 @@ class Deducer(_BaseDeducer):
     
     def deduce(self):
         self._deduce_all_values()
-        if len(self.operations) > 0: return
+        if len(self.transactions) > 0: return
         self._deduce_all_single_candidates()
-        if len(self.operations) > 0: return
+        if len(self.transactions) > 0: return
         self._deduce_all_lineboxes()
-        if len(self.operations) > 0: return
+        if len(self.transactions) > 0: return
         self._deduce_all_companions()
     
     def eliminate(self):
@@ -464,7 +464,7 @@ class Deducer(_BaseDeducer):
         self._affected_cells.extend(self.single_candidate_deducer.affected_cells)
         self._affected_cells.extend(self.linebox_deducer.affected_cells)
         self._affected_cells.extend(self.companion_deducer.affected_cells)
-        self.clear_operations()
+        self.clear_transactions()
 
     def _get_all_rows(self) -> List[Cells]:
         return [self._get_row(i) for i in range(9)]
@@ -514,15 +514,15 @@ class Deducer(_BaseDeducer):
     
     def deduce_value(self, sliced_cells:Cells):
         self.value_deducer.deduce(sliced_cells)
-        self._operations.extend_operations(self.value_deducer._operations)
+        self._transactions.extend_transactions(self.value_deducer._transactions)
     
     def deduce_single_candidate(self, sliced_cells:Cells):
         self.single_candidate_deducer.deduce(sliced_cells)
-        self._operations.extend_operations(self.single_candidate_deducer._operations)
+        self._transactions.extend_transactions(self.single_candidate_deducer._transactions)
     
     def deduce_companion(self, sliced_cells:Cells):
         self.companion_deducer.deduce(sliced_cells)
-        self._operations.extend_operations(self.companion_deducer._operations)
+        self._transactions.extend_transactions(self.companion_deducer._transactions)
     
     def deduce_linebox(self, sliced_cells:Cells):
         row_count = sliced_cells.row_count
@@ -541,5 +541,5 @@ class Deducer(_BaseDeducer):
             return
 
         self.linebox_deducer.deduce(row, col)
-        self._operations.extend_operations(self.linebox_deducer._operations)
+        self._transactions.extend_transactions(self.linebox_deducer._transactions)
     
