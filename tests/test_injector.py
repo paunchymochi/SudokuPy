@@ -123,4 +123,19 @@ class TestInjector:
         
         with pytest.raises(ValueError):
             j.inject()
+    
+    def test_inject_no_solution_3(self):
+        b = Board()
+        j = Injector(b.cells)
+        b.cells.candidates = []
+        b.cell[0, 0].candidates = [5, 6]
+
+        j.inject()
+        assert len(j.injections) == 1
+
+        j.inject()
+        assert len(j.injections) == 1
+
+        with pytest.raises(ValueError):\
+            j.inject()
 
