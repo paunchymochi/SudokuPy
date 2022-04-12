@@ -9,6 +9,14 @@ class TestCandidate:
         repr = c.__repr__()
         for i in range(1, 10):
             assert repr.count(str(i)) == 1
+        assert repr.count('<') == 1
+        assert repr.count('>') == 1
+    
+    def test_str(self):
+        c = Candidate()
+        s = c.__str__()
+        for i in range(1, 10):
+            assert s.count(str(i)) == 1
 
     def test_constructor(self):
         c = Candidate()
