@@ -1,8 +1,17 @@
 import sys
 sys.path.append('..')
 from sudokupy.board import Board
-from sudokupy.injector import Injector
+from sudokupy.injector import Injector, _Injection
 import pytest
+
+class TestInjection:
+    def test_repr(self):
+        b = Board()
+        injection = _Injection(b.cells.data[0][0], b.cells.get_candidates(True))
+        repr = injection.__repr__()
+        assert repr.count('0') == 1
+        for i in range(1, 10):
+            assert repr.count(str(i)) == 1
 
 class TestInjector:
     def test_inject_one_value(self):
