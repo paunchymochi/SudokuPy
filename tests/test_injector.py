@@ -106,11 +106,10 @@ class TestInjector:
         assert len(j.injections) == 1
     
     def test_inject_no_solution(self):
-        board = Board()
-        j = Injector(board.cells)
+        b = Board()
+        j = Injector(b.cells)
 
-        board.cell[0, 0].candidates = []
-
+        b.cells.candidates = []
         with pytest.raises(ValueError):
             j.inject()
     
@@ -138,6 +137,6 @@ class TestInjector:
         j.inject()
         assert len(j.injections) == 1
 
-        with pytest.raises(ValueError):\
+        with pytest.raises(ValueError):
             j.inject()
 
