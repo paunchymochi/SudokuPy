@@ -9,10 +9,11 @@ class TestInjection:
         b = Board()
         injection = _Injection(b.cells.data[0][0], b.cells.get_candidates(True))
         repr = injection.__repr__()
-        assert repr.count('0') == 1
-        for i in range(1, 10):
-            assert repr.count(str(i)) == 1
-        
+        sum = 0
+        for i in range(0, 10):
+            sum += repr.count(str(i))
+        assert sum == 1 + 9 + 9 # value, available_candidates, untried_candidates
+
     def test_has_untried_candidates(self):
         b = Board()
         injection = _Injection(b.cells.data[0][0], b.cells.get_candidates(True))
