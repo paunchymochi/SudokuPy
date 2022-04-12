@@ -83,13 +83,19 @@ class Injector:
     
     def _new_injection(self) -> _Injection:
         cell = self._get_next_unfilled_cell()
+        if cell is None:
+            return None
+
         self._validate_cell(cell)
 
         board_candidates = self._get_board_candidates()
         injection = _Injection(cell, board_candidates)
+        self._append_injection(injection)
+        return injection
+    
+    def _append_injection(self, injection:_Injection):
         self._history.append({'action': 'new', 'injection': injection})
         self._injections.append(injection)
-        return injection
     
     def _validate_cell(self, cell: Cell):
         if cell is None:
