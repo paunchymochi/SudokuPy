@@ -7,12 +7,24 @@ import random
 class _Injection:
     def __init__(self, cell:Cell, board_candidates:List[List[int]]):
         self._cell = cell
-        self._candidates = cell.candidates
+        self._available_candidates = cell.candidates
         self._untried_candidates = cell.candidates.copy()
         self._board_candidates = board_candidates
     
+    @property
+    def cell(self) -> Cell:
+        return self._cell
+    
+    @property
+    def untried_candidates(self) -> List[List[int]]:
+        return self._untried_candidates
+    
+    @property
+    def available_candidates(self) -> List[List[int]]:
+        return self._available_candidates
+    
     def __repr__(self):
-        return f'<InjectionCell value:{self._cell.value} candidates:{self._candidates}>'
+        return f'<InjectionCell value:{self._cell.value} available_candidates:{self._available_candidates}>'
     
     def guess(self) -> int:
         new_value = random.choice(self._untried_candidates)
