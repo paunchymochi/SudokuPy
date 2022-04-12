@@ -51,9 +51,11 @@ class TestTransactions:
     def test_repr(self):
         t = Transactions()
         assert t.__str__().count('Transaction') == 0
+        assert t.__repr__().count('Transaction') == 1
 
         t.add_transaction(Cell(0, 0, 0), [1])
         assert t.__str__().count('Transaction') == 1
+        assert t.__repr__().count('Transaction') == 2
     
     def test_transactions(self):
         t = Transactions()
