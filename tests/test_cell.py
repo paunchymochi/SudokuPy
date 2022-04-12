@@ -4,6 +4,12 @@ from sudokupy.cell import Cell, Cells, Candidate
 import pytest
 
 class TestCandidate:
+    def test_repr(self):
+        c = Candidate()
+        repr = c.__repr__()
+        for i in range(1, 10):
+            assert repr.count(str(i)) == 1
+
     def test_constructor(self):
         c = Candidate()
         assert c.count() == 9
