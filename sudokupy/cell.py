@@ -359,9 +359,11 @@ class Cells:
                 cell.remove_candidates(values)
 
     def set_candidates(self, values:Union[int, List[int]]):
-        for row in self._data:
-            for cell in row:
-                cell.set_candidates(values)
+        if type(values) is int:
+            values = [values]
+        
+        for i, cell in enumerate(self.flatten()):
+            cell.set_candidates(values[i])
 
     def _make_default_cells(self):
         row_count = 9
