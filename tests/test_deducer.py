@@ -26,9 +26,24 @@ class TestTransaction:
         assert t.candidates == [1, 2, 3, 4]
 
     def test_eq(self):
-        raise NotImplementedError
+        cell = Cell(0, 0, 0)
+        cell2 = Cell(0, 0, 8)
+        t1 = Transaction(cell)
+        t2 = Transaction(cell2)
+
+        assert t1 == t2
+
+        cell3 = Cell(1, 1, 0)
+        cell4 = Cell(1, 1, 7)
+        t3 = Transaction(cell3)
+        t4 = Transaction(cell4)
+
+        assert t3 != t1
+        assert t3 == t4
 
     def test_repr(self):
+        cell = Cell(0, 0, 0)
+
         raise NotImplementedError
 
 class TestCompanionDeducer:
