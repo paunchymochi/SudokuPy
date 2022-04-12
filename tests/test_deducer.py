@@ -47,6 +47,27 @@ class TestTransaction:
         repr = t.__repr__()
         assert 'Transaction' in repr
 
+class TestTransactions:
+    def test_repr(self):
+        t = Transactions()
+        assert t.__str__().count('Transaction') == 0
+
+        t.add_transaction(Cell(0, 0, 0), [1])
+        assert t.__str__().count('Transaction') == 1
+    
+    def test_transactions(self):
+        raise NotImplementedError
+
+    def test_extend_transactions(self):
+        raise NotImplementedError
+
+    def test_clear_transactions(self):
+        raise NotImplementedError
+
+    def test_get_transactions(self):
+        raise NotImplementedError
+
+
 class TestCompanionDeducer:
     def test_single_companion(self):
         d = CompanionDeducer()
