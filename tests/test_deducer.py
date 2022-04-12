@@ -43,8 +43,9 @@ class TestTransaction:
 
     def test_repr(self):
         cell = Cell(0, 0, 0)
-
-        raise NotImplementedError
+        t = Transaction(cell)
+        repr = t.__repr__()
+        assert 'Transaction' in repr
 
 class TestCompanionDeducer:
     def test_single_companion(self):
