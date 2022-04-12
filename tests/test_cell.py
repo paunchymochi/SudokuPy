@@ -207,6 +207,14 @@ class TestCell:
         c.set_permanence(True)
         assert c.is_permanent == True
     
+    def test_set_value(self):
+        c = Cell(1, 2, 3)
+        c.set_value(7)
+        assert c.value == 7
+        c.set_permanence(True)
+        with pytest.raises(ValueError):
+            c.set_value(5)
+    
 class TestCells:
     def test_constructor(self):
         cells = Cells()
