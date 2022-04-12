@@ -12,7 +12,7 @@ class _Injection:
         self._board_candidates = board_candidates
     
     def __repr__(self):
-        return f'<InjectionCell value:{self._value} candidates:{self._candidates}>'
+        return f'<InjectionCell value:{self._cell.value} candidates:{self._candidates}>'
     
     def guess(self) -> int:
         new_value = random.choice(self._untried_candidates)
