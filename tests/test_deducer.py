@@ -56,7 +56,12 @@ class TestTransactions:
         assert t.__str__().count('Transaction') == 1
     
     def test_transactions(self):
-        raise NotImplementedError
+        t = Transactions()
+        assert t.transactions == []
+
+        t.add_transaction(Cell(0, 0, 0), [2, 3])
+        assert len(t.transactions) == 1
+        assert isinstance(t.transactions[0], Transaction)
 
     def test_extend_transactions(self):
         raise NotImplementedError
