@@ -24,7 +24,7 @@ class _Injection:
         return self._available_candidates
     
     def __repr__(self):
-        return f'<InjectionCell value:{self._cell.value} available_candidates:{self._available_candidates}>'
+        return f'<InjectionCell value:{self._cell.value} available_candidates:{self._available_candidates} untried_candidates:{self._untried_candidates}>'
     
     def guess(self) -> int:
         if not self.has_untried_candidates():
@@ -71,12 +71,14 @@ class Injector:
     def _rollback_candidates(self, injection:_Injection):
         if self._popped:
             self._cells.candidates = injection._board_candidates
+            self._append_injection(injection)
     
     def _pop_injection(self) -> _Injection:
         self._popped = True
         injection = self._injections.pop()
         self._history.append({'action': 'pop', 'injection': injection})
-        if injection.has_untried_candidates:
+        injection.cell.value = 0
+        if injection.has_untried_candidates():
             return injection
         else:
             return None
@@ -114,7 +116,8 @@ class Injector:
             cells = self._get_cells_in_box(boxrow, boxcol)
             for cell in cells:
                 if cell.value == 0:
-                    return cell
+                    if len(cell.candidates) > 0:
+                        return cell
             return None
     
     def _get_cells_in_box(self, boxrow:int, boxcol:int) -> List[Cell]:
