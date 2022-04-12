@@ -11,7 +11,7 @@ class TestTransaction:
         t = Transaction(cell)
         assert t.cell == cell
 
-    def test_candidates(self):
+    def test_add(self):
         cell = Cell(0, 0, 0)
         t = Transaction(cell)
         assert t.candidates == []
@@ -24,9 +24,6 @@ class TestTransaction:
 
         t.add([1])
         assert t.candidates == [1, 2, 3, 4]
-
-    def test_add(self):
-        raise NotImplementedError
 
     def test_eq(self):
         raise NotImplementedError
