@@ -93,8 +93,15 @@ class TestTransactions:
         assert len(t.transactions) == 0
 
     def test_get_transactions(self):
-        raise NotImplementedError
+        t = Transactions()
+        result = t.get_transactions()
+        assert type(result) is list
+        assert len(result) == 0
 
+        t.add_transaction(Cell(0, 0, 0), [1, 2])
+        result = t.get_transactions()
+        assert type(result) is list
+        assert len(result) == 1
 
 class TestCompanionDeducer:
     def test_single_companion(self):
