@@ -3,7 +3,7 @@ import sys
 sys.path.append('..')
 from sudokupy.cell import Cells
 from sudokupy.board import Board
-from sudokupy.solver import CompanionDeducer, LineBoxDeducer, ValueDeducer, SingleCandidateDeducer, Deducer
+from sudokupy.deducer import CompanionDeducer, LineBoxDeducer, ValueDeducer, SingleCandidateDeducer, Deducer
 
 @pytest.fixture
 def blank_board():
