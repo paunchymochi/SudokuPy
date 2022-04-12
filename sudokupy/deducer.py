@@ -136,7 +136,7 @@ class _BaseDeducer:
     
 class _Companion:
     __slots__ = ['cells', 'candidates', 'companion', 'skip', 'valid']
-    def __init__(self, cell:Cells, other=None):
+    def __init__(self, cell:Cell, other=None):
         self.cells:List[Cell] = []
         self.candidates = []
         self.companion = []
@@ -150,7 +150,7 @@ class _Companion:
             self.valid = self._is_valid()
     
     def __repr__(self):
-        return f'<_CandidateSet cells:{self.cells} companion:{self.companion}>'
+        return f'<_Companion cells:{self.cells} companion:{self.companion}>'
     
     def __eq__(self, other):
         return len(self) == len(other) and all([cell in other.cells for cell in self.cells])
@@ -170,7 +170,7 @@ class _Companion:
         self.candidates = other.candidates.copy()
         self.companion = other.companion.copy()
     
-    def _add(self, cell:Cells) -> bool:
+    def _add(self, cell:Cell) -> bool:
         if cell in self.cells:
             return False
         
