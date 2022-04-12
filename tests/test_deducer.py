@@ -85,7 +85,12 @@ class TestTransactions:
         assert t1.transactions[-1].candidates == [7, 8, 9]
 
     def test_clear_transactions(self):
-        raise NotImplementedError
+        t = Transactions()
+        t.add_transaction(Cell(0, 0, 0), [1, 2])
+        assert len(t.transactions) == 1
+
+        t.clear_transactions()
+        assert len(t.transactions) == 0
 
     def test_get_transactions(self):
         raise NotImplementedError
