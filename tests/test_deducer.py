@@ -64,6 +64,18 @@ class TestTransactions:
         t.add_transaction(Cell(0, 0, 0), [2, 3])
         assert len(t.transactions) == 1
         assert isinstance(t.transactions[0], Transaction)
+    
+    def test_len(self):
+        t = Transactions()
+        assert len(t) == 0
+
+        t.add_transaction(Cell(0, 0, 0), [1])
+        assert len(t) == 1
+        t.add_transaction(Cell(0, 0, 4), [3, 4, 5])
+        assert len(t) == 1
+
+        t.add_transaction(Cell(1, 1, 0), [7, 8, 9])
+        assert len(t) == 2
 
     def test_extend_transactions(self):
         t1 = Transactions()
