@@ -84,6 +84,18 @@ class TestInjector:
         j.inject()
         history = j.get_history()
         assert len(history) == 1
+    
+    def test_get_injections(self):
+        b = Board()
+        j = Injector(b.cells)
+        injections = j.get_injections()
+        assert injections == []
+
+        for i in range(9):
+            j.inject()
+            injections = j.get_injections()
+            assert len(injections) == 1 + i
+
 
     def test_inject_one_value(self):
         board = Board()
