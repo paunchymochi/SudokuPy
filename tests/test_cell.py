@@ -17,6 +17,13 @@ class TestCandidate:
         s = c.__str__()
         for i in range(1, 10):
             assert s.count(str(i)) == 1
+    
+    def test_print_grid(self):
+        c = Candidate()
+        c.set([1])
+        s = c.print_grid()
+        assert s.count('1') == 1
+        assert s.count('.') == 8
 
     def test_constructor(self):
         c = Candidate()
