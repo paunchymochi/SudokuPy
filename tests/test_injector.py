@@ -12,6 +12,19 @@ class TestInjection:
         assert repr.count('0') == 1
         for i in range(1, 10):
             assert repr.count(str(i)) == 1
+        
+    def test_has_untried_candidates(self):
+        b = Board()
+        injection = _Injection(b.cells.data[0][0], b.cells.get_candidates(True))
+        assert injection.has_untried_candidates() == True
+
+        for i in range(8):
+            injection.guess()
+            assert injection.has_untried_candidates() == True
+        
+        injection.guess()
+        assert injection.has_untried_candidates() == False
+
 
 class TestInjector:
     def test_inject_one_value(self):
