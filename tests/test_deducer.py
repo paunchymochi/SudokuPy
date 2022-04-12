@@ -1,9 +1,38 @@
 import pytest
 import sys
 sys.path.append('..')
-from sudokupy.cell import Cells
+from sudokupy.cell import Cells, Cell
 from sudokupy.board import Board
 from sudokupy.deducer import CompanionDeducer, LineBoxDeducer, ValueDeducer, SingleCandidateDeducer, Deducer, Transaction, Transactions
+
+class TestTransaction:
+    def test_cell(self):
+        cell = Cell(0, 0, 0)
+        t = Transaction(cell)
+        assert t.cell == cell
+
+    def test_candidates(self):
+        cell = Cell(0, 0, 0)
+        t = Transaction(cell)
+        assert t.candidates == []
+
+        t.add([3, 1, 2])
+        assert t.candidates == [1, 2, 3]
+
+        t.add([4])
+        assert t.candidates == [1, 2, 3, 4]
+
+        t.add([1])
+        assert t.candidates == [1, 2, 3, 4]
+
+    def test_add(self):
+        raise NotImplementedError
+
+    def test_eq(self):
+        raise NotImplementedError
+
+    def test_repr(self):
+        raise NotImplementedError
 
 class TestCompanionDeducer:
     def test_single_companion(self):
