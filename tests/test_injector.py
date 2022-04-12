@@ -24,7 +24,22 @@ class TestInjection:
         
         injection.guess()
         assert injection.has_untried_candidates() == False
+    
+    def test_untried_candidates(self):
+        b = Board()
+        injection = _Injection(b.cells.data[0][0], b.cells.get_candidates(True))
+        assert len(injection.untried_candidates) == 9
+        injection.guess()
+        assert len(injection.untried_candidates) == 8
+    
+    def test_available_candidates(self):
+        b = Board()
+        injection = _Injection(b.cells.data[0][0], b.cells.get_candidates(True))
+        assert len(injection.available_candidates) == 9
 
+        b.cell[1, 1].candidates = [3, 5, 7]
+        injection = _Injection(b.cells.data[1][1], b.cells.get_candidates(True))
+        assert len(injection.available_candidates) == 3
 
 class TestInjector:
     def test_inject_one_value(self):
