@@ -504,6 +504,16 @@ class TestCells:
         c.data[0][0].remove_candidates([1, 3])
         s = c.print_candidates()
         assert s.count('.2.') == 1
+    
+    def test_as_cell(self):
+        cells = Cells()
+        cell = cells[0, 1].as_cell()
+        assert isinstance(cell, Cell)
+        assert cell.row == 0
+        assert cell.column == 1
+
+        with pytest.raises(ValueError):
+            cells[0, 0:3].as_cell()
         
 
 
