@@ -4,6 +4,12 @@ from sudokupy.board import Board
 import pytest
 
 class TestBoard:
+    def test_repr(self):
+        b = Board()
+        repr = b.__repr__()
+        assert b.cells.__str__() in repr
+        assert b.cells.print_candidates() in repr
+
     def test_row(self):
         b = Board()
         row = b.row[1]
@@ -106,93 +112,6 @@ class TestBoard:
             for cell in row:
                 assert cell == list(range(1, 10))
     
-    def test_deduce_row(self):
-        b = Board()
-        b.cell[1, 1].values = 5
-        b.deduce_row(1)
-        candidates = b.row[1].get_candidates(flatten=True)
-        for candidate in candidates:
-            assert len(candidate) == 8
-            assert 5 not in candidate
-        
-        b.cell[1, 8].values = 6
-        b.cell[1, 7].values = 9
-        b.deduce_row(1)
-        candidates = b.row[1].get_candidates(flatten=True)
-        for candidate in candidates:
-            assert len(candidate) == 6
-            assert 5 not in candidate
-            assert 6 not in candidate
-            assert 9 not in candidate
-    
-    def test_deduce_column(self):
-        b = Board()
-        b.cell[1, 1].values = 5
-        b.deduce_column(1)
-        candidates = b.col[1].get_candidates(flatten=True)
-        for candidate in candidates:
-            assert len(candidate) == 8
-            assert 5 not in candidate
-        
-        b.cell[2, 1].values = 6
-        b.cell[3, 1].values = 7
-        b.cell[1, 8].values = 9
-        b.deduce_column(1)
-        candidates = b.col[1].get_candidates(flatten=True)
-        for candidate in candidates:
-            assert len(candidate) == 6
-            assert 6 not in candidate
-            assert 7 not in candidate
-    
-    def test_deduce_box(self):
-        b = Board()
-        b.cell[1, 1].values = 5
-        b.deduce_box(0, 0)
-        candidates = b.box[0, 0].get_candidates(flatten=True)
-        for candidate in candidates:
-            assert len(candidate) == 8
-            assert 5 not in candidate
-        
-        b.cell[0, 0].values = 1
-        b.cell[2, 0].values = 9
-        b.cell[3, 0].values = 8
-        b.deduce_box(0, 0)
-        candidates = b.box[0, 0].get_candidates(flatten=True)
-        for candidate in candidates:
-            assert len(candidate) == 6
-            assert 1 not in candidate
-            assert 9 not in candidate
-    
-    def test_deduce_adjacent(self):
-        b = Board()
-        b.cell[4, 4].values = 5
-
-        b.cell[0, 4].values = 1
-        b.cell[4, 0].values = 2
-        b.cell[3, 3].values = 3
-        b.deduce_adjacent(4, 4)
-        box_candidates = b.box[1, 1].get_candidates(flatten=True)
-        col_candidates = b.col[4].get_candidates(flatten=True)
-        row_candidates = b.row[4].get_candidates(flatten=True)
-
-        for candidate in box_candidates:
-            assert 5 not in candidate
-            assert 3 not in candidate
-        
-        for candidate in row_candidates:
-            assert 5 not in candidate
-            assert 2 not in candidate
-        
-        for candidate in col_candidates:
-            assert 5 not in candidate
-            assert 1 not in candidate
-        
-        for candidate in [box_candidates[4], row_candidates[4], col_candidates[4]]:
-            assert 5 not in candidate
-            assert 1 not in candidate
-            assert 2 not in candidate
-            assert 3 not in candidate
-    
     def test_resolve(self):
         b = Board()
         b.cell[4, 4].set_candidates(8)
@@ -209,11 +128,6 @@ class TestBoard:
         assert b.cell[0, 1].get_values(flatten=True)[0] == 2
         assert b.cell[0, 0].get_values(flatten=True)[0] == 0
         assert result == [(0, 1)]
-        b.deduce_box(0, 0)
-        result = b.resolve()
-        assert b.cell[0, 1].get_values(flatten=True)[0] == 2
-        assert b.cell[0, 0].get_values(flatten=True)[0] == 1
-        assert result == [(0, 0)]
     
     def test_resolve_adjacent(self):
         b = Board()

@@ -64,19 +64,23 @@ class Candidate:
         return num_list
 
 class Cell:
-    __slots__ = ['_row', '_column', '_value', '_candidates']
+    __slots__ = ['_row', '_column', '_value', '_candidates', '_is_permanent']
 
-    def __init__(self, row: int, column: int, value: int):
+    def __init__(self, row: int, column: int, value: int, is_value_permanent: bool = False):
         self._validate_position(row, 'row')
         self._validate_position(column, 'column')
         self._row = row
         self._column = column
         self._candidates = Candidate()
+        self._is_permanent = is_value_permanent
 
         self.set_value(value)
     
     def __repr__(self):
         return f'<Cell row:{self._row} column:{self._column} value:{self._value}>'
+    
+    def __eq__(self, other):
+        return self._row == other._row and self._column == other._column
 
     @property
     def row(self) -> int:
@@ -87,7 +91,7 @@ class Cell:
         return self._column
     
     @property
-    def candidates(self) -> Candidate:
+    def candidates(self) -> List[int]:
         return self._candidates.values
     
     @candidates.setter
@@ -119,10 +123,19 @@ class Cell:
     def boxcol(self) -> int:
         return self._column // 3
     
+    @property
+    def is_permanent(self):
+        return self._is_permanent
+    
+    def set_permanence(self, is_permanent:bool):
+        self._is_permanent = is_permanent
+    
     def print_candidates(self):
         return self._candidates.print_list()
     
     def set_value(self, value: int):
+        if self._is_permanent:
+            raise ValueError(f'value of cell {self.__repr__()} cannot be be changed')
         self._validate_value(value)
         self._value = value
     
@@ -349,9 +362,19 @@ class Cells:
                 cell.remove_candidates(values)
 
     def set_candidates(self, values:Union[int, List[int]]):
-        for row in self._data:
-            for cell in row:
+        if type(values) is int:
+            values = [values]
+        
+        if len(values) == 0:
+            for cell in self.flatten():
                 cell.set_candidates(values)
+        elif type(values[0]) in [list, tuple]:
+            for i, cell in enumerate(self.flatten()):
+                cell.set_candidates(values[i])
+        else:
+            for cell in self.flatten():
+                cell.set_candidates(values)
+        
 
     def _make_default_cells(self):
         row_count = 9
