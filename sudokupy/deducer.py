@@ -408,6 +408,60 @@ class SingleCandidateDeducer(_BaseDeducer):
             if candidate in adjacent_cell.candidates:
                 self._add_transaction(adjacent_cell, candidate)
 
+class PairedCandidate:
+    def __init__(self, candidate:int, cell1: Cell, cell2: Cell):
+        self.candidate = candidate
+        self.cells = (cell1, cell2)
+        self.rows = [cell.row for cell in self.cells]
+        self.cols = [cell.column for cell in self.cells]
+    
+    def __eq__(self, other:'PairedCandidate'):
+        if self.candidate == other.candidate:
+            if self.cells == other.cells:
+                return True
+        return False
+    
+    def match_vertices(self, others:Union['PairedCandidate', List['PairedCandidate']]):
+        if type(others) is not list:
+            others = [others]
+    
+    def is_row_pair(self):
+        if self.rows[0] == self.rows[1]:
+            return True
+        else:
+            return False
+
+class PairedVertices:
+    def __init__(self):
+        pass
+
+class PairedVerticesDeducer(_BaseDeducer):
+    def __init__(self, cells: Cells):
+        super().__init__()
+        self._cells = cells
+        self._pairs = []
+        self._vertices = []
+        
+    def deduce(self, row:int=None, col:int=None):
+        pass
+    
+    def _find_pairs(self, flattened_sliced_cells:List[Cell], is_row:bool):
+        pairs = []
+        counts:dict[int, List[int]] = {}
+        for i in range(1, 10):
+            counts[i] = []
+        
+        for cell in flattened_sliced_cells:
+            for candidate in cell.candidates:
+                counts[candidate].append(cell)
+        
+        for candidate, cells in counts.items():
+            if len(cells) == 2:
+                pair = PairedCandidate(candidate, cells[0], cells[1])
+                pairs.append(pair)
+
+        return pairs
+
 class Deducer(_BaseDeducer):
     def __init__(self, cells: Cells):
         super().__init__()
