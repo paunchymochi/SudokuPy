@@ -66,7 +66,7 @@ class Candidate:
 class Cell:
     __slots__ = ['_row', '_column', '_value', '_candidates', '_is_permanent']
 
-    def __init__(self, row: int, column: int, value: int, is_value_permanent: bool = False):
+    def __init__(self, row: int, column: int, value: int=0, is_value_permanent: bool = False):
         self._validate_position(row, 'row')
         self._validate_position(column, 'column')
         self._row = row
