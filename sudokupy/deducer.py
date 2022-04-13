@@ -136,13 +136,13 @@ class _BaseDeducer:
     
 class _Companion:
     __slots__ = ['cells', 'candidates', 'companion', 'skip', 'valid']
-    def __init__(self, cell:Cell, other=None):
+    def __init__(self, cell:Cell, other=None, max_level:int=3):
         self.cells:List[Cell] = []
         self.candidates = []
         self.companion = []
         self.skip = True
         self.valid = False
-        if not self._validate_cell(cell):
+        if not self._validate_cell(cell, max_level):
             return
         self._init_other(other)
         if self._add(cell):
@@ -182,8 +182,10 @@ class _Companion:
 
         return True
     
-    def _validate_cell(self, cell:Cell) -> bool:
+    def _validate_cell(self, cell:Cell, max_level:int) -> bool:
         if len(cell.candidates) == 0:
+            return False
+        if len(cell.candidates) > max_level:
             return False
         return True
     
@@ -205,21 +207,27 @@ class CompanionDeducer(_BaseDeducer):
         flattened_sliced_cells = sliced_cells.flatten()
 
         while level <= max_level and not self._transactions_in_current_slice:
-            companions[level] = self._make_companions(flattened_sliced_cells, companions[level-1])
+            companions[level] = self._make_companions(flattened_sliced_cells, 
+                    companions[level-1], max_level)
             level += 1
         
-    def _make_companions(self, flattened_sliced_cells:List[Cell], companions:List[_Companion]=None) -> List[_Companion]:
+    def _make_companions(self, flattened_sliced_cells:List[Cell], 
+            companions:List[_Companion]=None, 
+            max_level:int=3) -> List[_Companion]:
         if companions is None:
             companions = [None]
         new_companions = []
         for other_companion in companions:
             for cell in flattened_sliced_cells:
-                companion = _Companion(cell, other_companion)
+                if len(cell.candidates) > max_level:
+                    continue
+                companion = _Companion(cell, other_companion, max_level)
+                if companion.skip:
+                    continue
                 if companion not in new_companions:
-                    if not companion.skip:
-                        new_companions.append(companion)
-                    if companion.valid:
-                        self._make_new_transactions(companion, flattened_sliced_cells)
+                    new_companions.append(companion)
+                if companion.valid:
+                    self._make_new_transactions(companion, flattened_sliced_cells)
         return new_companions
     
     def _make_new_transactions(self, companion:_Companion, flattened_sliced_cells:List[Cell]):
