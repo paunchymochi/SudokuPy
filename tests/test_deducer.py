@@ -439,7 +439,14 @@ class TestDeducer:
 class TestCompanion:
     def test_constructor(self):
         b = Board()
-        c = _Companion(b.cell[0, 0].flatten()[0])
+        c = _Companion(b.cell[0, 0].flatten()[0], max_level=3)
+        assert len(c.candidates) == 0
+        assert c.candidates == []
+        assert c.companion == []
+        assert c.skip == True
+        assert c.valid == False
+
+        c = _Companion(b.cell[0, 0].flatten()[0], max_level=9)
         assert len(c.candidates) == 1
         assert len(c.candidates[0]) == 9
         assert len(c.companion) == 9
@@ -467,18 +474,20 @@ class TestCompanion:
     
     def test_eq(self):
         b = Board()
-        c1 = _Companion(b.cell[1, 1].flatten()[0])
-        c2 = _Companion(b.cell[1, 1].flatten()[0])
+        b.box[0, 0].candidates = [2, 3, 4]
+        c1 = _Companion(b.cell[1, 1].flatten()[0], max_level=3)
+        c2 = _Companion(b.cell[1, 1].flatten()[0], max_level=3)
         assert c1 == c2
-        c3 = _Companion(b.cell[0, 0].flatten()[0])
+        c3 = _Companion(b.cell[0, 0].flatten()[0], max_level=3)
         assert c1 != c3
     
     def test_len(self):
         b = Board()
-        c = _Companion(b.cell[0, 0].flatten()[0])
+        b.cells.candidates = [2, 3, 4]
+        c = _Companion(b.cell[0, 0].flatten()[0], max_level=3)
         assert len(c) == 1
-        c = _Companion(b.cell[1, 1].flatten()[0])
+        c = _Companion(b.cell[1, 1].flatten()[0], max_level=3)
         assert len(c) == 1
 
-        c = _Companion(b.cell[8, 8].flatten()[0], c)
+        c = _Companion(b.cell[8, 8].flatten()[0], c, max_level=3)
         assert len(c) == 2
