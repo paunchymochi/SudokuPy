@@ -66,7 +66,7 @@ class Candidate:
 class Cell:
     __slots__ = ['_row', '_column', '_value', '_candidates', '_is_permanent']
 
-    def __init__(self, row: int, column: int, value: int, is_value_permanent: bool = False):
+    def __init__(self, row: int, column: int, value: int=0, is_value_permanent: bool = False):
         self._validate_position(row, 'row')
         self._validate_position(column, 'column')
         self._row = row
@@ -419,6 +419,12 @@ class Cells:
             for cell in row:
                 flattened_cells.append(cell)
         return flattened_cells
+    
+    def as_cell(self) -> Cell:
+        if len(self.data) == 1:
+            if len(self.data[0]) == 1:
+                return self.data[0][0]
+        raise ValueError('Cells object has more than 1 instance of Cell')
 
     def _flatten(self, matrix) -> List:
 
