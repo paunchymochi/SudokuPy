@@ -419,6 +419,12 @@ class Cells:
             for cell in row:
                 flattened_cells.append(cell)
         return flattened_cells
+    
+    def as_cell(self) -> Cell:
+        if len(self.data) == 1:
+            if len(self.data[0]) == 1:
+                return self.data[0][0]
+        raise ValueError('Cells object has more than 1 instance of Cell')
 
     def _flatten(self, matrix) -> List:
 
