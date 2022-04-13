@@ -1,12 +1,13 @@
 import sys
 sys.path.append('..')
 from sudokupy.board import Board
-from sudokupy.solver import Deducer
+from sudokupy.deducer import Deducer
+from sudokupy.injector import Injector
 from sudokupy.cell import Cell
 import random
 from typing import List, Tuple
 
-class Generator:
+class BoardGenerator:
     def __init__(self, seed:int=None):
         self._reset(seed)
     
@@ -23,15 +24,15 @@ class Generator:
     def _reset(self, seed:int=None):
         self._board = Board()
         self._deducer = Deducer(self._board.cells)
-        self._injected_values = []
+        self._injector = Injector(self._board.cells)
         self._set_seed(seed)
     
     def generate(self, seed:int=None):
         self._reset(seed)
         self._generate_diagonal_boxes()
-        while not self._is_board_complete() and self._deducer.is_solvable():
-            self._deduce_resolve()
-            self._inject_value()
+        while not self._is_board_complete():
+            self._deduce()
+            self._inject()
         return self._is_board_complete()
 
     def _is_board_complete(self) -> bool:
@@ -54,29 +55,14 @@ class Generator:
             random_numbers.append(num)
         return random_numbers
     
-    def _deduce_resolve(self):
-        while True:
+    def _deduce(self):
+        self._deducer.deduce()
+        while len(self._deducer.transactions) > 0:
+            self._deducer.eliminate()
             self._deducer.deduce()
-            while len(self._deducer.operations) > 0:
-                self._deducer.eliminate()
-                self._deducer.deduce()
-            results = self._board.resolve()
-            if len(results) == 0:
-                break
     
-    def _inject_value(self):
-        cell = self._get_next_unfilled_cell()
-        if cell is None:
-            return
-        candidates = cell.candidates
-        if len(candidates) == 0:
-            return
-        value = random.choice(candidates)
-
-        cell.value = value
-        cell.candidates = []
-
-        self._injected_values.append({'cell':cell, 'candidates':candidates, 'chosen_value':value})
+    def _inject(self):
+        self._injector.inject()
     
     def _get_next_unfilled_cell(self) -> Cell:
         # fill boxes clockwise starting from box[0, 1]
