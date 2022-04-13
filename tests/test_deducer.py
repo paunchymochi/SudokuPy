@@ -3,7 +3,7 @@ import sys
 sys.path.append('..')
 from sudokupy.cell import Cells, Cell
 from sudokupy.board import Board
-from sudokupy.deducer import CompanionDeducer, LineBoxDeducer, ValueDeducer, SingleCandidateDeducer, Deducer, Transaction, Transactions
+from sudokupy.deducer import CompanionDeducer, LineBoxDeducer, ValueDeducer, SingleCandidateDeducer, Deducer, Transaction, Transactions, _Companion
 
 class TestTransaction:
     def test_cell(self):
@@ -436,3 +436,38 @@ class TestDeducer:
         assert sum([3, 5, 8] == x.candidates for x in d.transactions) == 4
         assert sum([1, 3, 5, 8] == x.candidates for x in d.transactions) == 2
 
+class TestCompanion:
+    def test_constructor(self):
+        b = Board()
+        c = _Companion(b.cell[0, 0].flatten()[0])
+        assert len(c.candidates) == 1
+        assert len(c.candidates[0]) == 9
+        assert len(c.companion) == 9
+        assert c.skip == False
+        assert c.valid == False
+    
+    def test_constructor_other(self):
+        raise NotImplementedError
+    
+    def test_repr(self):
+        c = _Companion(Cell(0, 0, 0))
+        repr = c.__repr__()
+        assert 'Companion' in repr
+    
+    def test_eq(self):
+        b = Board()
+        c1 = _Companion(b.cell[1, 1].flatten()[0])
+        c2 = _Companion(b.cell[1, 1].flatten()[0])
+        assert c1 == c2
+        c3 = _Companion(b.cell[0, 0].flatten()[0])
+        assert c1 != c3
+    
+    def test_len(self):
+        b = Board()
+        c = _Companion(b.cell[0, 0].flatten()[0])
+        assert len(c) == 1
+        c = _Companion(b.cell[1, 1].flatten()[0])
+        assert len(c) == 1
+
+        c = _Companion(b.cell[8, 8].flatten()[0], c)
+        assert len(c) == 2
