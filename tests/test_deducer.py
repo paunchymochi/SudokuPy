@@ -447,7 +447,18 @@ class TestCompanion:
         assert c.valid == False
     
     def test_constructor_other(self):
-        raise NotImplementedError
+        b = Board()
+        cell1 = b.cell[0, 0].flatten()[0]
+        cell1.candidates = [1, 2, 3]
+        c = _Companion(cell1)
+
+        cell2 = b.cell[1, 1].flatten()[0]
+        cell2.candidates = [2, 3, 4]
+        c2 = _Companion(cell2, c)
+        assert len(c2.candidates) == 2
+        assert c2.candidates[0] == [1, 2, 3]
+        assert c2.candidates[1] == [2, 3, 4]
+        assert c2.companion == [1, 2, 3, 4]
     
     def test_repr(self):
         c = _Companion(Cell(0, 0, 0))
