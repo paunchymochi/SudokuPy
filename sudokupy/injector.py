@@ -110,7 +110,7 @@ class Injector:
                 if cell.value == 0:
                     if len(cell.candidates) > 0:
                         return cell
-            return None
+        return None
     
     def _get_cells_in_box(self, boxrow:int, boxcol:int) -> List[Cell]:
         box = self._cells[boxrow*3:boxrow*3+3, boxcol*3:boxcol*3+3]
