@@ -219,12 +219,15 @@ class CompanionDeducer(_BaseDeducer):
         new_companions = []
         for other_companion in companions:
             for cell in flattened_sliced_cells:
+                if len(cell.candidates) > max_level:
+                    continue
                 companion = _Companion(cell, other_companion, max_level)
-                if companion is not None and companion not in new_companions:
-                    if not companion.skip:
-                        new_companions.append(companion)
-                    if companion.valid:
-                        self._make_new_transactions(companion, flattened_sliced_cells)
+                if companion.skip:
+                    continue
+                if companion not in new_companions:
+                    new_companions.append(companion)
+                if companion.valid:
+                    self._make_new_transactions(companion, flattened_sliced_cells)
         return new_companions
     
     def _make_new_transactions(self, companion:_Companion, flattened_sliced_cells:List[Cell]):
