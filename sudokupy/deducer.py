@@ -409,15 +409,16 @@ class SingleCandidateDeducer(_BaseDeducer):
                 self._add_transaction(adjacent_cell, candidate)
 
 class PairedCandidate:
-    def __init__(self, candidate:int, cell1: Cell, cell2: Cell):
+    def __init__(self, candidate:int, topleft_cell: Cell, cell1: Cell, cell2: Cell):
         self.candidate = candidate
         self.cells = (cell1, cell2)
+        self.topleft_cell = topleft_cell
         self.rows = [cell.row for cell in self.cells]
         self.cols = [cell.column for cell in self.cells]
     
     def __eq__(self, other:'PairedCandidate'):
         if self.candidate == other.candidate:
-            if self.cells == other.cells:
+            if self.topleft_cell == other.topleft_cell:
                 return True
         return False
     
@@ -457,10 +458,15 @@ class PairedVerticesDeducer(_BaseDeducer):
         
         for candidate, cells in counts.items():
             if len(cells) == 2:
-                pair = PairedCandidate(candidate, cells[0], cells[1])
+                topleft_cell = self._get_topleft_cell()
+                pair = PairedCandidate(candidate, topleft_cell, cells[0], cells[1])
                 pairs.append(pair)
 
         return pairs
+    
+    def _get_topleft_cell(flattened_sliced_cells:List[Cell]) -> Cell:
+        return flattened_sliced_cells[0]
+
 
 class Deducer(_BaseDeducer):
     def __init__(self, cells: Cells):
