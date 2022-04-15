@@ -428,12 +428,6 @@ class VertexPair:
                 return True
         return False
     
-    # def get_vertex_indices(self):
-    #     if self.is_row_pair():
-    #         return self.cols
-    #     else:
-    #         return self.rows
-    
     def is_row_pair(self):
         if self.rows[0] == self.rows[1]:
             return True
@@ -447,7 +441,6 @@ class VertexPair:
         else:
             self.vertex_row = self.cols[0]
             self.vertex_cols = self.rows
-
 
 class VertexCouple:
     def __init__(self, vertex_pairs:List[VertexPair], other:'VertexCouple'=None):
@@ -595,7 +588,6 @@ class VertexDict:
     def _new_candidate(self, candidate:int):
         self._dict[candidate] = []
 
-
 class VertexCouples:
     def __init__(self):
         self._pairs_dict = VertexDict()
@@ -649,13 +641,6 @@ class VertexCouples:
             couples.append(joined_couple)
         return couples
 
-        # for i in range(len(pairs) -1):
-        #     for j in range(1, len(pairs)):
-        #         joined_couple = VertexCouple(pairs)
-        #         couple = VertexCouple([pairs[i], pairs[j]], parent_couple)
-        #         couples.append(couple)
-        # return couples
-    
 class VertexCoupleDeducer(_BaseDeducer):
     def __init__(self, cells: Cells):
         super().__init__()
@@ -672,7 +657,6 @@ class VertexCoupleDeducer(_BaseDeducer):
         self._make_new_transactions(valid_couples)
         
         return pairs
-
 
     def _make_new_transactions(self, valid_couples:List[VertexCouple]):
 
@@ -708,13 +692,8 @@ class VertexCoupleDeducer(_BaseDeducer):
         return (rows, cols)
     
     def _make_new_transaction(self, cell:Cell, candidate:int):
-        # remove_candidates = self._make_remove_candidates(cell, candidate)
         self._add_transaction(cell, candidate)
 
-    # def _make_remove_candidates(self, cell:Cell, candidate:int):
-    #     candidates = cell.candidates
-    #     return [c for c in candidates if c != candidate]
-    
     def _get_flattened_sliced_cells(self, row:int=None, col:int=None) -> List[Cell]:
         if row is not None:
             slice = self._cells[row].flatten()
@@ -752,7 +731,6 @@ class VertexCoupleDeducer(_BaseDeducer):
     def _find_couples(self, max_vertex_pairs=3):
         couples = self._vertices.find_couples(max_vertex_pairs)
         return couples
-
 
 class Deducer(_BaseDeducer):
     def __init__(self, cells: Cells):
