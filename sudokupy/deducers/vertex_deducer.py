@@ -69,9 +69,13 @@ class VertexPair:
         col_set = list(set(cols))
 
         if len(row_set) == 1 or len(col_set) == 1:
-            return
+            pass
         else:
             raise ValueError(f'{cell1} and {cell2} are not on a straight line with {topleft_cell}')
+        
+        if topleft_cell.row != 0 and topleft_cell.column != 0:
+            raise ValueError(f'{topleft_cell} is not a topleft cell')
+
 
 class VertexCouple:
     def __init__(self, vertex_pairs:List[VertexPair], other:'VertexCouple'=None):
