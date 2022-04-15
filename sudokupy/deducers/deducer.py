@@ -1,5 +1,10 @@
 import sys
-sys.path.append('...')
+sys.path.append('../..')
+from sudokupy.deducers.deducer_base import _BaseDeducer
+from sudokupy.cell import Cells
+from sudokupy.deducer import ValueDeducer, SingleCandidateDeducer, CompanionDeducer, LineBoxDeducer, VertexCoupleDeducer
+from typing import List
+
 
 class Deducer(_BaseDeducer):
     def __init__(self, cells: Cells):
