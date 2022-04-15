@@ -1,7 +1,7 @@
 import sys
 sys.path.append('..')
 from sudokupy.board import Board
-from sudokupy.deducer import Deducer
+from sudokupy.deducers.deducer import Deducer
 from sudokupy.injector import Injector
 from sudokupy.cell import Cell
 import random
