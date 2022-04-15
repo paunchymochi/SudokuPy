@@ -762,6 +762,7 @@ class Deducer(_BaseDeducer):
         self.single_candidate_deducer = SingleCandidateDeducer(cells)
         self.companion_deducer = CompanionDeducer()
         self.linebox_deducer = LineBoxDeducer(cells)
+        self.vertex_deducer = VertexCoupleDeducer(cells)
     
     def is_solvable(self) -> bool:
         for cell in self._cells.flatten():
@@ -797,12 +798,18 @@ class Deducer(_BaseDeducer):
         self.deduce_companion(self._get_col(col))
         self.deduce_companion(self._get_box(row//3, col//3))
     
+    def _deduce_adjacent_vertices(self, row:int, col:int):
+        self.deduce_vertex(self._get_row(row))
+        self.deduce_vertex(self._get_col(col))
+    
     def deduce(self):
         self._deduce_all_values()
         if len(self.transactions) > 0: return
         self._deduce_all_single_candidates()
         if len(self.transactions) > 0: return
         self._deduce_all_lineboxes()
+        if len(self.transactions) > 0: return
+        # self._deduce_all_vertices()
         if len(self.transactions) > 0: return
         self._deduce_all_companions()
     
@@ -845,7 +852,7 @@ class Deducer(_BaseDeducer):
         return self._cells[boxrow*3:boxrow*3+3,boxcol*3:boxcol*3+3]
     
     def _deduce_all_values(self):
-        cells_list = self._get_all_sliced_cells(True)
+        cells_list = self._get_all_sliced_cells(include_boxes=True)
         for cells in cells_list:
             self.deduce_value(cells)
     
@@ -855,14 +862,19 @@ class Deducer(_BaseDeducer):
             self.deduce_single_candidate(cells)
     
     def _deduce_all_companions(self):
-        cells_list = self._get_all_sliced_cells(True)
+        cells_list = self._get_all_sliced_cells(include_boxes=True)
         for cells in cells_list:
             self.deduce_companion(cells)
 
     def _deduce_all_lineboxes(self):
-        cells_list = self._get_all_sliced_cells(False)
+        cells_list = self._get_all_sliced_cells(include_boxes=False)
         for cells in cells_list:
             self.deduce_linebox(cells)
+    
+    def _deduce_all_vertices(self):
+        cells_list = self._get_all_sliced_cells(include_boxes=False)
+        for cells in cells_list:
+            self.deduce_vertex(cells)
     
     def deduce_value(self, sliced_cells:Cells):
         self.value_deducer.deduce(sliced_cells)
@@ -877,6 +889,18 @@ class Deducer(_BaseDeducer):
         self._transactions.extend_transactions(self.companion_deducer._transactions)
     
     def deduce_linebox(self, sliced_cells:Cells):
+        row, col = self._get_rowcol_from_sliced_cells(sliced_cells)
+
+        self.linebox_deducer.deduce(row, col)
+        self._transactions.extend_transactions(self.linebox_deducer._transactions)
+    
+    def deduce_vertex(self, sliced_cells:Cells):
+        row, col = self._get_rowcol_from_sliced_cells(sliced_cells)
+
+        self.vertex_deducer.deduce(row, col)
+        self._transactions.extend_transactions(self.vertex_deducer._transactions)
+    
+    def _get_rowcol_from_sliced_cells(self, sliced_cells:Cells):
         row_count = sliced_cells.row_count
         col_count = sliced_cells.col_count
 
@@ -889,9 +913,5 @@ class Deducer(_BaseDeducer):
         else:
             col = None
         
-        if row is None and col is None:
-            return
+        return (row, col)
 
-        self.linebox_deducer.deduce(row, col)
-        self._transactions.extend_transactions(self.linebox_deducer._transactions)
-    
