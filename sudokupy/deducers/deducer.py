@@ -3,8 +3,9 @@ sys.path.append('../..')
 from sudokupy.deducers.deducer_base import _BaseDeducer
 from sudokupy.deducers.companion_deducer import CompanionDeducer
 from sudokupy.deducers.linebox_deducer import LineBoxDeducer
+from sudokupy.deducers.value_deducer import ValueDeducer
 from sudokupy.cell import Cells
-from sudokupy.deducer import ValueDeducer, SingleCandidateDeducer, VertexCoupleDeducer
+from sudokupy.deducer import SingleCandidateDeducer, VertexCoupleDeducer
 from typing import List
 
 class Deducer(_BaseDeducer):
