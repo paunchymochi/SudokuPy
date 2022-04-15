@@ -4,8 +4,9 @@ from sudokupy.deducers.deducer_base import _BaseDeducer
 from sudokupy.deducers.companion_deducer import CompanionDeducer
 from sudokupy.deducers.linebox_deducer import LineBoxDeducer
 from sudokupy.deducers.value_deducer import ValueDeducer
+from sudokupy.deducers.candidate_deducer import SingleCandidateDeducer
 from sudokupy.cell import Cells
-from sudokupy.deducer import SingleCandidateDeducer, VertexCoupleDeducer
+from sudokupy.deducer import VertexCoupleDeducer
 from typing import List
 
 class Deducer(_BaseDeducer):
