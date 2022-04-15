@@ -5,7 +5,8 @@ from sudokupy.cell import Cells, Cell
 from sudokupy.board import Board
 from sudokupy.deducers.deducer import Deducer
 from sudokupy.deducers.deducer_base import  Transaction, Transactions
-from sudokupy.deducer import CompanionDeducer, LineBoxDeducer, ValueDeducer, SingleCandidateDeducer, _Companion
+from sudokupy.deducers.companion_deducer import CompanionDeducer, _Companion
+from sudokupy.deducer import LineBoxDeducer, ValueDeducer, SingleCandidateDeducer
 
 class TestTransaction:
     def test_cell(self):
