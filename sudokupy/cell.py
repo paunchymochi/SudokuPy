@@ -77,7 +77,7 @@ class Cell:
         self.set_value(value)
     
     def __repr__(self):
-        return f'<Cell row:{self._row} column:{self._column} value:{self._value}>'
+        return f'<Cell ({self._row},{self._column})={self._value}>'
     
     def __eq__(self, other):
         return self._row == other._row and self._column == other._column
