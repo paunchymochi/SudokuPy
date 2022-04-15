@@ -9,6 +9,7 @@ from sudokupy.deducers.companion_deducer import CompanionDeducer, _Companion
 from sudokupy.deducers.linebox_deducer import LineBoxDeducer
 from sudokupy.deducers.candidate_deducer import SingleCandidateDeducer
 from sudokupy.deducers.value_deducer import ValueDeducer
+from sudokupy.deducers.vertex_deducer import VertexCoupleDeducer
 
 class TestTransaction:
     def test_cell(self):
