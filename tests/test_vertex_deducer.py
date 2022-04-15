@@ -10,3 +10,10 @@ class TestVertexPair:
         assert p.is_row_pair() == True
         p = VertexPair(1, Cell(0, 5), Cell(0, 5), Cell(8, 5))
         assert p.is_row_pair() == False
+    
+    def test_eq(self):
+        p = VertexPair(1, Cell(0, 0, 0), Cell(5, 0, 0), Cell(8, 0, 0))
+        p2 = VertexPair(2, Cell(0, 0, 0), Cell(5, 0, 0), Cell(8, 0, 0))
+        p3 = VertexPair(1, Cell(0, 0, 0), Cell(1, 0, 0), Cell(2, 0, 0))
+        assert p != p2
+        assert p == p3
