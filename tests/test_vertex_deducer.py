@@ -17,3 +17,8 @@ class TestVertexPair:
         p3 = VertexPair(1, Cell(0, 0, 0), Cell(1, 0, 0), Cell(2, 0, 0))
         assert p != p2
         assert p == p3
+    
+    def test_candidate(self):
+        for i in range(1, 10):
+            p = VertexPair(i, Cell(0, 0, 0), Cell(4, 0, 0), Cell(5, 0, 0))
+            assert p.candidate == i
