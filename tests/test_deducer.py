@@ -3,7 +3,13 @@ import sys
 sys.path.append('..')
 from sudokupy.cell import Cells, Cell
 from sudokupy.board import Board
-from sudokupy.deducer import CompanionDeducer, LineBoxDeducer, ValueDeducer, SingleCandidateDeducer, Deducer, Transaction, Transactions, _Companion
+from sudokupy.deducers.deducer import Deducer
+from sudokupy.deducers.deducer_base import  Transaction, Transactions
+from sudokupy.deducers.companion_deducer import CompanionDeducer, _Companion
+from sudokupy.deducers.linebox_deducer import LineBoxDeducer
+from sudokupy.deducers.candidate_deducer import SingleCandidateDeducer
+from sudokupy.deducers.value_deducer import ValueDeducer
+from sudokupy.deducers.vertex_deducer import VertexCoupleDeducer
 
 class TestTransaction:
     def test_cell(self):
