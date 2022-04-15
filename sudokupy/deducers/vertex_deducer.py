@@ -2,18 +2,49 @@ import sys
 sys.path.append('../..')
 from sudokupy.cell import Cell, Cells
 from sudokupy.deducers.deducer_base import _BaseDeducer 
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 class VertexPair:
+    __slots__ = ['_candidate', '_cells', '_topleft_cell']
     def __init__(self, candidate:int, topleft_cell: Cell, cell1: Cell, cell2: Cell):
-        self.candidate = candidate
-        self.cells = (cell1, cell2)
-        self.topleft_cell = topleft_cell
-        self.rows = [cell.row for cell in self.cells]
-        self.cols = [cell.column for cell in self.cells]
-        self.vertex_row:int = 0
-        self.vertex_cols:List[int] = []
-        self._make_vertex_rowcol()
+        self._validate_inputs(candidate, topleft_cell, cell1, cell2)
+        self._candidate = candidate
+        self._cells = (cell1, cell2)
+        self._topleft_cell = topleft_cell
+
+    @property
+    def candidate(self) -> int:
+        return self._candidate
+    
+    @property
+    def cells(self) -> Tuple[Cell]:
+        return self._cells
+    
+    @property
+    def topleft_cell(self) -> Cell:
+        return self._topleft_cell
+    
+    @property
+    def rows(self) -> List[int]:
+        return [cell.row for cell in self._cells]
+    
+    @property
+    def cols(self) -> List[int]:
+        return [cell.column for cell in self._cells]
+    
+    @property
+    def vertex_row(self) -> int:
+        if self.is_row_pair():
+            return self.rows[0]
+        else:
+            return self.cols[0]
+    
+    @property
+    def vertex_cols(self) -> List[int]:
+        if self.is_row_pair():
+            return self.cols
+        else:
+            return self.rows
     
     def __repr__(self):
         return f'<VertexPair candidate:{self.candidate} cells:{self.cells}>'
@@ -30,13 +61,17 @@ class VertexPair:
         else:
             return False
     
-    def _make_vertex_rowcol(self):
-        if self.is_row_pair():
-            self.vertex_row = self.rows[0]
-            self.vertex_cols = self.cols
+    def _validate_inputs(self, candidate:int, topleft_cell:Cell, cell1:Cell, cell2:Cell):
+        rows = [topleft_cell.row, cell1.row, cell2.row]
+        cols = [topleft_cell.column, cell1.column, cell2.column]
+
+        row_set = list(set(rows))
+        col_set = list(set(cols))
+
+        if len(row_set) == 1 or len(col_set) == 1:
+            return
         else:
-            self.vertex_row = self.cols[0]
-            self.vertex_cols = self.rows
+            raise ValueError(f'{cell1} and {cell2} are not on a straight line with {topleft_cell}')
 
 class VertexCouple:
     def __init__(self, vertex_pairs:List[VertexPair], other:'VertexCouple'=None):
