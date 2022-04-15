@@ -5,6 +5,9 @@ from sudokupy.deducers.deducer_base import _BaseDeducer
 from typing import List, Optional, Tuple
 
 class VertexPair:
+    """
+    Stores 2 Cell objects that are on the same line
+    """
     __slots__ = ['_candidate', '_cells', '_topleft_cell']
     def __init__(self, candidate:int, topleft_cell: Cell, cell1: Cell, cell2: Cell):
         self._validate_inputs(candidate, topleft_cell, cell1, cell2)
@@ -75,7 +78,6 @@ class VertexPair:
         
         if topleft_cell.row != 0 and topleft_cell.column != 0:
             raise ValueError(f'{topleft_cell} is not a topleft cell')
-
 
 class VertexCouple:
     def __init__(self, vertex_pairs:List[VertexPair], other:'VertexCouple'=None):
