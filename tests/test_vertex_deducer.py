@@ -22,3 +22,9 @@ class TestVertexPair:
         for i in range(1, 10):
             p = VertexPair(i, Cell(0, 0, 0), Cell(4, 0, 0), Cell(5, 0, 0))
             assert p.candidate == i
+    
+    def test_cells(self):
+        c1 = Cell(3, 0, 0)
+        c2 = Cell(5, 0, 0)
+        p = VertexPair(2, Cell(0, 0, 0), c1, c2)
+        assert p.cells == (c1, c2)
