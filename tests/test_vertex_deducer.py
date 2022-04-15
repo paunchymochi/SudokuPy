@@ -36,4 +36,13 @@ class TestVertexPair:
             p = VertexPair(1, c, Cell(3, i, 0), Cell(7, i, 0))
             assert p.topleft_cell == c
 
+    def test_row_col(self):
+        cases = [
+            [[3, 0], [6, 0]],
+            [[0, 4], [0, 8]]
+        ]
+        for case in cases:
+            p = VertexPair(1, Cell(0, 0, 0), Cell(case[0][0], case[0][1]), Cell(case[1][0], case[1][1]))
+            assert p.rows == [case[0][0], case[1][0]]
+            assert p.cols == [case[0][1], case[1][1]]
 
