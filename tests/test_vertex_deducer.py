@@ -54,4 +54,11 @@ class TestVertexPair:
         p = VertexPair(1, Cell(0, 0, 0), Cell(1, 0, 0), Cell(4, 0, 0))
         assert p.vertex_row == 0
         assert p.vertex_cols == [1, 4]
+    
+    def test_is_row_pair(self):
+        p = VertexPair(1, Cell(0, 0, 0), Cell(0, 5, 0), Cell(0, 8, 0))
+        assert p.is_row_pair == True
+        p = VertexPair(1, Cell(0, 0, 0), Cell(1, 0, 0), Cell(4, 0, 0))
+        assert p.is_row_pair == False
+
 
