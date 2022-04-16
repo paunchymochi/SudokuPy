@@ -128,6 +128,10 @@ class VertexCouple:
         if other is not None:
             if not isinstance(other, VertexCouple):
                 raise TypeError(f'other must be an instance of VertexCouple')
+        
+        candidates = list(set(pair.candidate for pair in vertex_pairs))
+        if len(candidates) > 1:
+            return False
 
         for vertex_pair in vertex_pairs:
             if not isinstance(vertex_pair, VertexPair):
