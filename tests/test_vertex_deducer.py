@@ -102,6 +102,26 @@ class TestVertexCouple:
         assert c1 != c2
         assert c1 == c1
         assert c1 == c3
+    
+    def test_discard(self):
+        p1 = VertexPair(1, Cell(0, 4), Cell(0, 7))
+        p2 = VertexPair(2, Cell(1, 4), Cell(1, 7))
+        c1 = VertexCouple([p1, p2])
+        assert c1.discard == True
+
+        p3 = VertexPair(3, Cell(0, 0), Cell(0, 4))
+        p4 = VertexPair(3, Cell(1, 0), Cell(1, 4))
+        c2 = VertexCouple([p3, p4])
+        assert c2.discard == False
+
+        p5 = VertexPair(4, Cell(0, 0), Cell(5, 0))
+        p6 = VertexPair(4, Cell(0, 4), Cell(5, 4))
+        c3 = VertexCouple([p5, p6])
+        assert c3.discard == False
+
+        c4 = VertexCouple([p5, p6], c2)
+        assert c4.discard == True
+
 
 class TestVertexDict:
     def test_len(self):
