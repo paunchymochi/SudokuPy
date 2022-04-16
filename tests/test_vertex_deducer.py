@@ -89,3 +89,16 @@ class TestVertexCouple:
         
         with pytest.raises(TypeError):
             c = VertexCouple([0])
+
+    def test_eq(self):
+        p1 = VertexPair(1, Cell(0, 4), Cell(0, 7))
+        p2 = VertexPair(1, Cell(3, 4), Cell(3, 7))
+        p3 = VertexPair(2, Cell(0, 4), Cell(0, 7))
+        p4 = VertexPair(2, Cell(3, 4), Cell(3, 7))
+        c1 = VertexCouple([p1, p2])
+        c2 = VertexCouple([p3, p4])
+        c3 = VertexCouple([p2, p1])
+
+        assert c1 != c2
+        assert c1 == c1
+        assert c1 == c3
