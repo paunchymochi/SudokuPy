@@ -190,3 +190,9 @@ class TestVertexDict:
         d.add_couple(c2)
         assert d.has_couple(c2) == True
 
+class TestVertexCouples:
+    def test_add_pair(self):
+        raise NotImplementedError
+    def test_find_couples(self):
+        raise NotImplementedError
+    
