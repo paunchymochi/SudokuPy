@@ -172,7 +172,7 @@ class VertexDict:
         return f'<VertexDict {self._dict}>'
     
     def __len__(self):
-        return len(self._dict)
+        return sum([len(x) for x in self._dict.values()])
     
     def get_candidates(self):
         return self._dict.keys()
