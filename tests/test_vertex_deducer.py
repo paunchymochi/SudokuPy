@@ -87,3 +87,10 @@ class TestVertexCouple:
         assert c2.discard == False
         assert c2.valid == True
     
+    def test_invalid_parameter(self):
+        p = VertexPair(1, Cell(0, 0, 0), Cell(0, 4, 0), Cell(0, 7, 0))
+        with pytest.raises(TypeError):
+            c = VertexCouple(p)
+        
+        with pytest.raises(TypeError):
+            c = VertexCouple([0])
