@@ -8,12 +8,11 @@ class VertexPair:
     """
     Stores 2 Cell objects that are on the same line
     """
-    __slots__ = ['_candidate', '_cells', '_topleft_cell']
-    def __init__(self, candidate:int, topleft_cell: Cell, cell1: Cell, cell2: Cell):
-        self._validate_inputs(candidate, topleft_cell, cell1, cell2)
+    __slots__ = ['_candidate', '_cells', '_topleft_position']
+    def __init__(self, candidate:int, cell1: Cell, cell2: Cell):
+        self._topleft_position = self._get_topleft_position(cell1, cell2)
         self._candidate = candidate
         self._cells = (cell1, cell2)
-        self._topleft_cell = topleft_cell
 
     @property
     def candidate(self) -> int:
@@ -24,8 +23,8 @@ class VertexPair:
         return self._cells
     
     @property
-    def topleft_cell(self) -> Cell:
-        return self._topleft_cell
+    def topleft_position(self) -> Tuple[int]:
+        return self._topleft_position
     
     @property
     def rows(self) -> List[int]:
@@ -61,26 +60,23 @@ class VertexPair:
     
     def __eq__(self, other:'VertexPair'):
         if self.candidate == other.candidate:
-            if self.topleft_cell == other.topleft_cell:
+            if self.topleft_position == other.topleft_position:
                 return True
         return False
     
-    def _validate_inputs(self, candidate:int, topleft_cell:Cell, cell1:Cell, cell2:Cell):
-        rows = [topleft_cell.row, cell1.row, cell2.row]
-        cols = [topleft_cell.column, cell1.column, cell2.column]
-
+    def _get_topleft_position(self, cell1:Cell, cell2:Cell) -> Tuple[int]:
+        rows = [cell1.row, cell2.row]
+        cols = [cell1.column, cell2.column]
         row_set = list(set(rows))
         col_set = list(set(cols))
 
-        if not ((len(row_set) == 1) ^ (len(col_set) == 1)):
-            raise ValueError(f'Either {cell1} or {cell2} must have len of 1')
-        if not ((len(row_set) > 1) ^ (len(col_set) > 1)):
-            raise ValueError(f'Either {cell1} or {cell2} must have len greater than 1')
-        if len(row_set) > 3 or len(col_set) > 3:
-            raise ValueError(f'{topleft_cell}, {cell1} and {cell2} are not on a straight line')
-        
-        if topleft_cell.row != 0 and topleft_cell.column != 0:
-            raise ValueError(f'{topleft_cell} is not a topleft cell')
+        if len(row_set) == 1 and len(col_set) == 2:
+            topleft_position = (row_set[0], 0)
+        elif len(row_set) == 2 and len(col_set) == 1:
+            topleft_position = (0, col_set[0])
+        else:
+            raise ValueError(f'{cell1} and {cell2} are not on a stright line')
+        return topleft_position
 
 class VertexCouple:
     def __init__(self, vertex_pairs:List[VertexPair], other:'VertexCouple'=None):
@@ -360,14 +356,10 @@ class VertexCoupleDeducer(_BaseDeducer):
         
         for candidate, cells in counts.items():
             if len(cells) == 2:
-                topleft_cell = self._get_topleft_cell(flattened_sliced_cells)
-                pair = VertexPair(candidate, topleft_cell, cells[0], cells[1])
+                pair = VertexPair(candidate, cells[0], cells[1])
                 pairs.append(pair)
         return pairs
         
-    def _get_topleft_cell(self, flattened_sliced_cells:List[Cell]) -> Cell:
-        return flattened_sliced_cells[0]
-    
     def _add_pairs(self, pairs:List[VertexPair]):
         for pair in pairs:
             self._vertices.add_pair(pair)
