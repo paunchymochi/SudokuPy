@@ -45,4 +45,13 @@ class TestVertexPair:
             p = VertexPair(1, Cell(0, 0, 0), Cell(case[0][0], case[0][1]), Cell(case[1][0], case[1][1]))
             assert p.rows == [case[0][0], case[1][0]]
             assert p.cols == [case[0][1], case[1][1]]
+    
+    def test_vertex_rowcol(self):
+        p = VertexPair(1, Cell(0, 0, 0), Cell(0, 5, 0), Cell(0, 8, 0))
+        assert p.vertex_row == 0
+        assert p.vertex_cols == [5, 8]
+
+        p = VertexPair(1, Cell(0, 0, 0), Cell(1, 0, 0), Cell(4, 0, 0))
+        assert p.vertex_row == 0
+        assert p.vertex_cols == [1, 4]
 
