@@ -63,9 +63,6 @@ class TestVertexPair:
         with pytest.raises(ValueError):
             p = VertexPair(1, Cell(1, 1, 0), Cell(0, 5, 0))
         
-        with pytest.raises(ValueError):
-            p = VertexPair(1, Cell(1, 5, 1), Cell(1, 7, 1))
-
 class TestVertexCouple:
     def test_valid_couple(self):
         p1 = VertexPair(1, Cell(0, 4, 0), Cell(0, 7, 0))
