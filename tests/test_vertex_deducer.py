@@ -61,4 +61,10 @@ class TestVertexPair:
         p = VertexPair(1, Cell(0, 0, 0), Cell(1, 0, 0), Cell(4, 0, 0))
         assert p.is_row_pair == False
 
+    def test_invalid_inputs(self):
+        with pytest.raises(ValueError):
+            p = VertexPair(1, Cell(0, 0, 0), Cell(1, 1, 0), Cell(0, 5, 0))
+        
+        with pytest.raises(ValueError):
+            p = VertexPair(1, Cell(1, 1, 1), Cell(1, 5, 1), Cell(1, 7, 1))
 
