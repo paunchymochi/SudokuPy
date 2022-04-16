@@ -102,3 +102,23 @@ class TestVertexCouple:
         assert c1 != c2
         assert c1 == c1
         assert c1 == c3
+
+class TestVertexDict:
+    def test_len(self):
+        d = VertexDict()
+        assert len(d) == 0
+
+        for i in range(1, 10):
+            p1 = VertexPair(i, Cell(0, 4), Cell(0, 7))
+            p2 = VertexPair(i, Cell(3, 4), Cell(3, 7))
+            c = VertexCouple([p1, p2])
+
+            d.add_couple(c)
+            assert len(d) == i
+
+        for i in range(1, 10):
+            p3 = VertexPair(i, Cell(1, 5), Cell(7, 5))
+            p4 = VertexPair(i, Cell(1, 8), Cell(7, 8))
+            c = VertexCouple([p3, p4])
+            d.add_couple(c)
+            assert len(d) == 10 + i
