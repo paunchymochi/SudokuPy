@@ -121,4 +121,37 @@ class TestVertexDict:
             p4 = VertexPair(i, Cell(1, 8), Cell(7, 8))
             c = VertexCouple([p3, p4])
             d.add_couple(c)
-            assert len(d) == 10 + i
+            assert len(d) == 9 + i
+    
+    def test_add_remove_couple(self):
+        d = VertexDict()
+        assert len(d) == 0
+        p1 = VertexPair(9, Cell(1, 1), Cell(1, 3))
+        p2 = VertexPair(8, Cell(3, 3), Cell(5, 3))
+        c = VertexCouple([p1, p2])
+        assert c.discard == True
+        d.add_couple(c)
+        assert len(d) == 0
+        d.remove_couple(c)
+        assert len(d) == 0
+
+        for i in range(1, 10):
+            p1 = VertexPair(i, Cell(0, 4), Cell(0, 7))
+            p2 = VertexPair(i, Cell(3, 4), Cell(3, 7))
+            c1 = VertexCouple([p1, p2])
+            d.add_couple(c1)
+            assert len(d) == i
+
+        for i in range(1, 10):
+            p1 = VertexPair(i, Cell(0, 4), Cell(0, 7))
+            p2 = VertexPair(i, Cell(3, 4), Cell(3, 7))
+            c1 = VertexCouple([p1, p2])
+            d.remove_couple(c1)
+            assert len(d) == 9-i
+
+        for i in range(1, 10):
+            p3 = VertexPair(i, Cell(1, 5), Cell(7, 5))
+            p4 = VertexPair(i, Cell(1, 8), Cell(7, 8))
+            c2 = VertexCouple([p3, p4])
+            d.add_couple(c2)
+            assert len(d) == i
