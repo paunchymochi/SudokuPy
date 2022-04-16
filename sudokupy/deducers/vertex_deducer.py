@@ -127,17 +127,21 @@ class VertexCouple:
     
     def _validate_input(self, vertex_pairs:List[VertexPair], other:Optional['VertexCouple']) -> bool:
         if type(vertex_pairs) is not list:
-            raise TypeError(f'vertex_pairs must be a list of VertexPair')
-        if other is None:
-            return True
+            raise TypeError(f'vertex_pairs must be a list')
+
+        if other is not None:
+            if not isinstance(other, VertexCouple):
+                raise TypeError(f'other must be an instance of VertexCouple')
 
         for vertex_pair in vertex_pairs:
-            if vertex_pair.candidate != other.candidate:
-                return False
-            
-            if vertex_pair in other.pairs:
-                return False
+            if not isinstance(vertex_pair, VertexPair):
+                raise TypeError(f'vertex_pairs must be a list of VertexPair instances')
 
+            if other is not None:
+                if vertex_pair.candidate != other.candidate:
+                    return False
+                if vertex_pair in other.pairs:
+                    return False
         return True
     
     def _validate_pairs(self):
