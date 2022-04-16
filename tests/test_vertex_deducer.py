@@ -175,3 +175,18 @@ class TestVertexDict:
             c2 = VertexCouple([p3, p4])
             d.add_couple(c2)
             assert len(d) == i
+    
+    def test_has_couple(self):
+        d = VertexDict()
+        p1 = VertexPair(1, Cell(0, 4), Cell(0, 7))
+        p2 = VertexPair(1, Cell(3, 4), Cell(3, 7))
+        c1 = VertexCouple([p1, p2])
+        p3 = VertexPair(2, Cell(1, 5), Cell(7, 5))
+        p4 = VertexPair(2, Cell(1, 8), Cell(7, 8))
+        c2 = VertexCouple([p3, p4])
+        d.add_couple(c1)
+        assert d.has_couple(c1) == True
+        assert d.has_couple(c2) == False
+        d.add_couple(c2)
+        assert d.has_couple(c2) == True
+
