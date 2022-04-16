@@ -37,18 +37,25 @@ class VertexPair:
     
     @property
     def vertex_row(self) -> int:
-        if self.is_row_pair():
+        if self.is_row_pair:
             return self.rows[0]
         else:
             return self.cols[0]
     
     @property
     def vertex_cols(self) -> List[int]:
-        if self.is_row_pair():
+        if self.is_row_pair:
             return self.cols
         else:
             return self.rows
     
+    @property
+    def is_row_pair(self) -> bool:
+        if self.rows[0] == self.rows[1]:
+            return True
+        else:
+            return False
+
     def __repr__(self):
         return f'<VertexPair candidate:{self.candidate} cells:{self.cells}>'
     
@@ -58,12 +65,6 @@ class VertexPair:
                 return True
         return False
     
-    def is_row_pair(self):
-        if self.rows[0] == self.rows[1]:
-            return True
-        else:
-            return False
-    
     def _validate_inputs(self, candidate:int, topleft_cell:Cell, cell1:Cell, cell2:Cell):
         rows = [topleft_cell.row, cell1.row, cell2.row]
         cols = [topleft_cell.column, cell1.column, cell2.column]
@@ -71,12 +72,12 @@ class VertexPair:
         row_set = list(set(rows))
         col_set = list(set(cols))
 
-        if len(row_set) == 1 or len(col_set) == 1:
-            pass
-        elif (len(row_set) == 2) ^ (len(col_set) == 2):
-            pass
-        else:
-            raise ValueError(f'{cell1} and {cell2} are not on a straight line')
+        if not ((len(row_set) == 1) ^ (len(col_set) == 1)):
+            raise ValueError(f'Either {cell1} or {cell2} must have len of 1')
+        if not ((len(row_set) > 1) ^ (len(col_set) > 1)):
+            raise ValueError(f'Either {cell1} or {cell2} must have len greater than 1')
+        if len(row_set) > 3 or len(col_set) > 3:
+            raise ValueError(f'{topleft_cell}, {cell1} and {cell2} are not on a straight line')
         
         if topleft_cell.row != 0 and topleft_cell.column != 0:
             raise ValueError(f'{topleft_cell} is not a topleft cell')
@@ -161,7 +162,7 @@ class VertexCouple:
         return list(set(cols))
     
     def is_row_couple(self):
-        return self.pairs[0].is_row_pair()
+        return self.pairs[0].is_row_pair
 
 class VertexDict:
     def __init__(self):
