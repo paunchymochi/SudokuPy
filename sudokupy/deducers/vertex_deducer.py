@@ -84,8 +84,6 @@ class VertexPair:
 
 class VertexCouple:
     def __init__(self, vertex_pairs:List[VertexPair], other:'VertexCouple'=None):
-        if type(vertex_pairs) is not list:
-            vertex_pairs = [vertex_pairs]
         self.pairs:List[VertexPair] = []
         self.discard = False
         self.valid = False
@@ -128,6 +126,8 @@ class VertexCouple:
         self.pairs.extend(vertex_pairs)
     
     def _validate_input(self, vertex_pairs:List[VertexPair], other:Optional['VertexCouple']) -> bool:
+        if type(vertex_pairs) is not list:
+            raise TypeError(f'vertex_pairs must be a list of VertexPair')
         if other is None:
             return True
 
