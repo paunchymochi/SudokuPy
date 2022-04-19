@@ -2,6 +2,7 @@ import pytest
 import sys
 sys.path.append('..')
 from sudokupy.deducers.vertex_deducer import VertexCoupleDeducer, VertexCouple, VertexCouples, VertexDict, VertexPair
+from sudokupy.board import Board
 from sudokupy.cell import Cell, Cells
 
 class TestVertexPair:
@@ -191,6 +192,31 @@ class TestVertexDict:
         assert d.has_couple(c2) == True
 
 class TestVertexCouples:
+    def test_get_valid_couple(self):
+        cs = VertexCouples()
+        pair1 = VertexPair(1, Cell(0, 0), Cell(0, 2))
+        pair2 = VertexPair(1, Cell(3, 0), Cell(3, 2))
+        couple1 = VertexCouple([pair1, pair2])
+        assert couple1.valid == True
+
+        pair3 = VertexPair(2, Cell(0, 0), Cell(0, 2))
+        pair4 = VertexPair(2, Cell(5, 0), Cell(5, 8))
+        pair5 = VertexPair(2, Cell(7, 2), Cell(7, 8))
+        couple2 = VertexCouple([pair3, pair4, pair5])
+        assert couple2.valid == True
+
+        cs._joined_pairs[1] = VertexDict()
+        cs._joined_pairs[1].add_couple(couple1)
+        valid_couples = cs.get_valid_couples()
+        assert len(valid_couples) == 1
+        assert valid_couples[0] == couple1
+
+        cs._joined_pairs[2] = VertexDict()
+        cs._joined_pairs[2].add_couple(couple2)
+        valid_couples = cs.get_valid_couples()
+        assert len(valid_couples) == 2
+        assert valid_couples[1] == couple2
+
     def test_add_pair(self):
         cs = VertexCouples()
         assert len(cs._pairs_dict) == 0
@@ -236,3 +262,25 @@ class TestVertexCouples:
         assert len(cs._joined_pairs[2]) == 3
         assert len(cs._pairs_dict) == 5
         assert len(cs._uncoupled_pairs_dict) == 0
+
+class TestVertexCoupleDeducer:
+    def test_deduce__2_pairs(self):
+        b = Board()
+        d = VertexCoupleDeducer(b.cells)
+
+        b.cells.remove_candidates(5)
+        b.cell[0, 0].candidates = [4, 5]
+        b.cell[0, 5].candidates = [4, 5, 6]
+        b.cell[4, 0].candidates = [2, 3, 4]
+        b.cell[4, 5].candidates = [3, 4, 5]
+
+        d.deduce(row=0)
+        assert len(d._vertices.get_valid_couples()) == 0
+        assert len(d.transactions) == 0
+
+        d.deduce(row=4)
+        assert len(d._vertices.get_valid_couples()) == 1
+        assert len(d.transactions) == 1
+
+        b.row[0].remove_candidates(5)
+        raise NotImplementedError
