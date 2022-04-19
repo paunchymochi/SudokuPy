@@ -283,3 +283,30 @@ class TestVertexCoupleDeducer:
         assert len(d.transactions) == (9-2) * 2
 
         b.row[0].remove_candidates(5)
+    
+    def test_deduce__3_pairs(self):
+        b = Board()
+        d = VertexCoupleDeducer(b.cells)
+
+        b.cells.remove_candidates(5)
+        b.cell[0, 0].candidates = [4,5]
+        b.cell[0, 5].candidates = [5,6,7]
+        b.cell[4, 0].candidates = [2,4,5]
+        b.cell[4, 7].candidates = [5,6]
+        b.cell[6, 5].candidates = [2,4,5]
+        b.cell[6, 7].candidates = [5,7,8]
+
+        d.deduce(row=0)
+        assert len(d._vertices._uncoupled_pairs_dict) == 1
+        assert len(d._vertices.get_valid_couples()) == 0
+        assert len(d.transactions) == 0
+
+        d.deduce(row=4)
+        assert len(d._vertices._uncoupled_pairs_dict) == 2
+        assert len(d._vertices.get_valid_couples()) == 0
+        assert len(d.transactions) == 0
+
+        d.deduce(row=6)
+        assert len(d._vertices._uncoupled_pairs_dict) == 0
+        assert len(d._vertices.get_valid_couples()) == 1
+        assert len(d.transactions) == (9-2)*3
