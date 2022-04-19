@@ -260,6 +260,8 @@ class VertexCouples:
             couples_dict[level] = self._join_uncoupled_pairs(couples_dict[level-1])
             self._joined_pairs[level] = couples_dict[level]
             valid_couples_found = couples_dict[level].has_valid_couples()
+            if valid_couples_found:
+                self._remove_from_uncoupled_pairs_dict(couples_dict[level])
             level += 1
         
         return couples_dict[level-1].get_valid_couples()
@@ -284,6 +286,17 @@ class VertexCouples:
             joined_couple = VertexCouple(pair.pairs, parent_couple)
             couples.append(joined_couple)
         return couples
+    
+    def _remove_from_uncoupled_pairs_dict(self, uncoupled_pairs_dict:VertexDict):
+        for candidate in uncoupled_pairs_dict.get_candidates():
+            print(f'candidate: {candidate}')
+            couples = uncoupled_pairs_dict.get_couples(candidate)
+            print(f'couples: {couples}')
+            for couple in couples:
+                print(f'couple: {couple}')
+                if couple.valid:
+                    for pair in couple.pairs:
+                        self._uncoupled_pairs_dict.remove_couple(VertexCouple([pair]))
 
 class VertexCoupleDeducer(_BaseDeducer):
     def __init__(self, cells: Cells):
