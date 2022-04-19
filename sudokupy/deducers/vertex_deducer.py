@@ -214,13 +214,12 @@ class VertexDict:
             self._dict[candidate].append(couple)
     
     def remove_couple(self, couple:VertexCouple):
+        if len(couple) == 0:
+            return
         candidate = couple.candidate
-        pairs = couple.get_pairs()
         if candidate in self._dict.keys():
-            for pair in pairs:
-                extracted_couple = VertexCouple([pair])
-                if extracted_couple in self._dict[candidate]:
-                    self._dict[candidate].remove(extracted_couple)
+            if couple in self._dict[candidate]:
+                self._dict[candidate].remove(couple)
     
     def has_couple(self, couple:VertexCouple) -> bool:
         candidate = couple.candidate
@@ -299,15 +298,13 @@ class VertexCouples:
             couples.append(joined_couple)
         return couples
     
-    def _remove_from_uncoupled_pairs_dict(self, uncoupled_pairs_dict:VertexDict):
-        print('REMOVING')
-        print(f'len: {len(self._uncoupled_pairs_dict)}')
-        valid_couples = self.get_valid_couples()
-        print(f'Valid couples: {valid_couples}')
+    def _remove_from_uncoupled_pairs_dict(self, remove_couples_dict:VertexDict):
+        valid_couples = remove_couples_dict.get_valid_couples()
         for couple in valid_couples:
-            self._uncoupled_pairs_dict.remove_couple(couple)
-        print(f'len: {len(self._uncoupled_pairs_dict)}')
-        print(f'uncoupled: {self._uncoupled_pairs_dict}')
+            pairs = couple.pairs
+            for pair in pairs:
+                extracted_couple = VertexCouple([pair])
+                self._uncoupled_pairs_dict.remove_couple(extracted_couple)
 
 class VertexCoupleDeducer(_BaseDeducer):
     def __init__(self, cells: Cells):
