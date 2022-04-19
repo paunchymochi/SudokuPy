@@ -246,7 +246,7 @@ class VertexCouples:
         pass
 
     def add_pair(self, vertex_pair:VertexPair):
-        couple = VertexCouple(vertex_pair)
+        couple = VertexCouple([vertex_pair])
         if not self._pairs_dict.has_couple(couple):
             self._pairs_dict.add_couple(couple)
             self._uncoupled_pairs_dict.add_couple(couple)
