@@ -192,7 +192,21 @@ class TestVertexDict:
 
 class TestVertexCouples:
     def test_add_pair(self):
-        raise NotImplementedError
+        cs = VertexCouples()
+        assert len(cs._pairs_dict) == 0
+        assert len(cs._uncoupled_pairs_dict) == 0
+        pair = VertexPair(1, Cell(0, 0), Cell(0, 2))
+        cs.add_pair(pair)
+        assert len(cs._pairs_dict) == 1
+        assert len(cs._uncoupled_pairs_dict) == 1
+        cs.add_pair(pair)
+        assert len(cs._pairs_dict) == 1
+        assert len(cs._uncoupled_pairs_dict) == 1
+        pair2 = VertexPair(2, Cell(0, 0), Cell(0, 2))
+        cs.add_pair(pair2)
+        assert len(cs._pairs_dict) == 2
+        assert len(cs._uncoupled_pairs_dict) == 2
+
     def test_find_couples(self):
         raise NotImplementedError
     
