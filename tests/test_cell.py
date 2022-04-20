@@ -225,6 +225,12 @@ class TestCell:
         assert c1 is not c2
         assert c2.candidates == c1.candidates
         assert c2.is_permanent == c1.is_permanent
+
+        c1.value = 9
+        c1.candidates = []
+
+        assert c2.value == 3
+        assert c2.candidates == [4, 5, 6]
     
 class TestCells:
     def test_constructor(self):
