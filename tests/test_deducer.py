@@ -406,6 +406,7 @@ class TestDeducer:
         
         d = Deducer(b.cells)
         d.disable_single_candidate_deducer()
+        d.disable_companion_deducer()
         d.deduce_adjacent(0, 0)
         assert len(d.transactions) == 0
     
@@ -429,6 +430,7 @@ class TestDeducer:
 
         d = Deducer(b.cells)
         d.disable_linebox_deducer()
+        d.disable_companion_deducer()
         d.deduce_adjacent(0, 0)
         assert len(d.transactions) == 0
     
