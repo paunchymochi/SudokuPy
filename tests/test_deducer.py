@@ -3,7 +3,7 @@ import sys
 sys.path.append('..')
 from sudokupy.cell import Cells, Cell
 from sudokupy.board import Board
-from sudokupy.deducers.deducer import Deducer
+from sudokupy.deducers.deducer import Deducer, Deducers
 from sudokupy.deducers.deducer_base import  Transaction, Transactions
 from sudokupy.deducers.companion_deducer import CompanionDeducer, _Companion
 from sudokupy.deducers.linebox_deducer import LineBoxDeducer
@@ -342,12 +342,41 @@ class TestDeducer:
     def test_is_solvable(self):
         board = Board()
         d = Deducer(board.cells)
+        assert d.is_solvable() == True
         board.row[0].candidates = []
         board.row[0].values = [1, 2, 3, 4, 5, 6, 0, 0, 0]
         board.cell[0, 6].candidates = [7, 9]
         board.cell[0, 7].candidates = [7, 8]
 
         assert d.is_solvable() == False
+    
+    def test_states(self):
+        b = Board()
+        d = Deducer(b.cells)
+
+        for strategy in Deducers:
+            assert d._states[strategy][0] == True
+        
+        d.disable_companion_deducer()
+        d.disable_linebox_deducer()
+        d.disable_single_candidate_deducer()
+        d.disable_value_deducer()
+        d.disable_vertex_deducer()
+
+        for strategy in Deducers:
+            assert d._states[strategy][0] == False
+        
+        d.enable_companion_deducer(4)
+        d.enable_linebox_deducer()
+        d.enable_single_candidate_deducer()
+        d.enable_value_deducer()
+        d.enable_vertex_deducer(2)
+
+        for strategy in Deducers:
+            assert d._states[strategy][0] == True
+        
+        assert d._states[Deducers.COMPANION_DEDUCER][1] == 4
+        assert d._states[Deducers.VERTEX_DEDUCER][1] == 2
 
     def test_deduce_value(self):
         board = Board()
