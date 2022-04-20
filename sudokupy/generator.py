@@ -20,34 +20,48 @@ class CellValuesRemover:
         self._cells = cells
         self.set_difficulty(difficulty)
         self._reset(seed)
-        self._init_filled_cells()
     
     def set_difficulty(self, difficulty:Difficulty):
         self._difficulty = difficulty
+    def set_difficulty_easy(self):
+        self.set_difficulty(Difficulty.Easy)
+    def set_difficulty_medium(self):
+        self.set_difficulty(Difficulty.Medium)
+    def set_difficulty_hard(self):
+        self.set_difficulty(Difficulty.Hard)
+    def set_difficulty_expert(self):
+        self.set_difficulty(Difficulty.Expert)
+    def set_difficulty_evil(self):
+        self.set_difficulty(Difficulty.Evil)
     
-    def remove_values(self):
+    def remove(self, seed:int=None) -> Cells:
+        self._set_seed(seed)
+        cells = self._cells.copy()
+        filled_cells = self._get_filled_cells(cells)
         removal_count = self._get_removal_count(self._difficulty)
 
         for _ in range(removal_count):
-            self._remove_cell()
+            self._remove_cell(filled_cells)
 
-    def _init_filled_cells(self):
+        return cells
+
+    def _get_filled_cells(self, cells:Cells):
         filled_cells = []
-        cell_list = self._cells.flatten()
+        cell_list = cells.flatten()
         for cell in cell_list:
             if cell.value != 0:
                 filled_cells.append(cell)
-        self._filled_cells = filled_cells
+        return filled_cells
 
-    def _get_removal_cell(self) -> Cell:
-        cell = random.choice(self._filled_cells)
-        self._filled_cells.remove(cell)
-        return cell
-
-    def _remove_cell(self):
-        cell = self._get_removal_cell()
+    def _remove_cell(self, filled_cells:List[Cell]):
+        cell = self._get_removal_cell(filled_cells)
         cell.value = 0
     
+    def _get_removal_cell(self, filled_cells:List[Cell]) -> Cell:
+        cell = random.choice(filled_cells)
+        filled_cells.remove(cell)
+        return cell
+
     def _get_removal_count(self, difficulty:Difficulty) -> int:
         if difficulty == Difficulty.Easy:
             return random.choice(range(42, 46))
