@@ -15,6 +15,14 @@ class Difficulty(Enum):
     Expert=4
     Evil=5
 
+def set_seed(seed:int=None):
+    if seed is not None:
+        random.seed(seed)
+
+class Generator:
+    def __init__(self, seed:int=None):
+        pass
+
 class CellValuesRemover:
     def __init__(self, cells:Cells, difficulty:Difficulty=Difficulty.Medium, seed:int=None):
         self._cells = cells
@@ -35,7 +43,7 @@ class CellValuesRemover:
         self.set_difficulty(Difficulty.Evil)
     
     def remove(self, seed:int=None) -> Cells:
-        self._set_seed(seed)
+        set_seed(seed)
         cells = self._cells.copy()
         cells.candidates = list(range(1, 10))
         filled_cells = self._get_filled_cells(cells)
@@ -76,11 +84,7 @@ class CellValuesRemover:
             return random.choice(range(60, 64))
 
     def _reset(self, seed:int=None):
-        self._set_seed(seed)
-
-    def _set_seed(self, seed:int=None):
-        if seed is not None:
-            random.seed(seed)
+        set_seed(seed)
 
 class BoardGenerator:
     def __init__(self, seed:int=None):
@@ -92,15 +96,11 @@ class BoardGenerator:
     def __str__(self):
         return f'{self._board.cells.print_candidates()}'
 
-    def _set_seed(self, seed:int=None):
-        if seed is not None:
-            random.seed(seed)
-    
     def _reset(self, seed:int=None):
         self._board = Board()
         self._deducer = Deducer(self._board.cells)
         self._injector = Injector(self._board.cells)
-        self._set_seed(seed)
+        set_seed(seed)
     
     def generate(self, seed:int=None):
         self._reset(seed)
