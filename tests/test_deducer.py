@@ -377,6 +377,14 @@ class TestDeducer:
         
         assert d._states[Deducers.COMPANION_DEDUCER][1] == 4
         assert d._states[Deducers.VERTEX_DEDUCER][1] == 2
+    
+    def test_deduce_adjacent__values(self):
+        b =  Board()
+        d = Deducer(b.cells)
+        b.cell[0, 0].values = 5
+        d.deduce_adjacent(0, 0)
+        assert len(d.transactions) == 9 + 6 + 6 # box, row, col
+
 
     def test_deduce_value(self):
         board = Board()
