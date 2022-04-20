@@ -6,6 +6,37 @@ from sudokupy.injector import Injector
 from sudokupy.cell import Cell
 import random
 from typing import List, Tuple
+from enum import Enum
+
+class Difficulty(Enum):
+    Easy=1
+    Medium=2
+    Hard=3
+    Expert=4
+    Evil=5
+
+class CellValuesRemover:
+    def __init__(self, difficulty:Difficulty, seed:int=None):
+        self._reset(seed)
+    
+    def _get_removal_count(self, difficulty:Difficulty) -> int:
+        if difficulty == Difficulty.Easy:
+            return random.choice(range(42, 46))
+        elif difficulty == Difficulty.Medium:
+            return random.choice(range(48, 53))
+        elif difficulty == Difficulty.Hard:
+            return random.choice(range(53, 57))
+        elif difficulty == Difficulty.Expert:
+            return random.choice(range(57, 60))
+        elif difficulty == Difficulty.Evil:
+            return random.choice(range(60, 64))
+
+    def _reset(self, seed:int=None):
+        self._set_seed(seed)
+
+    def _set_seed(self, seed:int=None):
+        if seed is not None:
+            random.seed(seed)
 
 class BoardGenerator:
     def __init__(self, seed:int=None):
