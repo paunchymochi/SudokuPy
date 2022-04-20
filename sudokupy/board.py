@@ -82,6 +82,16 @@ class Board:
     def cells(self) -> Cells:
         return self._cells
     
+    def copy(self) -> 'Board':
+        new_cells = self._cells.copy()
+        board = Board()
+        board._cells = new_cells
+        board.row = board.Row(new_cells)
+        board.col = board.Col(new_cells)
+        board.box = board.Box(new_cells)
+        board.cell = board.Cell(new_cells)
+        return board
+    
     def get_row(self, row:int) -> Cells:
         return self.cells[row]
 
