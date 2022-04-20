@@ -201,6 +201,15 @@ class Cells:
                 sliced_rows = [[cell] for cell in sliced_rows]
         
         return Cells(sliced_rows)
+    
+    def __eq__(self, other:'Cells') -> bool:
+        if not isinstance(other, Cells):
+            return False
+        cell_list = other.flatten()
+        for i, cell in enumerate(self.flatten()):
+            if cell != cell_list[i]:
+                return False
+        return True
 
     @property
     def row_count(self):
