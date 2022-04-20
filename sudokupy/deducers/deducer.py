@@ -8,6 +8,14 @@ from sudokupy.deducers.candidate_deducer import SingleCandidateDeducer
 from sudokupy.deducers.vertex_deducer import VertexCoupleDeducer
 from sudokupy.cell import Cells
 from typing import List
+from enum import Enum
+
+class Deducers(Enum):
+    VALUE_DEDUCER = 0
+    SINGLE_CANDIDATE_DEDUCER = 1
+    COMPANION_DEDUCER = 2
+    LINEBOX_DEDUCER = 3
+    VERTEX_DEDUCER = 4
 
 class Deducer(_BaseDeducer):
     def __init__(self, cells: Cells):
