@@ -215,6 +215,17 @@ class TestCell:
         with pytest.raises(ValueError):
             c.set_value(5)
     
+    def test_copy(self):
+        c1 = Cell(1, 2, 3)
+        c1.candidates = [4, 5, 6]
+        c1.set_permanence(True)
+
+        c2 = c1.copy()
+        assert c1 == c2
+        assert c1 is not c2
+        assert c2.candidates == c1.candidates
+        assert c2.is_permanent == c1.is_permanent
+    
 class TestCells:
     def test_constructor(self):
         cells = Cells()
