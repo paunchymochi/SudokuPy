@@ -545,7 +545,9 @@ class TestCells:
         
         cells1[0, 0].values = 9
         cells1[0, 0].candidates = []
-        assert cells1 != cells2
+        
+        assert cells2[0, 0].as_cell().value == 0
+        assert cells2[0, 0].as_cell().candidates == list(range(1, 10))
         
 
 
