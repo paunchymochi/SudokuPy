@@ -2,46 +2,84 @@ import sys
 sys.path.append('../..')
 from sudokupy.cell import Cell, Cells
 from sudokupy.deducers.deducer_base import _BaseDeducer 
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 class VertexPair:
-    def __init__(self, candidate:int, topleft_cell: Cell, cell1: Cell, cell2: Cell):
-        self.candidate = candidate
-        self.cells = (cell1, cell2)
-        self.topleft_cell = topleft_cell
-        self.rows = [cell.row for cell in self.cells]
-        self.cols = [cell.column for cell in self.cells]
-        self.vertex_row:int = 0
-        self.vertex_cols:List[int] = []
-        self._make_vertex_rowcol()
+    """
+    Stores 2 Cell objects that are on the same line
+    """
+    __slots__ = ['_candidate', '_cells', '_topleft_position']
+    def __init__(self, candidate:int, cell1: Cell, cell2: Cell):
+        self._topleft_position = self._get_topleft_position(cell1, cell2)
+        self._candidate = candidate
+        self._cells = (cell1, cell2)
+
+    @property
+    def candidate(self) -> int:
+        return self._candidate
     
+    @property
+    def cells(self) -> Tuple[Cell]:
+        return self._cells
+    
+    @property
+    def topleft_position(self) -> Tuple[int]:
+        return self._topleft_position
+    
+    @property
+    def rows(self) -> List[int]:
+        return [cell.row for cell in self._cells]
+    
+    @property
+    def cols(self) -> List[int]:
+        return [cell.column for cell in self._cells]
+    
+    @property
+    def vertex_row(self) -> int:
+        if self.is_row_pair:
+            return self.rows[0]
+        else:
+            return self.cols[0]
+    
+    @property
+    def vertex_cols(self) -> List[int]:
+        if self.is_row_pair:
+            return self.cols
+        else:
+            return self.rows
+    
+    @property
+    def is_row_pair(self) -> bool:
+        if self.rows[0] == self.rows[1]:
+            return True
+        else:
+            return False
+
     def __repr__(self):
         return f'<VertexPair candidate:{self.candidate} cells:{self.cells}>'
     
     def __eq__(self, other:'VertexPair'):
         if self.candidate == other.candidate:
-            if self.topleft_cell == other.topleft_cell:
+            if self.topleft_position == other.topleft_position:
                 return True
         return False
     
-    def is_row_pair(self):
-        if self.rows[0] == self.rows[1]:
-            return True
+    def _get_topleft_position(self, cell1:Cell, cell2:Cell) -> Tuple[int]:
+        rows = [cell1.row, cell2.row]
+        cols = [cell1.column, cell2.column]
+        row_set = list(set(rows))
+        col_set = list(set(cols))
+
+        if len(row_set) == 1 and len(col_set) == 2:
+            topleft_position = (row_set[0], 0)
+        elif len(row_set) == 2 and len(col_set) == 1:
+            topleft_position = (0, col_set[0])
         else:
-            return False
-    
-    def _make_vertex_rowcol(self):
-        if self.is_row_pair():
-            self.vertex_row = self.rows[0]
-            self.vertex_cols = self.cols
-        else:
-            self.vertex_row = self.cols[0]
-            self.vertex_cols = self.rows
+            raise ValueError(f'{cell1} and {cell2} are not on a stright line')
+        return topleft_position
 
 class VertexCouple:
     def __init__(self, vertex_pairs:List[VertexPair], other:'VertexCouple'=None):
-        if type(vertex_pairs) is not list:
-            vertex_pairs = [vertex_pairs]
         self.pairs:List[VertexPair] = []
         self.discard = False
         self.valid = False
@@ -84,15 +122,27 @@ class VertexCouple:
         self.pairs.extend(vertex_pairs)
     
     def _validate_input(self, vertex_pairs:List[VertexPair], other:Optional['VertexCouple']) -> bool:
-        if other is None:
-            return True
+        if type(vertex_pairs) is not list:
+            raise TypeError(f'vertex_pairs must be a list')
+        
 
+        if other is not None:
+            if not isinstance(other, VertexCouple):
+                raise TypeError(f'other must be an instance of VertexCouple')
+        
         for vertex_pair in vertex_pairs:
-            if vertex_pair.candidate != other.candidate:
-                return False
-            
-            if vertex_pair in other.pairs:
-                return False
+            if not isinstance(vertex_pair, VertexPair):
+                raise TypeError(f'vertex_pairs must be a list of VertexPair instances')
+
+            if other is not None:
+                if vertex_pair.candidate != other.candidate:
+                    return False
+                if vertex_pair in other.pairs:
+                    return False
+
+        candidates = list(set(pair.candidate for pair in vertex_pairs))
+        if len(candidates) > 1:
+            return False
 
         return True
     
@@ -118,7 +168,7 @@ class VertexCouple:
         return list(set(cols))
     
     def is_row_couple(self):
-        return self.pairs[0].is_row_pair()
+        return self.pairs[0].is_row_pair
 
 class VertexDict:
     def __init__(self):
@@ -128,7 +178,7 @@ class VertexDict:
         return f'<VertexDict {self._dict}>'
     
     def __len__(self):
-        return len(self._dict)
+        return sum([len(x) for x in self._dict.values()])
     
     def get_candidates(self):
         return self._dict.keys()
@@ -164,9 +214,12 @@ class VertexDict:
             self._dict[candidate].append(couple)
     
     def remove_couple(self, couple:VertexCouple):
+        if len(couple) == 0:
+            return
         candidate = couple.candidate
-        if couple in self._dict[candidate]:
-            self._dict[candidate].remove(couple)
+        if candidate in self._dict.keys():
+            if couple in self._dict[candidate]:
+                self._dict[candidate].remove(couple)
     
     def has_couple(self, couple:VertexCouple) -> bool:
         candidate = couple.candidate
@@ -195,10 +248,16 @@ class VertexCouples:
             f'joined_pairs:{self._joined_pairs}\n>'
     
     def get_valid_couples(self) -> List[VertexCouple]:
-        pass
+        valid_couples = []
+        for level in self._joined_pairs.keys():
+            for candidate in self._joined_pairs[level].get_candidates():
+                for couple in self._joined_pairs[level].get_couples(candidate):
+                    if couple.valid:
+                        valid_couples.append(couple)
+        return valid_couples
 
     def add_pair(self, vertex_pair:VertexPair):
-        couple = VertexCouple(vertex_pair)
+        couple = VertexCouple([vertex_pair])
         if not self._pairs_dict.has_couple(couple):
             self._pairs_dict.add_couple(couple)
             self._uncoupled_pairs_dict.add_couple(couple)
@@ -212,6 +271,8 @@ class VertexCouples:
             couples_dict[level] = self._join_uncoupled_pairs(couples_dict[level-1])
             self._joined_pairs[level] = couples_dict[level]
             valid_couples_found = couples_dict[level].has_valid_couples()
+            if valid_couples_found:
+                self._remove_from_uncoupled_pairs_dict(couples_dict[level])
             level += 1
         
         return couples_dict[level-1].get_valid_couples()
@@ -236,6 +297,14 @@ class VertexCouples:
             joined_couple = VertexCouple(pair.pairs, parent_couple)
             couples.append(joined_couple)
         return couples
+    
+    def _remove_from_uncoupled_pairs_dict(self, remove_couples_dict:VertexDict):
+        valid_couples = remove_couples_dict.get_valid_couples()
+        for couple in valid_couples:
+            pairs = couple.pairs
+            for pair in pairs:
+                extracted_couple = VertexCouple([pair])
+                self._uncoupled_pairs_dict.remove_couple(extracted_couple)
 
 class VertexCoupleDeducer(_BaseDeducer):
     def __init__(self, cells: Cells):
@@ -312,14 +381,10 @@ class VertexCoupleDeducer(_BaseDeducer):
         
         for candidate, cells in counts.items():
             if len(cells) == 2:
-                topleft_cell = self._get_topleft_cell(flattened_sliced_cells)
-                pair = VertexPair(candidate, topleft_cell, cells[0], cells[1])
+                pair = VertexPair(candidate, cells[0], cells[1])
                 pairs.append(pair)
         return pairs
         
-    def _get_topleft_cell(self, flattened_sliced_cells:List[Cell]) -> Cell:
-        return flattened_sliced_cells[0]
-    
     def _add_pairs(self, pairs:List[VertexPair]):
         for pair in pairs:
             self._vertices.add_pair(pair)

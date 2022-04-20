@@ -64,7 +64,7 @@ class Deducer(_BaseDeducer):
         if len(self.transactions) > 0: return
         self._deduce_all_lineboxes()
         if len(self.transactions) > 0: return
-        # self._deduce_all_vertices()
+        self._deduce_all_vertices()
         if len(self.transactions) > 0: return
         self._deduce_all_companions()
     
@@ -74,10 +74,12 @@ class Deducer(_BaseDeducer):
         self.single_candidate_deducer.eliminate()
         self.linebox_deducer.eliminate()
         self.companion_deducer.eliminate()
+        self.vertex_deducer.eliminate()
         self._affected_cells.extend(self.value_deducer.affected_cells)
         self._affected_cells.extend(self.single_candidate_deducer.affected_cells)
         self._affected_cells.extend(self.linebox_deducer.affected_cells)
         self._affected_cells.extend(self.companion_deducer.affected_cells)
+        self._affected_cells.extend(self.vertex_deducer.affected_cells)
         self.clear_transactions()
 
     def _get_all_rows(self) -> List[Cells]:

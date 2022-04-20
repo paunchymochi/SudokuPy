@@ -199,7 +199,7 @@ class TestCell:
     
     def test_repr(self):
         c = Cell(1, 2, 3)
-        assert c.__repr__() == '<Cell row:1 column:2 value:3>'
+        assert c.__repr__() == '<Cell (1,2)=3>'
     
     def test_set_permanence(self):
         c = Cell(1, 2, 3)
