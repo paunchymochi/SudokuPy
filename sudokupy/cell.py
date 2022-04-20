@@ -18,6 +18,11 @@ class Candidate:
     
     def _get_default_values(self) -> List[int]:
         return list(range(1, 10))
+
+    def copy(self) -> 'Candidate':
+        new_candidate = Candidate()
+        new_candidate._values = self._values.copy()
+        return new_candidate
     
     def remove(self, values: Union[int, List[int]]):
         if type(values) is int:
@@ -62,6 +67,7 @@ class Candidate:
         num_list.append(numbers[3:6])
         num_list.append(numbers[6:9])
         return num_list
+    
 
 class Cell:
     __slots__ = ['_row', '_column', '_value', '_candidates', '_is_permanent']
@@ -79,12 +85,13 @@ class Cell:
     def __repr__(self):
         return f'<Cell ({self._row},{self._column})={self._value}>'
     
-    def __eq__(self, other):
-        return self._row == other._row and self._column == other._column
+    def __eq__(self, other:'Cell'):
+        return self._row == other._row and \
+            self._column == other._column
     
     def copy(self) -> 'Cell':
         cell = Cell(self._row, self._column, self._value)
-        cell._candidates = self._candidates
+        cell._candidates = self._candidates.copy()
         cell._is_permanent = self._is_permanent
         return cell
 
