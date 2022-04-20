@@ -63,6 +63,7 @@ class Deducer(_BaseDeducer):
         d[Deducers.COMPANION_DEDUCER] = [True, 3]
         d[Deducers.LINEBOX_DEDUCER] = [True, None]
         d[Deducers.VERTEX_DEDUCER] = [True, 3]
+        return d
 
     def _set_state(self, deducer:Deducers, enabled:bool, max_option=None):
         self._states[deducer] = [enabled, max_option]
