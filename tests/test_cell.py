@@ -215,6 +215,23 @@ class TestCell:
         with pytest.raises(ValueError):
             c.set_value(5)
     
+    def test_copy(self):
+        c1 = Cell(1, 2, 3)
+        c1.candidates = [4, 5, 6]
+        c1.set_permanence(True)
+
+        c2 = c1.copy()
+        assert c1 == c2
+        assert c1 is not c2
+        assert c2.candidates == c1.candidates
+        assert c2.is_permanent == c1.is_permanent
+
+        c1.value = 9
+        c1.candidates = []
+
+        assert c2.value == 3
+        assert c2.candidates == [4, 5, 6]
+    
 class TestCells:
     def test_constructor(self):
         cells = Cells()
@@ -514,6 +531,23 @@ class TestCells:
 
         with pytest.raises(ValueError):
             cells[0, 0:3].as_cell()
+    
+    def test_copy(self):
+        cells1 = Cells()
+        cells1[3, 5].values = 5
+        cells1[2:4].candidates = [2, 3, 4]
+        cells2 = cells1.copy()
+        assert cells1 == cells2
+        assert cells1 is not cells2
+        cell_list = cells2.flatten()
+        for i, cell in enumerate(cells1.flatten()):
+            assert cell_list[i] == cell
+        
+        cells1[0, 0].values = 9
+        cells1[0, 0].candidates = []
+        
+        assert cells2[0, 0].as_cell().value == 0
+        assert cells2[0, 0].as_cell().candidates == list(range(1, 10))
         
 
 
