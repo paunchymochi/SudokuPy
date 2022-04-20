@@ -33,6 +33,7 @@ class _Injection:
         self._untried_candidates.remove(new_value)
         self._value = new_value
         self._cell.value = new_value
+        self._cell.candidates = []
     
     def has_untried_candidates(self) -> bool:
         return len(self._untried_candidates) > 0
