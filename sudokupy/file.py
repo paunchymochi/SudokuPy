@@ -2,7 +2,6 @@ import sys
 sys.path.append('..')
 from pathlib import Path
 from typing import List
-from sudokupy.board import Board
 from sudokupy.cell import Cell
 
 class File:
@@ -26,6 +25,7 @@ class File:
         return lines
     
     def _make_board(self, csv_data:List[List[int]]):
+        from sudokupy.board import Board
         board = Board()
         board.cells.values = csv_data
         return board
