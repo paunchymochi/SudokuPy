@@ -6,7 +6,7 @@ from typing import Dict, Tuple, List, Union
 
 class Transaction:
     __slots__ = ['_cell', '_candidates', '_deducer_name']
-    def __init__(self, deducer_name:str, cell:Cell):
+    def __init__(self, cell:Cell, deducer_name:str=None):
         self._cell = cell
         self._candidates = []
         self._deducer_name = deducer_name
@@ -42,8 +42,8 @@ class Transaction:
         return self._cell == other._cell
 
 class Transactions:
-    __slots__ = '_transactions_dict, _deducer_name'
-    def __init__(self, deducer_name:str):
+    __slots__ = ['_transactions_dict', '_deducer_name']
+    def __init__(self, deducer_name:str=None):
         self._deducer_name = deducer_name
         self._transactions_dict:Dict[Tuple[int], List[Transaction]] = {}
         self.clear_transactions()
@@ -89,7 +89,7 @@ class Transactions:
     
     def _make_new_transactions_entry(self, cell:Cell):
         position = self._get_position(cell)
-        self._transactions_dict[position] = Transaction(self._deducer_name, cell)
+        self._transactions_dict[position] = Transaction(cell, self._deducer_name)
 
     def _cell_in_transactions(self, position:Tuple[int]) -> bool:
         return position in self._transactions_dict.keys()
