@@ -1,10 +1,8 @@
 import pytest
 import sys
 sys.path.append('..')
-from sudokupy.cell import Cells, Cell
-from sudokupy.board import Board
+from sudokupy.cell import Cell
 from sudokupy.deducers.deducer_base import  Transaction, Transactions
-from sudokupy.deducers.vertex_deducer import VertexCoupleDeducer
 
 class TestTransaction:
     def test_cell(self):
