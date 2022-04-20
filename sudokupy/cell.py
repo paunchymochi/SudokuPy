@@ -184,63 +184,6 @@ class Cells:
     def __repr__(self):
         return f'<Cells \n{self._print_grid()}\nrows:{self._row_count} cols:{self._col_count}>'
     
-    @property
-    def row_count(self):
-        return self._row_count
-    @property
-    def col_count(self):
-        return self._col_count
-    
-    def _print_grid(self):
-        def _print_row_grid(row: List[Cell], print_box:bool):
-            rows_str = [item.print_value for item in row]
-            if print_box:
-                for i in [6, 3]:
-                    rows_str.insert(i, '|')
-                rows_str += '|'
-            return ' '.join(rows_str)
-        
-        def _print_row_index(row: List[Cell]):
-            return f'{row[0].row} |'
-        
-        def _print_rows(data: List[List[Cell]], print_box:bool):
-            rows = [_print_row_index(row)+_print_row_grid(row, print_box) for row in data]
-            if print_box:
-                for i in [6, 3]:
-                    rows.insert(i, _print_line_break(9, True))
-                rows.append(_print_line_break(9, True))
-
-            return '\n'.join(rows)
-        
-        def _print_line_break(col_num: int, print_box:bool):
-            sep = '   '
-            if print_box:
-                sep = '__|'
-                sep += '| '.join(['_'*6 for _ in range(3)])
-                sep += '|'
-            else:
-                sep += '_'*(col_num*2-1)
-            return sep
-        
-        def _print_header(row: List[Cell], print_box:bool):
-            nums = [cell.column for cell in row]
-            nums = [str(num) for num in nums]
-            nums = '   ' + ' '.join(nums)
-            if print_box:
-                nums = nums.replace(' 0', '|0')
-                nums = nums.replace('3', '| 3')
-                nums = nums.replace('6', '| 6')
-                nums += ' |'
-            sep = _print_line_break(len(row), print_box)
-            return f'{nums}\n{sep}\n'
-        
-        if self._col_count == 9 and self._row_count == 9:
-            print_box = True
-        else:
-            print_box = False
-        grid = _print_header(self._data[0], print_box) + _print_rows(self._data, print_box)
-        return grid
-    
     def __len__(self):
         return self._count_data()
     
@@ -259,6 +202,13 @@ class Cells:
         
         return Cells(sliced_rows)
 
+    @property
+    def row_count(self):
+        return self._row_count
+    @property
+    def col_count(self):
+        return self._col_count
+    
     @property
     def data(self) -> List[List[Cell]]:
         return self._data
@@ -283,61 +233,6 @@ class Cells:
     def values(self, values: Union[int, List[int], List[List[int]]]):
         self.set_values(values)
 
-    def print_candidates(self):
-        def get_candidates():
-            candidates = [[cell.print_candidates() for cell in row] for row in self.data]
-            return candidates
-        
-        def get_row_index():
-            return [row[0].row for row in self.data]
-        
-        def get_col_index():
-            return [cell.column for cell in self.data[0]]
-        
-        def print_header():
-            cols = get_col_index()
-            s = '   '
-            s += ' '.join(f' {col} ' for col in cols) 
-            s += ' '
-            return s
-
-        def print_line_break(top_newline=False, bottom_newline=False):
-            cols = len(get_col_index())
-            s = ''
-            if top_newline:
-                s += '\n'
-            s += '  ' + '-'*(cols*3 + cols + 1)
-            if bottom_newline:
-                s += '\n'
-            return s
-        
-        def print_subrow(candidates, row, subrow, row_index):
-            s = ''
-            candidate_row = candidates[row]
-            candidate_subrow = [cell[subrow] for cell in candidate_row]
-            if subrow == 1:
-                s += f'{row_index} '
-            else:
-                s += '  '
-            s += '|'
-            s += '|'.join(candidate_subrow)
-            s += '|'
-            return s
-        
-        def print_row(row, row_index):
-            s = ''
-            candidates = get_candidates()
-            subrows = [print_subrow(candidates, row, subrow, row_index) for subrow in range(3)]
-            return '\n'.join(subrows)
-
-        s = ''
-        s += print_header()
-        s += print_line_break(True, True)
-        rows = [print_row(row, row_index) for row, row_index in enumerate(get_row_index())]
-        s += print_line_break(True, True).join(rows)
-        s += print_line_break(top_newline=True)
-        return s
-    
     @property
     def candidates(self) -> List[List[List[int]]]:
         return self.get_candidates()
@@ -345,6 +240,13 @@ class Cells:
     @candidates.setter
     def candidates(self, values:Union[int, List[int]]):
         self.set_candidates(values)
+    
+    def copy(self) -> 'Cells':
+        new_cells = Cells()
+        for i in range(len(new_cells._data)):
+            for j in range(len(new_cells._data[0])):
+                new_cells._data[i][j] = self._data[i][j].copy()
+        return new_cells
     
     def contains(self, values: Union[int, List[int]]) -> bool:
         if type(values) is int:
@@ -447,4 +349,109 @@ class Cells:
     
     def _count_data(self):
         return self._row_count * self._col_count
+    
+    def _print_grid(self):
+        def _print_row_grid(row: List[Cell], print_box:bool):
+            rows_str = [item.print_value for item in row]
+            if print_box:
+                for i in [6, 3]:
+                    rows_str.insert(i, '|')
+                rows_str += '|'
+            return ' '.join(rows_str)
+        
+        def _print_row_index(row: List[Cell]):
+            return f'{row[0].row} |'
+        
+        def _print_rows(data: List[List[Cell]], print_box:bool):
+            rows = [_print_row_index(row)+_print_row_grid(row, print_box) for row in data]
+            if print_box:
+                for i in [6, 3]:
+                    rows.insert(i, _print_line_break(9, True))
+                rows.append(_print_line_break(9, True))
+
+            return '\n'.join(rows)
+        
+        def _print_line_break(col_num: int, print_box:bool):
+            sep = '   '
+            if print_box:
+                sep = '__|'
+                sep += '| '.join(['_'*6 for _ in range(3)])
+                sep += '|'
+            else:
+                sep += '_'*(col_num*2-1)
+            return sep
+        
+        def _print_header(row: List[Cell], print_box:bool):
+            nums = [cell.column for cell in row]
+            nums = [str(num) for num in nums]
+            nums = '   ' + ' '.join(nums)
+            if print_box:
+                nums = nums.replace(' 0', '|0')
+                nums = nums.replace('3', '| 3')
+                nums = nums.replace('6', '| 6')
+                nums += ' |'
+            sep = _print_line_break(len(row), print_box)
+            return f'{nums}\n{sep}\n'
+        
+        if self._col_count == 9 and self._row_count == 9:
+            print_box = True
+        else:
+            print_box = False
+        grid = _print_header(self._data[0], print_box) + _print_rows(self._data, print_box)
+        return grid
+    
+    def print_candidates(self):
+        def get_candidates():
+            candidates = [[cell.print_candidates() for cell in row] for row in self.data]
+            return candidates
+        
+        def get_row_index():
+            return [row[0].row for row in self.data]
+        
+        def get_col_index():
+            return [cell.column for cell in self.data[0]]
+        
+        def print_header():
+            cols = get_col_index()
+            s = '   '
+            s += ' '.join(f' {col} ' for col in cols) 
+            s += ' '
+            return s
+
+        def print_line_break(top_newline=False, bottom_newline=False):
+            cols = len(get_col_index())
+            s = ''
+            if top_newline:
+                s += '\n'
+            s += '  ' + '-'*(cols*3 + cols + 1)
+            if bottom_newline:
+                s += '\n'
+            return s
+        
+        def print_subrow(candidates, row, subrow, row_index):
+            s = ''
+            candidate_row = candidates[row]
+            candidate_subrow = [cell[subrow] for cell in candidate_row]
+            if subrow == 1:
+                s += f'{row_index} '
+            else:
+                s += '  '
+            s += '|'
+            s += '|'.join(candidate_subrow)
+            s += '|'
+            return s
+        
+        def print_row(row, row_index):
+            s = ''
+            candidates = get_candidates()
+            subrows = [print_subrow(candidates, row, subrow, row_index) for subrow in range(3)]
+            return '\n'.join(subrows)
+
+        s = ''
+        s += print_header()
+        s += print_line_break(True, True)
+        rows = [print_row(row, row_index) for row, row_index in enumerate(get_row_index())]
+        s += print_line_break(True, True).join(rows)
+        s += print_line_break(top_newline=True)
+        return s
     
