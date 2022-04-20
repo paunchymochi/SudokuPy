@@ -525,6 +525,17 @@ class TestCells:
 
         with pytest.raises(ValueError):
             cells[0, 0:3].as_cell()
+    
+    def test_copy(self):
+        cells1 = Cells()
+        cells1[3, 5].values = 5
+        cells1[2:4].candidates = [2, 3, 4]
+        cells2 = cells1.copy()
+        assert cells1 == cells2
+        assert cells1 is not cells2
+        cell_list = cells2.flatten()
+        for i, cell in enumerate(cells1.flatten()):
+            assert cell_list[i] == cell
         
 
 
