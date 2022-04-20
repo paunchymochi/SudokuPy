@@ -37,6 +37,7 @@ class CellValuesRemover:
     def remove(self, seed:int=None) -> Cells:
         self._set_seed(seed)
         cells = self._cells.copy()
+        cells.candidates = list(range(1, 10))
         filled_cells = self._get_filled_cells(cells)
         removal_count = self._get_removal_count(self._difficulty)
 
