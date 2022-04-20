@@ -10,9 +10,14 @@ class File:
     
     def read_csv(self, filename:str):
         path = self.get_path(filename)
+        self._validate_path(path)
         csv_data = self._get_csv_data(path)
         board = self._make_board(csv_data)
         return board
+    
+    def _validate_path(self, path:Path):
+        if not path.exists():
+            raise FileExistsError(f'path {path} does not exist')
     
     def _get_csv_data(self, path:Path) -> List[List[int]]:
 
