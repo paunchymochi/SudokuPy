@@ -342,6 +342,7 @@ class TestDeducer:
     def test_is_solvable(self):
         board = Board()
         d = Deducer(board.cells)
+        assert d.is_solvable() == True
         board.row[0].candidates = []
         board.row[0].values = [1, 2, 3, 4, 5, 6, 0, 0, 0]
         board.cell[0, 6].candidates = [7, 9]
