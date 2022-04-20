@@ -1,8 +1,13 @@
 import sys
 sys.path.append('..')
 from sudokupy.cell import Cells
+from sudokupy.file import File
 
 from typing import List, Tuple
+
+def from_csv(filename:str=None) -> 'Board':
+    file = File()
+    return file.read_csv(filename)
 
 class Board:
     class _Slice:
@@ -68,7 +73,15 @@ class Board:
             self._validate_slicer(key[1], 8)
             return self._cells[key[0], key[1]]
 
-    def __init__(self):
+    def __init__(self, csv_filename:str=None):
+        if csv_filename is not None:
+            board = from_csv(csv_filename)
+            self._cells = board._cells
+            self.row = board.row
+            self.col = board.col
+            self.box = board.box
+            self.cell = board.cell
+            return
         self._cells = Cells()
         self.row = self.Row(self.cells)
         self.col = self.Col(self.cells)
