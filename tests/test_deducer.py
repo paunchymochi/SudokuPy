@@ -416,6 +416,31 @@ class TestDeducer:
                 assert transaction.candidates == [5]
             else:
                 assert transaction.candidates == [5, 7]
+    
+    def test_deduce_adjacent__companions(self):
+        b = Board()
+        d = Deducer(b.cells)
+
+        b.cell[0, 0].candidates = [5, 7]
+        b.cell[0, 5].candidates = [5, 9]
+        b.cell[0, 7].candidates = [7, 9]
+        b.cell[5, 0].candidates = [5, 8]
+        b.cell[7, 0].candidates = [7, 8]
+        b.cell[2, 1].candidates = [5, 6]
+        b.cell[2, 2].candidates = [6, 7]
+        d.deduce_adjacent(0, 0)
+        assert len(d.transactions) == 6 + 4 + 4 # box, row, col
+        for transaction in d.transactions:
+            if transaction.cell.row == 0 and transaction.cell.column > 2:
+                assert transaction.candidates == [5, 7, 9]
+            elif transaction.cell.column == 0 and transaction.cell.row > 2:
+                assert transaction.candidates == [5, 7, 8]
+            elif transaction.cell.row > 1 and transaction.cell.column > 1:
+                assert transaction.candidates == [5, 6, 7]
+            elif transaction.cell.row == 0:
+                assert transaction.candidates == [5, 6, 7, 9]
+            elif transaction.cell.column == 0:
+                assert transaction.candidates == [5, 6, 7, 8]
 
     def test_deduce_value(self):
         board = Board()
