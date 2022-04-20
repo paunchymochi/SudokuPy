@@ -21,7 +21,34 @@ def set_seed(seed:int=None):
 
 class Generator:
     def __init__(self, seed:int=None):
-        pass
+        self.reset(seed)
+        self._board_generator:BoardGenerator=None
+        self._remover:CellValuesRemover=None
+        self.board:Board=None
+    
+    def reset(self, seed:int=None):
+        set_seed(seed)
+    
+    def generate(self, difficulty:Difficulty=Difficulty.Medium, seed:int=None) -> Board:
+        self._board_generator = BoardGenerator()
+        cells = self._board_generator.generate(seed)
+        self._remover = CellValuesRemover(cells, difficulty)
+        cells = self._remover.remove(seed)
+        board = Board()
+        board._cells = cells
+        self.board = board
+        return board
+    
+    def generate_easy(self, seed:int=None) -> Board:
+        return self.generate(Difficulty.Easy, seed)
+    def generate_medium(self, seed:int=None) -> Board:
+        return self.generate(Difficulty.Medium, seed)
+    def generate_hard(self, seed:int=None) -> Board:
+        return self.generate(Difficulty.Hard, seed)
+    def generate_expert(self, seed:int=None) -> Board:
+        return self.generate(Difficulty.Expert, seed)
+    def generate_evil(self, seed:int=None) -> Board:
+        return self.generate(Difficulty.Evil, seed)
 
 class CellValuesRemover:
     def __init__(self, cells:Cells, difficulty:Difficulty=Difficulty.Medium, seed:int=None):
