@@ -308,7 +308,7 @@ class VertexCouples:
 
 class VertexCoupleDeducer(_BaseDeducer):
     def __init__(self, cells: Cells):
-        super().__init__()
+        super().__init__('VertexCoupleDeducer')
         self._cells:Cells = cells
         self._vertices = VertexCouples()
         
