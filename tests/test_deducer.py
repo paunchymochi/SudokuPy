@@ -389,6 +389,11 @@ class TestDeducer:
                 assert transaction.candidates == list(range(1, 10))
             else:
                 assert transaction.candidates == [5]
+        
+        d = Deducer(b.cells)
+        d.disable_value_deducer()
+        d.deduce_adjacent(0, 0)
+        assert len(d.transactions) == 0
     
     def test_deduce_adjacent__single_candidates(self):
         b = Board()
@@ -398,6 +403,11 @@ class TestDeducer:
         assert len(d.transactions) == 8 + 6 + 6 # box, row, col
         for transaction in d.transactions:
             assert transaction.candidates == [5]
+        
+        d = Deducer(b.cells)
+        d.disable_single_candidate_deducer()
+        d.deduce_adjacent(0, 0)
+        assert len(d.transactions) == 0
     
     def test_deduce_adjacent__lineboxes(self):
         b = Board()
@@ -416,6 +426,11 @@ class TestDeducer:
                 assert transaction.candidates == [5]
             else:
                 assert transaction.candidates == [5, 7]
+
+        d = Deducer(b.cells)
+        d.disable_linebox_deducer()
+        d.deduce_adjacent(0, 0)
+        assert len(d.transactions) == 0
     
     def test_deduce_adjacent__companions(self):
         b = Board()
@@ -441,6 +456,11 @@ class TestDeducer:
                 assert transaction.candidates == [5, 6, 7, 9]
             elif transaction.cell.column == 0:
                 assert transaction.candidates == [5, 6, 7, 8]
+
+        d = Deducer(b.cells)
+        d.disable_companion_deducer()
+        d.deduce_adjacent(0, 0)
+        assert len(d.transactions) == 0
 
     def test_deduce_value(self):
         board = Board()
