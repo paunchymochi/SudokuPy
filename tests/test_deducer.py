@@ -398,6 +398,24 @@ class TestDeducer:
         assert len(d.transactions) == 8 + 6 + 6 # box, row, col
         for transaction in d.transactions:
             assert transaction.candidates == [5]
+    
+    def test_deduce_adjacent__lineboxes(self):
+        b = Board()
+        d = Deducer(b.cells)
+        b.row[0].remove_candidates(5)
+        b.col[0].remove_candidates(7)
+        b.cell[0, 0].candidates = [5, 6, 7]
+        b.cell[2, 0].candidates = [5, 6, 7]
+        b.cell[0, 2].candidates = [5, 6, 7]
+        d.deduce_adjacent(0, 0)
+        assert len(d.transactions) == 8
+        for transaction in d.transactions:
+            if transaction.cell.row == 0:
+                assert transaction.candidates == [7]
+            elif transaction.cell.column == 0:
+                assert transaction.candidates == [5]
+            else:
+                assert transaction.candidates == [5, 7]
 
     def test_deduce_value(self):
         board = Board()
