@@ -5,7 +5,7 @@ from sudokupy.deducers.deducer_base import _BaseDeducer
 
 class ValueDeducer(_BaseDeducer):
     def __init__(self):
-        super().__init__()
+        super().__init__('ValueDeducer')
         self._cells_with_assigned_candidates = []
         self._cells_with_values = []
     

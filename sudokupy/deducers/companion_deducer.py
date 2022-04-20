@@ -63,7 +63,7 @@ class _Companion:
 class CompanionDeducer(_BaseDeducer):
 
     def __init__(self):
-        super().__init__()
+        super().__init__('CompanionDeducer')
 
     def deduce(self, sliced_cells:Cells, max_companion_count:int=3):
         self._transactions_in_current_slice = False
