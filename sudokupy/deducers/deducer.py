@@ -19,7 +19,7 @@ class Deducers(Enum):
 
 class Deducer(_BaseDeducer):
     def __init__(self, cells: Cells):
-        super().__init__()
+        super().__init__('Deducer')
         self._cells = cells
         self.value_deducer = ValueDeducer()
         self.single_candidate_deducer = SingleCandidateDeducer(cells)

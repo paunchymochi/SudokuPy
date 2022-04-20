@@ -6,7 +6,7 @@ from typing import List
 
 class SingleCandidateDeducer(_BaseDeducer):
     def __init__(self, cells: Cells):
-        super().__init__()
+        super().__init__('SingleCandidateDeducer')
         self._cells = cells
         self._checked_cells:List[Cell]=[]
     

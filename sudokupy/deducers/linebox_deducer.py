@@ -67,7 +67,7 @@ class LineBoxDeducer(_BaseDeducer):
             return segmented_line
 
     def __init__(self, cells:Cells):
-        super().__init__()
+        super().__init__('LineBoxDeducer')
         self._cells = cells
     
     def deduce(self, row:int=None, col:int=None):
