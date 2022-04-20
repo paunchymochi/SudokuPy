@@ -1,3 +1,4 @@
+import pytest
 import sys
 sys.path.append('..')
 from sudokupy.file import File
@@ -17,3 +18,8 @@ class TestFile:
         file = File()
         board = file.read_csv('easy01.csv')
         assert board.row[0].get_values(flatten=True) == [7, 0, 4, 9, 0, 0, 5, 6, 8]
+
+    def test_read_csv_non_existent(self):
+        file = File()
+        with pytest.raises(FileExistsError):
+            board = file.read_csv('zzzzz.csv')
