@@ -5,13 +5,14 @@ from sudokupy.cell import Cell, Cells
 from typing import Dict, Tuple, List, Union
 
 class Transaction:
-    __slots__ = ['_cell', '_candidates']
-    def __init__(self, cell:Cell):
+    __slots__ = ['_cell', '_candidates', '_deducer_name']
+    def __init__(self, deducer_name:str, cell:Cell):
         self._cell = cell
         self._candidates = []
+        self._deducer_name = deducer_name
     
     def __repr__(self):
-        return f'<Transaction cell:{self._cell.__repr__()} candidates:{self._candidates}>'
+        return f'<Transaction deducer:{self._deducer_name} cell:{self._cell.__repr__()} candidates:{self._candidates}>'
     
     @property
     def cell(self):
@@ -20,6 +21,10 @@ class Transaction:
     @property
     def candidates(self):
         return self._candidates
+    
+    @property
+    def deducer_name(self):
+        return self._deducer_name
     
     def add(self, candidates: List[int]):
         if len(self._candidates) == 0:
@@ -37,8 +42,9 @@ class Transaction:
         return self._cell == other._cell
 
 class Transactions:
-    __slots__ = '_transactions_dict'
-    def __init__(self):
+    __slots__ = '_transactions_dict, _deducer_name'
+    def __init__(self, deducer_name:str):
+        self._deducer_name = deducer_name
         self._transactions_dict:Dict[Tuple[int], List[Transaction]] = {}
         self.clear_transactions()
     
@@ -83,7 +89,7 @@ class Transactions:
     
     def _make_new_transactions_entry(self, cell:Cell):
         position = self._get_position(cell)
-        self._transactions_dict[position] = Transaction(cell)
+        self._transactions_dict[position] = Transaction(self._deducer_name, cell)
 
     def _cell_in_transactions(self, position:Tuple[int]) -> bool:
         return position in self._transactions_dict.keys()
@@ -92,9 +98,9 @@ class Transactions:
         return (cell.row, cell.column)
     
 class _BaseDeducer:
-    def __init__(self):
+    def __init__(self, deducer_name:str):
         self._affected_cells:List[Cell] = []
-        self._transactions = Transactions()
+        self._transactions = Transactions(deducer_name)
     
     @property
     def transactions(self):
