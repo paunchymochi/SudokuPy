@@ -81,6 +81,12 @@ class Cell:
     
     def __eq__(self, other):
         return self._row == other._row and self._column == other._column
+    
+    def copy(self) -> 'Cell':
+        cell = Cell(self._row, self._column, self._value)
+        cell._candidates = self._candidates
+        cell._is_permanent = self._is_permanent
+        return cell
 
     @property
     def row(self) -> int:
@@ -441,4 +447,4 @@ class Cells:
     
     def _count_data(self):
         return self._row_count * self._col_count
-
+    
