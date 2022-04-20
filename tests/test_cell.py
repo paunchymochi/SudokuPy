@@ -537,6 +537,10 @@ class TestCells:
         for i, cell in enumerate(cells1.flatten()):
             assert cell_list[i] == cell
         
+        cells1[0, 0].values = 9
+        cells1[0, 0].candidates = []
+        assert cells1 != cells2
+        
 
 
     
