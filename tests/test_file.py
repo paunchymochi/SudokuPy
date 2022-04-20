@@ -16,8 +16,8 @@ class TestFile:
     
     def test_read_csv(self):
         file = File()
-        board = file.read_csv('easy01.csv')
-        assert board.row[0].get_values(flatten=True) == [7, 0, 4, 9, 0, 0, 5, 6, 8]
+        cells = file.read_csv('easy01.csv')
+        assert cells[0].get_values(flatten=True) == [7, 0, 4, 9, 0, 0, 5, 6, 8]
 
     def test_read_csv_non_existent(self):
         file = File()
