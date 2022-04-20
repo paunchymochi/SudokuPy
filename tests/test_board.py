@@ -150,5 +150,10 @@ class TestBoard:
         assert b.cell[0, 0].get_candidates(flatten=True)[0] == []
         assert b.cell[3, 3].get_values(flatten=True)[0] == 0
         assert b.cell[3, 3].get_candidates(flatten=True)[0] == [5]
+    
+    def test_from_csv(self):
+
+        b = Board('easy01.csv')
+        assert b.row[0].get_values(flatten=True) == [7, 0, 4, 9, 0, 0, 5, 6, 8]
 
 
