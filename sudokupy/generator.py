@@ -3,7 +3,7 @@ sys.path.append('..')
 from sudokupy.board import Board
 from sudokupy.deducers.deducer import Deducer
 from sudokupy.injector import Injector
-from sudokupy.cell import Cell
+from sudokupy.cell import Cell, Cells
 import random
 from typing import List, Tuple
 from enum import Enum
@@ -16,8 +16,37 @@ class Difficulty(Enum):
     Evil=5
 
 class CellValuesRemover:
-    def __init__(self, difficulty:Difficulty, seed:int=None):
+    def __init__(self, cells:Cells, difficulty:Difficulty=Difficulty.Medium, seed:int=None):
+        self._cells = cells
+        self.set_difficulty(difficulty)
         self._reset(seed)
+        self._init_filled_cells()
+    
+    def set_difficulty(self, difficulty:Difficulty):
+        self._difficulty = difficulty
+    
+    def remove_values(self):
+        removal_count = self._get_removal_count(self._difficulty)
+
+        for _ in range(removal_count):
+            self._remove_cell()
+
+    def _init_filled_cells(self):
+        filled_cells = []
+        cell_list = self._cells.flatten()
+        for cell in cell_list:
+            if cell.value != 0:
+                filled_cells.append(cell)
+        self._filled_cells = filled_cells
+
+    def _get_removal_cell(self) -> Cell:
+        cell = random.choice(self._filled_cells)
+        self._filled_cells.remove(cell)
+        return cell
+
+    def _remove_cell(self):
+        cell = self._get_removal_cell()
+        cell.value = 0
     
     def _get_removal_count(self, difficulty:Difficulty) -> int:
         if difficulty == Difficulty.Easy:
