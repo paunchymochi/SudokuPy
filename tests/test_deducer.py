@@ -384,7 +384,20 @@ class TestDeducer:
         b.cell[0, 0].values = 5
         d.deduce_adjacent(0, 0)
         assert len(d.transactions) == 9 + 6 + 6 # box, row, col
-
+        for transaction in d.transactions:
+            if transaction.cell == Cell(0, 0):
+                assert transaction.candidates == list(range(1, 10))
+            else:
+                assert transaction.candidates == [5]
+    
+    def test_deduce_adjacent__single_candidates(self):
+        b = Board()
+        d = Deducer(b.cells)
+        b.cell[0, 0].candidates = [5]
+        d.deduce_adjacent(0, 0)
+        assert len(d.transactions) == 8 + 6 + 6 # box, row, col
+        for transaction in d.transactions:
+            assert transaction.candidates == [5]
 
     def test_deduce_value(self):
         board = Board()
