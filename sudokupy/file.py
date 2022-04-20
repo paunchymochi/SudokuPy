@@ -3,12 +3,32 @@ sys.path.append('..')
 from pathlib import Path
 from typing import List
 from sudokupy.cell import Cell
+import tkinter
+from tkinter import filedialog
+
+class _FileDialog:
+    def __init__(self):
+        self._init_root_tk()
+
+    def _init_root_tk(self):
+        root = tkinter.Tk()
+        root.withdraw()
+        root.lift()
+        root.attributes('-topmost', True)
+        self._root_tk = root
+    
+    @classmethod
+    def askopenfilename(self):
+        result = filedialog.askopenfilename(title='Open CSV File', filetypes=[('CSV File', '*.csv')], initialdir='../boards')
+        return result
 
 class File:
     def __init__(self, folder:str=None):
         self.set_folder(folder)
     
-    def read_csv(self, filename:str):
+    def read_csv(self, filename:str=None):
+        if filename is None:
+            filename = _FileDialog.askopenfilename()
         path = self.get_path(filename)
         self._validate_path(path)
         csv_data = self._get_csv_data(path)
