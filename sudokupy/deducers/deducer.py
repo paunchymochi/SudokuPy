@@ -28,6 +28,15 @@ class Deducer(_BaseDeducer):
         self.vertex_deducer = VertexCoupleDeducer(cells)
         self._states = self._reset_states()
     
+    @property
+    def transactions(self):
+        tx = []
+        deducers:List[_BaseDeducer] = [self.value_deducer, self.single_candidate_deducer, self.companion_deducer, self.linebox_deducer, self.vertex_deducer]
+        for deducer in deducers:
+            t = deducer._transactions.get_transactions()
+            tx.extend(t)
+        return tx
+    
     def is_solvable(self) -> bool:
         for cell in self._cells.flatten():
             if cell.value == 0 and cell.candidates == []:
