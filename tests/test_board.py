@@ -155,5 +155,8 @@ class TestBoard:
 
         b = Board('easy01.csv')
         assert b.row[0].get_values(flatten=True) == [7, 0, 4, 9, 0, 0, 5, 6, 8]
+    
+    def test_to_csv(self):
+        raise NotImplementedError
 
 
