@@ -11,9 +11,14 @@ SudokuPy generates a board by filling in cells, deducing, undoing filling-in of 
 ### Generating a Board
 
 ```python
-from generator import Generator
+from generator import Generator, Difficulty
 g = Generator()
-board = g.generate(seed=123)
+board = g.generate(difficulty=Difficulty.Hard, seed=123)
+easy_board = g.generate_easy(seed=234)
+medium_board = g.generate_medium()
+hard_board = g.generate_hard()
+expert_board = g.generate_expert()
+evil_board = g.generate_evil()
 ```
 
 ### Solving a Board
