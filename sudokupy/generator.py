@@ -102,13 +102,17 @@ class BoardGenerator:
         self._injector = Injector(self._board.cells)
         set_seed(seed)
     
-    def generate(self, seed:int=None):
+    @property
+    def cells(self):
+        return self._board.cells
+    
+    def generate(self, seed:int=None) -> Cells:
         self._reset(seed)
         self._generate_diagonal_boxes()
         while not self._is_board_complete():
             self._deduce()
             self._inject()
-        return self._is_board_complete()
+        return self.cells
 
     def _is_board_complete(self) -> bool:
         cells = self._board.cells.get_values(flatten=True)
