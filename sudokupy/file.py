@@ -2,7 +2,7 @@ import sys
 sys.path.append('..')
 from pathlib import Path
 from typing import List
-from sudokupy.cell import Cell
+from sudokupy.cell import Cells
 import tkinter
 from tkinter import filedialog
 
@@ -32,8 +32,14 @@ class File:
         path = self.get_path(filename)
         self._validate_path(path)
         csv_data = self._get_csv_data(path)
-        board = self._make_board(csv_data)
+        board = self._make_cells(csv_data)
         return board
+    
+    def to_csv(self, cells:Cells, filename:str):
+        path = self.get_path(filename)
+
+    def _pack_csv_data(self, cells:Cells) -> List[str]:
+        pass
     
     def _validate_path(self, path:Path):
         if not path.exists():
@@ -49,11 +55,10 @@ class File:
         lines = [[int(s) for s in line] for line in lines]
         return lines
     
-    def _make_board(self, csv_data:List[List[int]]):
-        from sudokupy.board import Board
-        board = Board()
-        board.cells.values = csv_data
-        return board
+    def _make_cells(self, csv_data:List[List[int]]):
+        cells = Cells()
+        cells.values = csv_data
+        return cells
 
     def set_folder(self, folder:str):
         self._folder = folder
