@@ -213,7 +213,8 @@ class Deducer(_BaseDeducer):
     def deduce_companion(self, sliced_cells:Cells):
         if not self._is_enabled(Deducers.COMPANION_DEDUCER):
             return
-        self.companion_deducer.deduce(sliced_cells)
+        max_companion_length = self._states[Deducers.COMPANION_DEDUCER][1]
+        self.companion_deducer.deduce(sliced_cells, max_companion_length)
         self._transactions.extend_transactions(self.companion_deducer._transactions)
     
     def deduce_linebox(self, sliced_cells:Cells):
@@ -229,7 +230,8 @@ class Deducer(_BaseDeducer):
             return
         row, col = self._get_rowcol_from_sliced_cells(sliced_cells)
 
-        self.vertex_deducer.deduce(row, col)
+        max_vertex_pairs = self._states[Deducers.VERTEX_DEDUCER][1]
+        self.vertex_deducer.deduce(row, col, max_vertex_pairs)
         self._transactions.extend_transactions(self.vertex_deducer._transactions)
     
     def _get_rowcol_from_sliced_cells(self, sliced_cells:Cells):
