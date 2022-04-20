@@ -199,7 +199,7 @@ class TestCell:
     
     def test_repr(self):
         c = Cell(1, 2, 3)
-        assert c.__repr__() == '<Cell row:1 column:2 value:3>'
+        assert c.__repr__() == '<Cell (1,2)=3>'
     
     def test_set_permanence(self):
         c = Cell(1, 2, 3)
@@ -504,6 +504,16 @@ class TestCells:
         c.data[0][0].remove_candidates([1, 3])
         s = c.print_candidates()
         assert s.count('.2.') == 1
+    
+    def test_as_cell(self):
+        cells = Cells()
+        cell = cells[0, 1].as_cell()
+        assert isinstance(cell, Cell)
+        assert cell.row == 0
+        assert cell.column == 1
+
+        with pytest.raises(ValueError):
+            cells[0, 0:3].as_cell()
         
 
 
