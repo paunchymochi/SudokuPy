@@ -44,7 +44,7 @@ class Solver:
         file = File()
         if filename is None:
             file.choose_folder()
-        cells = file.read_csv()
+        cells = file.read_csv(filename)
         board = Board.from_cells(cells)
         self.from_board(board)
     
