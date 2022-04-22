@@ -21,6 +21,11 @@ class _FileDialog:
     def askopenfilename(self):
         result = filedialog.askopenfilename(title='Open CSV File', filetypes=[('CSV File', '*.csv')], initialdir='../boards')
         return result
+    
+    @classmethod
+    def askdirectory(self):
+        result = filedialog.askdirectory(title='Choose Folder')
+        return result
 
 class File:
     def __init__(self, folder:str=None):
@@ -71,15 +76,25 @@ class File:
         cells = Cells()
         cells.values = csv_data
         return cells
+    
+    def choose_folder(self):
+        folder = _FileDialog.askdirectory()
+        self.set_folder(folder)
 
     def set_folder(self, folder:str):
+        if folder == '':
+            folder = None
         self._folder = folder
 
     def get_folder(self) -> Path:
         folder = self._folder
         if folder is None:
             folder = 'boards'
-        board_folder = Path(__file__).parent.parent.joinpath(folder)
+        folder = Path(folder)
+        if folder.is_absolute():
+            return folder
+        else:
+            board_folder = Path(__file__).parent.parent / folder
         return board_folder
 
     def get_path(self, filename:str) -> Path:
