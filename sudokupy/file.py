@@ -35,11 +35,23 @@ class File:
         board = self._make_cells(csv_data)
         return board
     
-    def to_csv(self, cells:Cells, filename:str):
+    def to_csv(self, cells:Cells, filename:str) -> List[str]:
         path = self.get_path(filename)
+        csv_lines = self._make_csv_lines(cells)
 
-    def _pack_csv_data(self, cells:Cells) -> List[str]:
-        pass
+        with open(path, 'w') as f:
+            for line in csv_lines:
+                f.write(line + '\n')
+        
+        return csv_lines
+
+    def _make_csv_lines(self, cells:Cells) -> List[str]:
+        lines = []
+        for row in cells.data:
+            line = [str(cell.value) for cell in row]
+            line_str = ','.join(line)
+            lines.append(line_str)
+        return lines
     
     def _validate_path(self, path:Path):
         if not path.exists():
