@@ -50,10 +50,10 @@ class Generator:
     def generate_evil(self, seed:int=None) -> Board:
         return self.generate(Difficulty.Evil, seed)
     
-    def to_csv(self, filename:str):
+    def to_csv(self, filename:str, folder:str=None):
         if self.board is None:
             return
-        self.board.to_csv(filename)
+        self.board.to_csv(filename, folder)
 
 class CellValuesRemover:
     def __init__(self, cells:Cells, difficulty:Difficulty=Difficulty.Medium, seed:int=None):
