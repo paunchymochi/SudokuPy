@@ -7,6 +7,7 @@ from sudokupy.cell import Cell, Cells
 from sudokupy.deducers.deducer_base import Transaction
 from sudokupy.injector import _Injection
 from typing import List
+from pathlib import Path
 
 class Solver:
     def __init__(self, board:Board=None):
@@ -50,6 +51,11 @@ class Solver:
             self._deduce()
             self._inject()
         return self._solved_board
+    
+    def to_csv(self, filename:str) -> Path:
+        if self._solved_board is None:
+            return
+        self._solved_board.to_csv(filename)
     
     def _is_board_solved(self) -> bool:
         cells = self._solved_board.cells.get_values(flatten=True)
