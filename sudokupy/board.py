@@ -97,14 +97,19 @@ class Board:
         file.to_csv(self.cells, filename)
         return file.get_path(filename)
     
+    @classmethod
+    def from_cells(self, cells:Cells) -> 'Board':
+        board = Board()
+        board._cells = cells
+        board.row = board.Row(cells)
+        board.col = board.Col(cells)
+        board.box = board.Box(cells)
+        board.cell = board.Cell(cells)
+        return board
+    
     def copy(self) -> 'Board':
         new_cells = self._cells.copy()
-        board = Board()
-        board._cells = new_cells
-        board.row = board.Row(new_cells)
-        board.col = board.Col(new_cells)
-        board.box = board.Box(new_cells)
-        board.cell = board.Cell(new_cells)
+        board = Board.from_cells(new_cells)
         return board
     
     def get_row(self, row:int) -> Cells:
