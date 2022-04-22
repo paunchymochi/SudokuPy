@@ -6,16 +6,21 @@ from sudokupy.injector import Injector
 from sudokupy.cell import Cell, Cells
 from sudokupy.deducers.deducer_base import Transaction
 from sudokupy.injector import _Injection
+from sudokupy.file import File
 from typing import List
 from pathlib import Path
 
 class Solver:
-    def __init__(self, board:Board=None):
+    def __init__(self, board:Board=None, csv_filename:str=None):
         self._unsolved_board:Board = None
         self._solved_board:Board = None
         self._deducer:Deducer = None
         self._injector:Injector = None
-        self.set_board(board)
+
+        if board is not None:
+            self.from_board(board)
+        elif csv_filename is not None:
+            self.from_csv(csv_filename)
 
     @property
     def solved_board(self) -> Board:
@@ -35,9 +40,15 @@ class Solver:
     def __repr__(self):
         return f'<Solver\nOriginal Board:\n{self._unsolved_board.cells.__str__()}\n\nSolved Board:\n{self._solved_board.cells.__str__()}\n>'
 
-    def set_board(self, board:Board):
-        if board is None:
-            return
+    def from_csv(self, filename:str=None):
+        file = File()
+        if filename is None:
+            file.choose_folder()
+        cells = file.read_csv(filename)
+        board = Board.from_cells(cells)
+        self.from_board(board)
+    
+    def from_board(self, board:Board):
         if not isinstance(board, Board):
             raise TypeError('board must be an instance of Board')
         self._unsolved_board = board.copy()
@@ -45,8 +56,7 @@ class Solver:
         self._deducer = Deducer(self._solved_board.cells)
         self._injector = Injector(self._solved_board.cells)
     
-    def solve(self, board:Board=None) -> Board:
-        self.set_board(board)
+    def solve(self) -> Board:
         while not self._is_board_solved():
             self._deduce()
             self._inject()
