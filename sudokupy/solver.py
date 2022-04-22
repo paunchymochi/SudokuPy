@@ -52,10 +52,10 @@ class Solver:
             self._inject()
         return self._solved_board
     
-    def to_csv(self, filename:str) -> Path:
+    def to_csv(self, filename:str, folder:str=None) -> Path:
         if self._solved_board is None:
             return
-        self._solved_board.to_csv(filename)
+        self._solved_board.to_csv(filename, folder)
     
     def _is_board_solved(self) -> bool:
         cells = self._solved_board.cells.get_values(flatten=True)
