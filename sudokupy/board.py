@@ -4,6 +4,7 @@ from sudokupy.cell import Cells
 from sudokupy.file import File
 
 from typing import List, Tuple
+from pathlib import Path
 
 def from_csv(filename:str=None) -> 'Board':
     file = File()
@@ -91,8 +92,10 @@ class Board:
     def cells(self) -> Cells:
         return self._cells
     
-    def to_csv(self, filename:str) -> str:
-        raise NotImplementedError
+    def to_csv(self, filename:str, folder:str=None) -> Path:
+        file = File(folder)
+        file.to_csv(self.cells, filename)
+        return file.get_path(filename)
     
     def copy(self) -> 'Board':
         new_cells = self._cells.copy()
