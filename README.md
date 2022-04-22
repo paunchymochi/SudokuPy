@@ -19,12 +19,19 @@ medium_board = g.generate_medium()
 hard_board = g.generate_hard()
 expert_board = g.generate_expert()
 evil_board = g.generate_evil()
+
+board.to_csv() # Opens file dialog
+board.to_csv('generated_board.csv') # Saves as 'boards/generated_board.csv'
+board.to_csv('C:/sudoku/generated_board.csv') # Absolute path
 ```
 
 ### Solving a Board
 
 ```python
 from solver import Solver
-s = Solver()
-solved_board = s.solve(board)
+solver = Solver()
+
+solver.from_csv('hard01.csv')
+solver.solve()
+solve.to_csv('hard01_solved.csv')
 ```
