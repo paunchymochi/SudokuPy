@@ -155,5 +155,18 @@ class TestBoard:
 
         b = Board('easy01.csv')
         assert b.row[0].get_values(flatten=True) == [7, 0, 4, 9, 0, 0, 5, 6, 8]
+    
+    def test_to_csv(self, tmpdir):
+        from sudokupy.file import File
+        b = Board('easy01.csv')
+
+        result = b.to_csv('to_csv.csv', tmpdir)
+        assert result.exists()
+
+        file = File(tmpdir)
+        cells = file.read_csv('to_csv.csv')
+
+        assert cells == b.cells
+
 
 
