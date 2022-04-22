@@ -1,8 +1,14 @@
 import sys
 sys.path.append('..')
 from sudokupy.cell import Cells
+from sudokupy.file import File
 
 from typing import List, Tuple
+from pathlib import Path
+
+def from_csv(filename:str=None) -> 'Board':
+    file = File()
+    return file.read_csv(filename)
 
 class Board:
     class _Slice:
@@ -68,12 +74,16 @@ class Board:
             self._validate_slicer(key[1], 8)
             return self._cells[key[0], key[1]]
 
-    def __init__(self):
-        self._cells = Cells()
-        self.row = self.Row(self.cells)
-        self.col = self.Col(self.cells)
-        self.box = self.Box(self.cells)
-        self.cell = self.Cell(self.cells)
+    def __init__(self, csv_filename:str=None):
+        if csv_filename is not None:
+            cells = from_csv(csv_filename)
+            self._cells = cells
+        else:
+            self._cells = Cells()
+        self.row = self.Row(self._cells)
+        self.col = self.Col(self._cells)
+        self.box = self.Box(self._cells)
+        self.cell = self.Cell(self._cells)
     
     def __repr__(self):
         return f'<Board\n{self.cells.__str__()}\n\n{self.cells.print_candidates()}\n>'
@@ -81,6 +91,11 @@ class Board:
     @property
     def cells(self) -> Cells:
         return self._cells
+    
+    def to_csv(self, filename:str, folder:str=None) -> Path:
+        file = File(folder)
+        file.to_csv(self.cells, filename)
+        return file.get_path(filename)
     
     def copy(self) -> 'Board':
         new_cells = self._cells.copy()
