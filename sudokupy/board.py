@@ -6,10 +6,6 @@ from sudokupy.file import File
 from typing import List, Tuple
 from pathlib import Path
 
-def from_csv(filename:str=None) -> 'Board':
-    file = File()
-    return file.read_csv(filename)
-
 class Board:
     class _Slice:
         def __init__(self, cells:Cells):
@@ -76,8 +72,8 @@ class Board:
 
     def __init__(self, csv_filename:str=None):
         if csv_filename is not None:
-            cells = from_csv(csv_filename)
-            self._cells = cells
+            board = Board.from_csv(csv_filename)
+            self._cells = board._cells
         else:
             self._cells = Cells()
         self.row = self.Row(self._cells)
@@ -97,6 +93,12 @@ class Board:
         file.to_csv(self.cells, filename)
         return file.get_path(filename)
     
+    @classmethod
+    def from_csv(self, filename:str=None) -> 'Board':
+        file = File()
+        cells = file.read_csv(filename)
+        return Board.from_cells(cells)
+
     @classmethod
     def from_cells(self, cells:Cells) -> 'Board':
         board = Board()
